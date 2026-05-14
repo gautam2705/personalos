@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🔭 Long-Term Vision</title>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --card: #ffffff;
+    --ink: #f8fafc;
+    --dark: #0b0f1a;
+    --muted: #94a3b8;
+    --one: #22d3ee;
+    --three: #a78bfa;
+    --ten: #fbbf24;
+    --health: #10b981;
+    --wealth: #f59e0b;
+    --craft: #3b82f6;
+    --relationships: #ec4899;
+    --mind: #8b5cf6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(34,211,238,.2) 0, transparent 30%),
+      radial-gradient(circle at 88% 16%, rgba(251,191,36,.16) 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, rgba(167,139,250,.18) 0, transparent 32%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: rgba(255,255,255,.08); border: 2px dashed var(--ten);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--ten);
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 50px); margin: 12px 0 6px; letter-spacing: -0.02em; }
+  h1 .scope { display: inline-block; animation: scope 4s infinite; }
+  @keyframes scope { 0%,100%{transform:rotate(0)} 50%{transform:rotate(12deg)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 22px; }
+  .btn {
+    background: #fff; border: 2px solid var(--dark); color: var(--dark);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ten);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ten); }
+  .btn.primary { background: var(--ten); color: var(--dark); }
+
+  main { max-width: 1200px; margin: 0 auto; }
+
+  /* Eulogy / identity */
+  .eulogy {
+    background: linear-gradient(135deg, #0b0f1a 0%, #1e1b4b 100%);
+    color: #fff; text-align: center;
+    border: 3px solid var(--dark);
+    border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--three);
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .eulogy .label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--three); font-weight: 800; }
+  .eulogy .statement { font-size: clamp(18px, 2.6vw, 26px); font-weight: 700; line-height: 1.5; margin: 12px 0; max-width: 900px; margin-left: auto; margin-right: auto; }
+  .eulogy .statement em { color: var(--ten); font-style: normal; }
+
+  /* Horizon tabs */
+  .horizons {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 720px) { .horizons { grid-template-columns: 1fr; } }
+  .horizon-btn {
+    background: #fff; color: var(--dark);
+    border: 3px solid var(--dark);
+    border-radius: 18px;
+    padding: 16px 20px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform .14s ease, box-shadow .14s ease;
+    box-shadow: 5px 5px 0 var(--dark);
+  }
+  .horizon-btn .num { font-size: 32px; font-weight: 900; letter-spacing: -.03em; }
+  .horizon-btn .word { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .horizon-btn .title { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .horizon-btn:hover { transform: translate(-2px,-3px); box-shadow: 7px 8px 0 var(--dark); }
+  .horizon-btn.active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--dark); }
+  .horizon-btn[data-h="1"].active  { background: var(--one); }
+  .horizon-btn[data-h="3"].active  { background: var(--three); color: #fff; }
+  .horizon-btn[data-h="10"].active { background: var(--ten); }
+
+  .horizon-content { display: none; }
+  .horizon-content.active { display: block; }
+
+  /* Pillars */
+  .pillars {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;
+    margin-bottom: 16px;
+  }
+  .pillar {
+    background: var(--card); color: var(--dark);
+    border: 2.5px solid var(--dark);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--dark);
+    padding: 18px 20px;
+    position: relative; overflow: hidden;
+  }
+  .pillar::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px; }
+  .pillar[data-pillar="health"]::before        { background: var(--health); }
+  .pillar[data-pillar="wealth"]::before        { background: var(--wealth); }
+  .pillar[data-pillar="craft"]::before         { background: var(--craft); }
+  .pillar[data-pillar="relationships"]::before { background: var(--relationships); }
+  .pillar[data-pillar="mind"]::before          { background: var(--mind); }
+
+  .pillar h3 { margin: 10px 0 4px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+  .pillar .vision { font-size: 14px; color: #475569; margin-bottom: 10px; line-height: 1.5; font-style: italic; }
+  .pillar ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; }
+  .pillar ul li { margin-bottom: 4px; }
+
+  /* Bucket list */
+  .section {
+    background: #fff; color: var(--dark);
+    border: 2.5px solid var(--dark);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--dark);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .section .sub { color: #64748b; font-size: 13px; margin-bottom: 16px; }
+
+  .bucket-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;
+  }
+  .bucket {
+    background: #f1f5f9; border: 2px solid var(--dark);
+    border-radius: 12px; padding: 10px 14px;
+    cursor: pointer; user-select: none;
+    transition: transform .1s ease;
+  }
+  .bucket.done { background: #dcfce7; text-decoration: line-through; color: #166534; }
+  .bucket:hover { transform: translate(-1px,-1px); }
+  .bucket .n { font-weight: 800; font-size: 14px; }
+  .bucket .by { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  /* Metrics to hit */
+  .metric-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;
+  }
+  .metric {
+    background: #1e293b; color: #fff;
+    border: 2px solid var(--dark);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .metric .cat { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ten); font-weight: 800; }
+  .metric .target { font-size: 22px; font-weight: 900; margin-top: 2px; }
+  .metric .m { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Annual review */
+  .qa {
+    background: #fef3c7; border: 2px solid #f59e0b;
+    border-radius: 12px; padding: 14px 18px; margin-bottom: 8px;
+  }
+  .qa .q { font-weight: 800; font-size: 14px; color: #92400e; }
+  .qa .a { font-size: 13px; color: #475569; margin-top: 4px; font-style: italic; }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🔭 Long-Term Vision</span>
+  <h1>Vision <span class="scope">🔭</span></h1>
+  <p>Where I want to be in 1, 3, and 10 years — and who I want to become.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="principles.html">📜 Principles</a>
+  <a class="btn" href="career.html">🧑‍💻 Career</a>
+</div>
+
+<main>
+
+  <!-- Identity / eulogy -->
+  <div class="eulogy">
+    <div class="label">Who I Am Becoming</div>
+    <div class="statement">
+      I am a person of <em>deep craft</em> and <em>steady health</em>, surrounded by people I love, building things that matter, with enough freedom to say no.
+    </div>
+    <div style="font-size:13px; color:#cbd5e1; margin-top:12px; font-style:italic;">
+      If someone read this at my 80th birthday, what would I want it to say? That's the vision.
+    </div>
+  </div>
+
+  <!-- Horizon selector -->
+  <div class="horizons" id="horizons">
+    <div class="horizon-btn active" data-h="1">
+      <div class="word">Horizon</div>
+      <div class="num">1 yr</div>
+      <div class="title">Concrete · Measurable</div>
+    </div>
+    <div class="horizon-btn" data-h="3">
+      <div class="word">Horizon</div>
+      <div class="num">3 yr</div>
+      <div class="title">Directional · Ambitious</div>
+    </div>
+    <div class="horizon-btn" data-h="10">
+      <div class="word">Horizon</div>
+      <div class="num">10 yr</div>
+      <div class="title">Identity · Legacy</div>
+    </div>
+  </div>
+
+  <!-- Horizon content -->
+  <div class="horizon-content active" id="h-1">
+    <div class="pillars" id="pillars-1"></div>
+    <section class="section">
+      <h2>📏 Numbers I'm Hitting</h2>
+      <div class="sub">Hard targets for this year. If they're not in numbers, they're not goals.</div>
+      <div class="metric-grid" id="metrics-1"></div>
+    </section>
+  </div>
+
+  <div class="horizon-content" id="h-3">
+    <div class="pillars" id="pillars-3"></div>
+    <section class="section">
+      <h2>📏 Numbers I'm Hitting</h2>
+      <div class="sub">Aggressive but honest targets. Set once. Review every six months.</div>
+      <div class="metric-grid" id="metrics-3"></div>
+    </section>
+  </div>
+
+  <div class="horizon-content" id="h-10">
+    <div class="pillars" id="pillars-10"></div>
+    <section class="section">
+      <h2>📏 Numbers I'm Hitting</h2>
+      <div class="sub">North-star numbers. The life these unlock matters more than the numbers themselves.</div>
+      <div class="metric-grid" id="metrics-10"></div>
+    </section>
+  </div>
+
+  <!-- Bucket list -->
+  <section class="section">
+    <h2>🪣 Bucket List</h2>
+    <div class="sub">Click to cross off.</div>
+    <div class="bucket-grid" id="bucket"></div>
+  </section>
+
+  <!-- Annual review prompts -->
+  <section class="section">
+    <h2>📝 Annual Review Prompts</h2>
+    <div class="sub">Sit with these every December. Write long answers.</div>
+    <div id="review"></div>
+  </section>
+
+</main>
+
+<footer class="note">Re-read: monthly (1-yr) · quarterly (3-yr) · annually (10-yr). Re-write in your own words.</footer>
+
+<script>
+// ============ EDIT ============
+
+const PILLARS = ["health", "wealth", "craft", "relationships", "mind"];
+const PILLAR_META = {
+  health:        { icon: "💪", title: "Health" },
+  wealth:        { icon: "💰", title: "Wealth" },
+  craft:         { icon: "🎯", title: "Craft" },
+  relationships: { icon: "❤️", title: "Relationships" },
+  mind:          { icon: "🧠", title: "Mind" }
+};
+
+const VISION = {
+  1: {
+    health:        { vision: "Stable cardiac recovery · biomarkers trending to target · daily yoga practice installed.",
+                     goals: [
+                       "Weight 63 → 58 kg",
+                       "Swim 1000 m continuous by Dec 2026",
+                       "Daily 15–30 min yoga (start Month 1 plan)",
+                       "Homocysteine < 15 (retest 6–8 wk post-supplement)",
+                       "Gym + sport 5–6×/week maintained"
+                     ] },
+    wealth:        { vision: "Family & kids set up · foundation for FI building.",
+                     goals: [
+                       "Invest ₹3.5L across 5 kids' futures (Avik 1L, Mishika 75K, Kashvi 75K, Adriti 50K, Akshvi 50K)",
+                       "Plan & book Dubai family trip for 2027 (~₹10L, 17 people)",
+                       "Track FI corpus progression monthly",
+                       "Zero credit card debt carried"
+                     ] },
+    craft:         { vision: "Badminton coaching + chess study routines established.",
+                     goals: [
+                       "Start badminton coaching (July 2026)",
+                       "Chess: 20 puzzles/day + 1 opening repertoire",
+                       "Read 15 books (6/15 done for 2026)",
+                       "Books: first India-state entries filled"
+                     ] },
+    relationships: { vision: "Closer family bonds · documented, visible, planned.",
+                     goals: [
+                       "Monthly dedicated time with each parent",
+                       "Plan Dubai 2027 logistics: flights, hotels, itinerary",
+                       "Quarterly meetup with each of the 3 sister families"
+                     ] },
+    mind:          { vision: "Meditation habit + Know-India literacy started.",
+                     goals: [
+                       "20 min/day meditation (Vipassana-style)",
+                       "Follow Know Your Rep / KYP / Informed Indian Citizen platforms",
+                       "One silent weekend or mini-retreat",
+                       "Journal 10 min nightly"
+                     ] }
+  },
+  3: {
+    health:        { vision: "Endurance milestone achieved · biomarkers at target · body at lean performance weight.",
+                     goals: [
+                       "Endurance milestone (cardiologist-cleared): Half Marathon (21K) OR 2 km open-water swim OR 100 km cycle",
+                       "Body fat < 15% (DEXA-verified)",
+                       "HDL > 45 · TG < 100 · HCY < 10 · hs-CRP < 1 · RHR < 55 · VO₂ max > 45",
+                       "5–6× weekly activity cemented as lifelong rhythm"
+                     ] },
+    wealth:        { vision: "Parents housed · two passive income streams live · major life purchases done.",
+                     goals: [
+                       "Buy house for parents (~₹1 cr, fully paid)",
+                       "Buy a Toyota Camry-class sedan (~₹50L)",
+                       "Launch 2 passive income streams: 1 investment (equity/REIT/dividend) + 1 skill-driven (AI product / niche GPT / consulting asset)",
+                       "FI corpus past 50% of ₹6 cr target",
+                       "Family Dubai trip 2027 — completed"
+                     ] },
+    craft:         { vision: "Signature hobby achievements: chess rating · badminton tournament · cycling tour.",
+                     goals: [
+                       "Chess 1200 rapid (by May 2027) → push toward 1500",
+                       "Play a structured badminton tournament / club-level match",
+                       "Cycling trip: Sri Lanka loop or an Indian-state-by-bike tour",
+                       "~300 books read cumulative (on track for 500)"
+                     ] },
+    relationships: { vision: "Memorable family experiences logged · partner & future kids planning begun.",
+                     goals: [
+                       "Dubai 2027 memory album + annual domestic family trip rhythm",
+                       "Partner-and-future-kids plan expanded (TBD3, TBD4, TBD5 defined)",
+                       "Kids' fund compounding + annual top-ups"
+                     ] },
+    mind:          { vision: "Silent retreat done · yoga certification complete · Know-India mastery.",
+                     goals: [
+                       "Attend 10–21 day silent retreat (Vipassana / Isha / Art of Living)",
+                       "Complete 200-hour certified yoga course",
+                       "India literacy: know every MP constituency, key policies, recent Acts",
+                       "Indian states visited: substantial progress toward 36"
+                     ] }
+  },
+  10: {
+    health:        { vision: "Aging backward · athletic into 40s · zero lifestyle-disease progression.",
+                     goals: [
+                       "All biomarker targets sustained for 10+ years",
+                       "Still doing endurance events (cycling / swimming / hiking)",
+                       "Still bench-pressing, still mobile, still lean (<15% BF)"
+                     ] },
+    wealth:        { vision: "Financially independent · generational wealth base built.",
+                     goals: [
+                       "FI corpus ₹6 cr (₹2L/month × 12 × 25, 4% rule)",
+                       "Passive + semi-passive income > monthly burn, sustainably",
+                       "Kid's education fund: ₹2–3 cr by their age 18",
+                       "Kokapet house ✓ · parents' house ✓ · car ✓"
+                     ] },
+    craft:         { vision: "World experienced · knowledge deep · library complete.",
+                     goals: [
+                       "Visit all 28 Indian states + 8 UTs — 2–3 nights each, documented (by 2030)",
+                       "Visit all 7 continents — one signature experience each (by 2035)",
+                       "Read 500 books logged and rated",
+                       "Signature continent experiences: Patagonia hike · Australia dive · Europe road trip · Africa safari · Antarctica expedition"
+                     ] },
+    relationships: { vision: "A life rich in people, across generations.",
+                     goals: [
+                       "Strong marriage / partnership",
+                       "Kid(s) raised with love, values, and a real father",
+                       "Family bonds (parents, siblings, nieces/nephews) flourishing",
+                       "Chosen community of peers intact"
+                     ] },
+    mind:          { vision: "Settled, curious, informed citizen with a daily practice.",
+                     goals: [
+                       "Daily yoga + meditation is non-negotiable",
+                       "Engaged, informed Indian citizen — beyond headlines",
+                       "Teaching / passing on what I've learned",
+                       "Grateful as default emotional baseline"
+                     ] }
+  }
+};
+
+const METRICS = {
+  1: [
+    { cat: "Weight",          target: "58 kg",         m: "From 63 kg · −5 kg by year-end" },
+    { cat: "Swim",             target: "1000 m",        m: "Continuous · by Dec 2026" },
+    { cat: "Yoga",             target: "Daily",         m: "15–30 min habit installed" },
+    { cat: "Kids' Fund",       target: "₹3.5L",         m: "5 nieces/nephews seeded" },
+    { cat: "Books This Year",  target: "15",            m: "6/15 done" },
+    { cat: "Homocysteine",     target: "< 15",          m: "From 22 µmol/L" }
+  ],
+  3: [
+    { cat: "Body Fat",         target: "< 15%",         m: "DEXA-verified" },
+    { cat: "HDL / TG / HCY",    target: ">45 · <100 · <10", m: "Biomarker triad" },
+    { cat: "RHR / VO₂ Max",     target: "<55 · >45",     m: "Currently 55 · 43.1" },
+    { cat: "Chess Rapid",       target: "1200 → 1500",   m: "From 950" },
+    { cat: "Parents' House",    target: "₹1 cr",         m: "Fully paid" },
+    { cat: "Dream Car",         target: "Toyota Camry",  m: "~₹50L" },
+    { cat: "Passive Income",    target: "2 streams",     m: "1 investment + 1 skill-driven" },
+    { cat: "Yoga Certification",target: "200 hours",     m: "Certified program" },
+    { cat: "Silent Retreat",    target: "10–21 days",    m: "Vipassana / Isha / AoL" }
+  ],
+  10: [
+    { cat: "FI Corpus",         target: "₹6 cr",         m: "₹2L/mo × 12 × 25 (4% rule)" },
+    { cat: "Indian States + UTs",target: "36 / 36",       m: "All states & UTs by 2030 · 2–3 nights each" },
+    { cat: "Continents",        target: "7 / 7",          m: "By 2035 · signature experience each" },
+    { cat: "Books Logged",      target: "500",            m: "From 162 currently" },
+    { cat: "Kid's College Fund",target: "₹2–3 cr",        m: "By age 18" },
+    { cat: "Healthspan",        target: "All markers in range", m: "Sustained for 10+ years" }
+  ]
+};
+
+const BUCKET = [
+  // { name, by, done }
+  { name: "🏠 Buy house in Kokapet (partner/kids)",     by: "done ✅" },
+  { name: "🏠 Buy house for parents (~₹1 cr)",          by: "by 33" },
+  { name: "🚗 Drive a Toyota Camry (~₹50L)",            by: "by 35" },
+  { name: "✈️ Dubai family trip (17 people, ~₹10L)",    by: "2027" },
+  { name: "🏃 Complete Half Marathon / 2km swim / 100km cycle", by: "3-yr" },
+  { name: "🧘 Attend 10–21 day silent retreat",         by: "3-yr" },
+  { name: "🧘 200-hr certified yoga course",            by: "3-yr" },
+  { name: "🇮🇳 Visit all 28 states + 8 UTs of India",    by: "by 2030" },
+  { name: "🌍 Visit all 7 continents",                  by: "by 2035" },
+  { name: "📚 Read 500 books",                          by: "by 2035" },
+  { name: "🚴 Loop Hyderabad ORR by bike (~158 km)",    by: "3-yr" },
+  { name: "🚴 Cycling trip around Sri Lanka",           by: "3-yr" },
+  { name: "💰 Hit FI corpus ₹6 cr",                     by: "10-yr" },
+  { name: "💼 2 passive income streams live",           by: "3-yr" },
+  { name: "♟️ Chess rapid 1200 → 1500 lifetime",        by: "10-yr" }
+];
+
+const REVIEW_PROMPTS = [
+  { q: "What am I proudest of this year?",                           a: "" },
+  { q: "What was the biggest mistake? What did it teach me?",         a: "" },
+  { q: "Who helped me most? Have I thanked them properly?",          a: "" },
+  { q: "What did I say yes to that I should have said no to?",       a: "" },
+  { q: "What did I say no to that I should have said yes to?",       a: "" },
+  { q: "What's one habit I want to install in the next 12 months?",  a: "" },
+  { q: "What's one habit I want to retire?",                         a: "" },
+  { q: "Am I healthier than last year? If not, why?",                a: "" },
+  { q: "Am I closer to the people I love than last year?",           a: "" },
+  { q: "If this year repeated exactly, would that be OK?",           a: "If not — what's the one change that matters most?" }
+];
+
+// ============ RENDER ============
+
+function renderHorizon(h) {
+  const pillarsEl = document.getElementById(`pillars-${h}`);
+  pillarsEl.innerHTML = PILLARS.map(p => {
+    const meta = PILLAR_META[p];
+    const data = VISION[h][p];
+    return `
+      <div class="pillar" data-pillar="${p}">
+        <h3>${meta.icon} ${meta.title}</h3>
+        <div class="vision">"${data.vision}"</div>
+        <ul>${data.goals.map(g => `<li>${g}</li>`).join('')}</ul>
+      </div>`;
+  }).join('');
+
+  const metricsEl = document.getElementById(`metrics-${h}`);
+  metricsEl.innerHTML = METRICS[h].map(m => `
+    <div class="metric">
+      <div class="cat">${m.cat}</div>
+      <div class="target">${m.target}</div>
+      <div class="m">${m.m}</div>
+    </div>`).join('');
+}
+[1, 3, 10].forEach(renderHorizon);
+
+const horizonsEl = document.getElementById('horizons');
+horizonsEl.addEventListener('click', e => {
+  const btn = e.target.closest('.horizon-btn');
+  if (!btn) return;
+  horizonsEl.querySelectorAll('.horizon-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.horizon-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`h-${btn.dataset.h}`).classList.add('active');
+});
+
+document.getElementById('bucket').innerHTML = BUCKET.map((b, i) => `
+  <div class="bucket" data-i="${i}" onclick="this.classList.toggle('done')">
+    <div class="n">${b.name}</div>
+    <div class="by">${b.by}</div>
+  </div>`).join('');
+
+document.getElementById('review').innerHTML = REVIEW_PROMPTS.map(p => `
+  <div class="qa">
+    <div class="q">${p.q}</div>
+    <div class="a">${p.a || '— write your answer —'}</div>
+  </div>`).join('');
+</script>
+</body>
+</html>

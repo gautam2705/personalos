@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🌟 Life OS</title>
+<style>
+  :root {
+    --bg: #fdfcf7;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --card: #ffffff;
+
+    --c-health: #10b981;
+    --c-supp:   #f59e0b;
+    --c-meal:   #f97316;
+    --c-work:   #ef4444;
+    --c-money:  #7c3aed;
+    --c-princ:  #d97706;
+    --c-career: #22d3ee;
+    --c-travel: #0ea5e9;
+    --c-vision: #fbbf24;
+    --c-hobby:  #e11d48;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 5%,  #fce7f3 0, transparent 25%),
+      radial-gradient(circle at 85% 10%, #dbeafe 0, transparent 28%),
+      radial-gradient(circle at 20% 90%, #d1fae5 0, transparent 28%),
+      radial-gradient(circle at 85% 85%, #fef3c7 0, transparent 28%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+  }
+  header.hero {
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto 28px;
+  }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--ink);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--ink);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    margin: 14px 0 6px; letter-spacing: -0.03em;
+    font-weight: 900;
+  }
+  h1 .sparkle { display: inline-block; animation: sparkle 2.4s infinite; }
+  @keyframes sparkle { 0%,100%{transform:rotate(0) scale(1)} 50%{transform:rotate(20deg) scale(1.2)} }
+  header.hero p.tag { color: var(--muted); margin: 0 0 6px; font-size: 16px; font-style: italic; }
+  header.hero .date {
+    font-size: 13px; color: var(--muted); font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* Quick stats strip */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    max-width: 1200px;
+    margin: 0 auto 24px;
+  }
+  .stat {
+    background: #fff; border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 10px 14px;
+  }
+  .stat .l { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .stat .v { font-size: 20px; font-weight: 900; letter-spacing: -.02em; margin-top: 2px; }
+  .stat .m { font-size: 11px; color: var(--muted); }
+
+  /* Module grid */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .module {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 20px 22px;
+    text-decoration: none;
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s ease, box-shadow .15s ease;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+  }
+  .module:hover { transform: translate(-3px,-4px); box-shadow: 8px 9px 0 var(--ink); }
+  .module:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+  .module::before {
+    content: "";
+    position: absolute;
+    top: -24px; right: -24px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: .9;
+  }
+  .module .icon {
+    font-size: 38px;
+    line-height: 1;
+    margin-bottom: 10px;
+    position: relative; z-index: 1;
+  }
+  .module h3 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    letter-spacing: -.01em;
+    position: relative; z-index: 1;
+  }
+  .module p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .module .go {
+    margin-top: 12px;
+    font-size: 12px; font-weight: 800;
+    color: var(--ink);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .module .go::after { content: "→"; transition: transform .15s ease; display: inline-block; }
+  .module:hover .go::after { transform: translateX(6px); }
+
+  .module[data-c="health"]::before  { background: var(--c-health); }
+  .module[data-c="supp"]::before    { background: var(--c-supp); }
+  .module[data-c="meal"]::before    { background: var(--c-meal); }
+  .module[data-c="work"]::before    { background: var(--c-work); }
+  .module[data-c="money"]::before   { background: var(--c-money); }
+  .module[data-c="princ"]::before   { background: var(--c-princ); }
+  .module[data-c="career"]::before  { background: var(--c-career); }
+  .module[data-c="travel"]::before  { background: var(--c-travel); }
+  .module[data-c="vision"]::before  { background: var(--c-vision); }
+  .module[data-c="hobby"]::before   { background: var(--c-hobby); }
+
+  .section-title {
+    margin: 30px 0 12px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* Today's focus card */
+  .focus {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    color: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--c-vision);
+    padding: 22px 26px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+  @media (max-width: 640px) {
+    .focus { grid-template-columns: 1fr; }
+  }
+  .focus .label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--c-vision); font-weight: 800; }
+  .focus .quote { font-size: clamp(18px, 2.6vw, 24px); font-weight: 700; line-height: 1.4; margin: 6px 0; }
+  .focus .author { font-size: 13px; color: #cbd5e1; font-style: italic; }
+  .focus .weather {
+    background: rgba(255,255,255,.08);
+    border: 1.5px solid rgba(255,255,255,.15);
+    border-radius: 14px;
+    padding: 14px 18px;
+    text-align: center;
+  }
+  .focus .weather .day { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--c-vision); font-weight: 800; }
+  .focus .weather .dt { font-size: 22px; font-weight: 900; margin-top: 4px; }
+
+  footer.note {
+    text-align: center;
+    color: var(--muted);
+    margin-top: 40px;
+    font-size: 13px;
+  }
+  footer.note a { color: var(--ink); font-weight: 700; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🌟 Personal Operating System</span>
+  <h1>Life OS <span class="sparkle">✨</span></h1>
+  <p class="tag">"Your life is the sum of what you consistently pay attention to."</p>
+  <div class="date" id="dateLine"></div>
+</header>
+
+<!-- Today's focus quote -->
+<div class="focus">
+  <div>
+    <div class="label">Today's North Star</div>
+    <div class="quote" id="quote">We are what we repeatedly do. Excellence, then, is not an act, but a habit.</div>
+    <div class="author" id="author">— Will Durant (paraphrasing Aristotle)</div>
+  </div>
+  <div class="weather">
+    <div class="day" id="dayName">—</div>
+    <div class="dt" id="dayDate">—</div>
+  </div>
+</div>
+
+<!-- Stats strip -->
+<div class="stats">
+  <div class="stat"><div class="l">Modules</div><div class="v">10</div><div class="m">all wired up</div></div>
+  <div class="stat"><div class="l">Reviewed</div><div class="v" id="lastRev">Today</div><div class="m">refresh weekly</div></div>
+  <div class="stat"><div class="l">Mode</div><div class="v">Build</div><div class="m">compounding phase</div></div>
+  <div class="stat"><div class="l">Horizon</div><div class="v">10 yr</div><div class="m">patience pays</div></div>
+</div>
+
+<main>
+
+  <div class="section-title">— Body —</div>
+  <div class="grid">
+    <a class="module" data-c="health" href="health.html">
+      <div class="icon">🩺</div>
+      <h3>Health History</h3>
+      <p>Vitals, conditions, medications, labs, family history, emergency contacts.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="supp" href="supplements.html">
+      <div class="icon">💊</div>
+      <h3>Supplements</h3>
+      <p>Daily stack by time-of-day — doses, purpose, interactions, refill schedule.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="meal" href="meal-plan.html">
+      <div class="icon">🍽️</div>
+      <h3>Meal Plan</h3>
+      <p>Weekly high-protein meal plan with hydration timeline and macro tracking.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="work" href="workout-plan.html">
+      <div class="icon">💪</div>
+      <h3>Workout Plan</h3>
+      <p>7-day training split, evening core circuit, daily cycling target.</p>
+      <span class="go">Open</span>
+    </a>
+  </div>
+
+  <div class="section-title">— Wealth & Craft —</div>
+  <div class="grid">
+    <a class="module" data-c="money" href="finances.html">
+      <div class="icon">💰</div>
+      <h3>Finances</h3>
+      <p>Net worth, accounts, monthly budget, investment allocation, goals.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="career" href="career.html">
+      <div class="icon">🧑‍💻</div>
+      <h3>Career OS</h3>
+      <p>North star, OKRs, skill matrix, projects portfolio, growth log, network.</p>
+      <span class="go">Open</span>
+    </a>
+  </div>
+
+  <div class="section-title">— Mind & Life —</div>
+  <div class="grid">
+    <a class="module" data-c="princ" href="principles.html">
+      <div class="icon">📜</div>
+      <h3>Principles</h3>
+      <p>Life principles, decision rules, mental models, red flags in self & others.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="vision" href="vision.html">
+      <div class="icon">🔭</div>
+      <h3>Long-Term Vision</h3>
+      <p>1, 3, and 10-year horizons across health, wealth, craft, relationships, mind.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="travel" href="travel.html">
+      <div class="icon">✈️</div>
+      <h3>Travel & Lifestyle</h3>
+      <p>Packing checklist, dining-out rules, places been/to go, travel routines, EDC.</p>
+      <span class="go">Open</span>
+    </a>
+    <a class="module" data-c="hobby" href="hobbies.html">
+      <div class="icon">🎨</div>
+      <h3>Hobbies</h3>
+      <p>Cycling, swimming, TT, squash, badminton, yoga, reading, chess — level, goals, what I'm learning.</p>
+      <span class="go">Open</span>
+    </a>
+  </div>
+
+</main>
+
+<footer class="note">
+  One hub. Every module. Review cadence: weekly glance · monthly deep dive · annual overhaul.
+</footer>
+
+<script>
+// Date
+const now = new Date();
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('dateLine').textContent =
+  `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+document.getElementById('dayName').textContent = days[now.getDay()];
+document.getElementById('dayDate').textContent = `${months[now.getMonth()].slice(0,3)} ${now.getDate()}`;
+
+// Rotate quote daily
+const QUOTES = [
+  { q: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", a: "— Will Durant" },
+  { q: "The best time to plant a tree was 20 years ago. The second best time is now.", a: "— Chinese proverb" },
+  { q: "Discipline equals freedom.", a: "— Jocko Willink" },
+  { q: "What gets measured gets managed.", a: "— Peter Drucker" },
+  { q: "Hard choices, easy life. Easy choices, hard life.", a: "— Jerzy Gregorek" },
+  { q: "You do not rise to the level of your goals. You fall to the level of your systems.", a: "— James Clear" },
+  { q: "The obstacle is the way.", a: "— Marcus Aurelius" },
+  { q: "Slow is smooth. Smooth is fast.", a: "— Navy SEAL maxim" },
+  { q: "An investment in knowledge pays the best interest.", a: "— Benjamin Franklin" },
+  { q: "A man who uses an imaginary map thinking that it's a real one, is likely to be worse off than a man with no map at all.", a: "— Peter Bevelin" },
+  { q: "How we spend our days is, of course, how we spend our lives.", a: "— Annie Dillard" },
+  { q: "The two most powerful warriors are patience and time.", a: "— Tolstoy" },
+  { q: "Between stimulus and response, there is a space. In that space is our power to choose our response.", a: "— Viktor Frankl" },
+  { q: "Make your bed.", a: "— Adm. William McRaven" }
+];
+const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+const pick = QUOTES[dayOfYear % QUOTES.length];
+document.getElementById('quote').textContent = pick.q;
+document.getElementById('author').textContent = pick.a;
+</script>
+</body>
+</html>

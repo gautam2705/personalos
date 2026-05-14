@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🏔️ Spiti Circuit · Jun 6–12, 2026</title>
+<style>
+  :root {
+    --bg: #f0f9ff;
+    --ink: #0c1321;
+    --muted: #64748b;
+    --card: #ffffff;
+    --sky: #0ea5e9;
+    --sun: #f59e0b;
+    --leaf: #10b981;
+    --coral: #f43f5e;
+    --rock: #475569;
+    --snow: #e0f2fe;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 8%, #bae6fd 0, transparent 28%),
+      radial-gradient(circle at 88% 14%, #ddd6fe 0, transparent 30%),
+      radial-gradient(circle at 50% 95%, #d1fae5 0, transparent 30%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 18px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--sky);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--sky);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 { font-size: clamp(28px, 4.6vw, 46px); margin: 12px 0 4px; letter-spacing: -0.02em; }
+  header.hero p.tag { color: var(--muted); margin: 4px 0 6px; font-size: 15px; }
+  header.hero .dates { font-size: 13px; color: var(--rock); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 14px 0 18px; }
+  .btn {
+    background: #fff; border: 2px solid var(--ink); color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn.primary { background: var(--sky); color: #fff; }
+
+  main { max-width: 1200px; margin: 0 auto; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat {
+    background: #fff; border: 2.5px solid var(--ink);
+    border-radius: 14px; box-shadow: 4px 4px 0 var(--ink);
+    padding: 10px 14px;
+  }
+  .stat .l { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .stat .v { font-size: 20px; font-weight: 900; letter-spacing: -.02em; margin-top: 2px; }
+  .stat .m { font-size: 11px; color: var(--muted); }
+
+  .section {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .section .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+
+  /* Itinerary */
+  .day {
+    background: #f0f9ff;
+    border: 2px solid var(--sky);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) { .day { grid-template-columns: 1fr; gap: 6px; } }
+  .day .when {
+    text-align: center;
+    border-right: 2px dashed var(--sky);
+    padding-right: 14px;
+  }
+  @media (max-width: 640px) { .day .when { border-right: none; border-bottom: 2px dashed var(--sky); padding: 0 0 8px; text-align: left; } }
+  .day .when .num { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--sky); font-weight: 800; }
+  .day .when .date { font-size: 18px; font-weight: 900; line-height: 1.1; margin-top: 2px; }
+  .day .when .dow { font-size: 12px; color: var(--muted); font-weight: 700; }
+  .day .when .alt { font-size: 11px; color: var(--coral); font-weight: 800; margin-top: 6px; line-height: 1.4; }
+  .day .what h3 { margin: 0 0 4px; font-size: 16px; color: #075985; }
+  .day .what .glance { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+  .day .what ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: #1f2937; }
+
+  /* Transit day (Day 0 / Day 8) — muted styling */
+  .day.transit { background: #f8fafc; border-color: var(--rock); border-style: dashed; }
+  .day.transit .when { border-right-color: var(--rock); }
+  @media (max-width: 640px) { .day.transit .when { border-bottom-color: var(--rock); } }
+  .day.transit .when .num { color: var(--rock); }
+  .day.transit .when .alt { color: var(--rock); }
+  .day.transit .what h3 { color: var(--rock); }
+
+  /* Pre-trip tasks */
+  .task-list { list-style: none; margin: 0; padding: 0; }
+  .task-list li {
+    padding: 10px 0;
+    border-bottom: 1px dashed #cbd5e1;
+    display: flex; align-items: flex-start; gap: 10px;
+    cursor: pointer; user-select: none;
+    font-size: 14px; line-height: 1.5;
+  }
+  .task-list li:last-child { border-bottom: none; }
+  .task-list li input[type=checkbox] {
+    width: 18px; height: 18px; accent-color: var(--leaf);
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .task-list li.checked span { text-decoration: line-through; color: var(--muted); }
+  .task-list li .meta { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .task-list li.checked .meta { color: #cbd5e1; }
+
+  /* Charts */
+  .chart-wrap { width: 100%; overflow-x: auto; }
+  svg.chart { display: block; width: 100%; min-width: 600px; height: auto; }
+
+  /* Packing */
+  .pack-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;
+  }
+  .pack-cat {
+    background: #f0f9ff; border: 2px solid var(--sky);
+    border-radius: 14px; padding: 14px 16px;
+  }
+  .pack-cat h3 {
+    margin: 0 0 8px; font-size: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .pack-cat h3 .count {
+    background: var(--sky); color: #fff; padding: 2px 8px;
+    border-radius: 999px; font-size: 11px; font-weight: 800;
+  }
+  .pack-list { list-style: none; margin: 0; padding: 0; }
+  .pack-list li {
+    padding: 6px 0; border-bottom: 1px dashed #cbd5e1;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none; font-size: 13px;
+  }
+  .pack-list li:last-child { border-bottom: none; }
+  .pack-list input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--sky); flex-shrink: 0; }
+  .pack-list li.checked span { text-decoration: line-through; color: var(--muted); }
+  .pack-cat .progress { font-size: 11px; color: var(--muted); margin-top: 6px; font-weight: 700; }
+
+  /* Notes / tips */
+  .tip-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;
+  }
+  .tip {
+    background: #fffbeb; border: 2px solid var(--sun);
+    border-radius: 14px; padding: 12px 14px;
+  }
+  .tip h3 { margin: 0 0 6px; font-size: 14px; color: #92400e; }
+  .tip ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; }
+
+  /* Package included/excluded */
+  .package-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  @media (max-width: 640px) { .package-grid { grid-template-columns: 1fr; } }
+  .pkg-col { border-radius: 14px; padding: 14px 16px; border: 2px solid; }
+  .pkg-col h3 { margin: 0 0 8px; font-size: 15px; }
+  .pkg-col ul { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.7; }
+  .pkg-col.covered { background: #f0fdf4; border-color: var(--leaf); }
+  .pkg-col.covered h3 { color: #065f46; }
+  .pkg-col.not-covered { background: #fef2f2; border-color: var(--coral); }
+  .pkg-col.not-covered h3 { color: #991b1b; }
+
+  /* Money table */
+  .money-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .money-tbl th { text-align: left; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 8px 6px; border-bottom: 2px solid var(--ink); }
+  .money-tbl td { padding: 10px 6px; border-bottom: 1px dashed #e2e8f0; }
+  .money-tbl td:last-child { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .money-tbl tr.total td { border-bottom: none; border-top: 2px solid var(--ink); padding-top: 12px; font-size: 16px; }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🏔️ Upcoming Trip</span>
+  <h1>Shimla → Spiti → Manali</h1>
+  <p class="tag">7 days through Kinnaur, Spiti & Lahaul · Indo-Tibetan border to Rohtang</p>
+  <div class="dates">Sat 6 Jun '26 → Fri 12 Jun '26</div>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="travel.html">← Travel Hub</a>
+  <a class="btn" href="index.html">🏠 Life OS</a>
+</div>
+
+<main>
+
+  <!-- Quick stats -->
+  <div class="stats">
+    <div class="stat"><div class="l">Duration</div><div class="v">9 days</div><div class="m">door-to-door · 7 in Spiti</div></div>
+    <div class="stat"><div class="l">Highest pt</div><div class="v">4,590 m</div><div class="m">Kunzum Pass</div></div>
+    <div class="stat"><div class="l">Coldest</div><div class="v">−2°C</div><div class="m">Chandratal night</div></div>
+    <div class="stat"><div class="l">Distance</div><div class="v">~750 km</div><div class="m">Shimla → Manali</div></div>
+    <div class="stat"><div class="l">Stays</div><div class="v">Zostel</div><div class="m">+ camp at Chandratal</div></div>
+  </div>
+
+  <!-- Pre-trip tasks -->
+  <section class="section">
+    <h2>✅ Pre-Trip Tasks</h2>
+    <div class="sub">Tick off as you go. Keeps the runway clear before departure.</div>
+    <ul class="task-list" id="taskList"></ul>
+    <div style="margin-top:12px; text-align:center;">
+      <button class="btn" id="resetTasks">🔄 Reset Tasks</button>
+    </div>
+  </section>
+
+  <!-- Itinerary -->
+  <section class="section">
+    <h2>🗓️ Day-by-Day Itinerary</h2>
+    <div class="sub">Edit the <code>ITINERARY</code> block in source to update.</div>
+    <div id="itinerary"></div>
+  </section>
+
+  <!-- Altitude graph -->
+  <section class="section">
+    <h2>📈 Altitude Profile</h2>
+    <div class="sub">Sleep altitude per day, including transit nights on the bus. AMS risk rises above 3,500 m.</div>
+    <div class="chart-wrap"><svg class="chart" id="altChart" viewBox="0 0 800 340"></svg></div>
+  </section>
+
+  <!-- Temperature graph -->
+  <section class="section">
+    <h2>🌡️ Temperature Trend (June avg)</h2>
+    <div class="sub">High and low across the journey — from Delhi heat to sub-zero at Chandratal and back.</div>
+    <div class="chart-wrap"><svg class="chart" id="tempChart" viewBox="0 0 800 340"></svg></div>
+  </section>
+
+  <!-- Package -->
+  <section class="section">
+    <h2>📦 Zostel Package</h2>
+    <div class="sub">Major expenses sorted. Below is what you'll still pay for.</div>
+    <div class="package-grid">
+      <div class="pkg-col covered">
+        <h3>✓ Included</h3>
+        <ul>
+          <li>🚌 All transport — 16-seater traveller</li>
+          <li>📜 Inner-line permits, tolls, parking, driver charges</li>
+          <li>🆘 Emergency oxygen cylinder</li>
+          <li>🛡️ Travel insurance for all participants</li>
+          <li>🏠 6 nights — Zostel + Chandratal lakeside camp</li>
+          <li>🍳 6 breakfasts + 6 dinners (limited variety, remote area)</li>
+        </ul>
+      </div>
+      <div class="pkg-col not-covered">
+        <h3>✗ You Pay For</h3>
+        <ul>
+          <li>🥪 All 7 lunches — highway dhabas</li>
+          <li>💧 Mineral water, tea, snacks on the road</li>
+          <li>🍺 Alcohol (skip — no booze above 3,500 m)</li>
+          <li>✈️ Transport TO Shimla & FROM Manali</li>
+          <li>🛍️ Souvenirs, personal expenses</li>
+          <li>🎁 Tips for trip leader & driver</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Money plan -->
+  <section class="section">
+    <h2>💰 Cash Plan</h2>
+    <div class="sub">Last reliable ATMs: <b>Reckong Peo</b> (Day 1) and <b>Kaza</b> (Day 4–5). Carry small denominations — ₹100s and ₹500s.</div>
+    <table class="money-tbl">
+      <thead><tr><th>Item</th><th>Estimate</th></tr></thead>
+      <tbody>
+        <tr><td>7 lunches × ~₹300</td><td>₹2,100</td></tr>
+        <tr><td>Water (1L × 2/day × 7 days)</td><td>₹600</td></tr>
+        <tr><td>Tea / snacks on the road</td><td>₹1,000</td></tr>
+        <tr><td>Tips — driver + trip leader</td><td>₹1,000</td></tr>
+        <tr><td>Souvenirs / extras</td><td>₹1,000</td></tr>
+        <tr><td>Emergency buffer</td><td>₹2,000</td></tr>
+        <tr class="total"><td><b>Carry in cash</b></td><td><b>₹10,000–12,000</b></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Packing -->
+  <section class="section">
+    <h2>🎒 Trip Packing List</h2>
+    <div class="sub">Cold-weather, high-altitude, 7-day. Tick as you pack.</div>
+    <div class="pack-grid" id="packGrid"></div>
+    <div style="margin-top:14px; text-align:center;">
+      <button class="btn" id="resetPack">🔄 Reset Checks</button>
+    </div>
+  </section>
+
+  <!-- Tips -->
+  <section class="section">
+    <h2>💡 Trip Tips</h2>
+    <div class="tip-grid" id="tipGrid"></div>
+  </section>
+
+</main>
+
+<footer class="note">Update freely as the trip approaches. Keep what helped, prune what didn't.</footer>
+
+<script>
+// ============ DATA ============
+
+const ITINERARY = [
+  {
+    day: 0, date: "Fri 5 Jun '26", dow: "Friday",
+    title: "Delhi → Shimla (overnight bus)",
+    transit: true, stay: "To Shimla",
+    stayAlt: 1000, high: 38, low: 16,
+    glance: "Overnight Volvo from Delhi gets you to Shimla by morning. Sleep on the bus, wake up in the hills.",
+    items: [
+      "Final bag check, charge all devices",
+      "Reach ISBT Kashmiri Gate or Majnu Ka Tila by 6:30 PM",
+      "Board bus ~7 PM (HRTC / Volvo recommended)",
+      "Light dinner before boarding — avoid heavy food (winding road)",
+      "Take Avomine 30 min before departure",
+      "Sleep on bus — arrives Shimla ~6 AM",
+      "Reach ISBT Tutikandi by 7:30 AM for trip meet"
+    ]
+  },
+  {
+    day: 1, date: "Sat 6 Jun '26", dow: "Saturday",
+    title: "Shimla → Chitkul",
+    stay: "Chitkul", stayAlt: 3450, high: 18, low: 6,
+    glance: "The last motorable hamlet on the Indo-Tibetan border. Wooden houses, the Baspa river, snow-capped Kinnauri Himalayas.",
+    items: [
+      "Meet trip leader & group at ISBT Tutikandi, Shimla — 7:30 am",
+      "Depart ~8 am to Rampur with breakfast en route",
+      "Lunch at Rampur, then on to Kinnaur",
+      "Pitstop at Tranda Dhank & Tranda Dhank Mandir for thrilling photos",
+      "Evening tea in Sangla → check-in at Zostel Chitkul (3,450 m)",
+      "Wholesome dinner at the hostel"
+    ]
+  },
+  {
+    day: 2, date: "Sun 7 Jun '26", dow: "Sunday",
+    title: "Chitkul sightseeing + Sangla day trip",
+    stay: "Chitkul", stayAlt: 3450, high: 18, low: 6,
+    glance: "Baspa river views, Kamru Fort's wooden architecture, and the apple-and-saffron village of Rakchham.",
+    items: [
+      "Hearty breakfast then walk to Baspa river for glacier views",
+      "Day trip to Kamru Fort, Sangla — ancient royal residence",
+      "Lunch in Rakchham (3,100 m) — quiet, scenic, apples & saffron",
+      "Free evening to explore Chitkul village solo",
+      "Back to hostel for games & supper"
+    ]
+  },
+  {
+    day: 3, date: "Mon 8 Jun '26", dow: "Monday",
+    title: "Chitkul → Tabo via Spillo",
+    stay: "Tabo", stayAlt: 3280, high: 24, low: 9,
+    glance: "Tabo — home to the world's second-oldest monastery, ancient caves, and frozen lakes that feel timeless.",
+    items: [
+      "Breakfast overlooking the snow-clad Himalayas",
+      "Drive to Tabo — short lunch pitstop at Spillo",
+      "Evening check-in at Zostel Homes Tabo (3,280 m)",
+      "Warm dinner, fun games, and chatter with the gang"
+    ]
+  },
+  {
+    day: 4, date: "Tue 9 Jun '26", dow: "Tuesday",
+    title: "Tabo → Kaza via Dhankar",
+    stay: "Kaza", stayAlt: 3800, high: 22, low: 7,
+    glance: "Kaza — heart of Spiti at 3,800 m. Snow-clad peaks, blue streams, gateway to the valley's wonders.",
+    items: [
+      "Breakfast then visit Tabo Monastery",
+      "Stop at Dhankar Gompa (3,894 m) — clifftop monastery, Buddhist art & cultural marvels",
+      "Lunch en route to Kaza (3,800 m)",
+      "Check-in at partner stay; relax or wander the colourful market",
+      "Warm dinner, early sleep"
+    ]
+  },
+  {
+    day: 5, date: "Wed 10 Jun '26", dow: "Wednesday",
+    title: "Kaza sightseeing — Hikkim, Komic, Langza, Key, Chicham",
+    stay: "Kaza", stayAlt: 3800, high: 22, low: 7,
+    glance: "Hikkim's world-highest post office, Komic's Tangyud Monastery, Langza's 1000-year-old Buddha. Hairpins & 1000-ft drops throughout.",
+    items: [
+      "Breakfast then loop through Hikkim (4,440 m) → Komic (4,587 m) → Langza (4,400 m)",
+      "Lunch in Hikkim with magical view",
+      "Visit Key Monastery (4,166 m) & Chicham Bridge (4,145 m)",
+      "Back to Kaza by nightfall, dinner, then star-gaze"
+    ]
+  },
+  {
+    day: 6, date: "Thu 11 Jun '26", dow: "Thursday",
+    title: "Kaza → Chandratal",
+    stay: "Chandratal", stayAlt: 4300, high: 15, low: -2,
+    glance: "Chandratal — crescent-moon lake at 14,100 ft on the Samudra Tapu. Source of the Chandra river.",
+    items: [
+      "Filling breakfast then drive over Kunzum Pass (4,590 m)",
+      "Check-in at lakeside camp at Chandratal (4,300 m)",
+      "Filling dinner, stories around the lake",
+      "Bundle up — coldest night of the trip"
+    ]
+  },
+  {
+    day: 7, date: "Fri 12 Jun '26", dow: "Friday",
+    title: "Chandratal → Manali",
+    stay: "Manali", stayAlt: 2050, high: 25, low: 14,
+    glance: "Manali — fruit orchards, the Beas, posh cafés. Drop in altitude, jump in oxygen.",
+    items: [
+      "Final group breakfast, depart for Manali",
+      "Lunch break — pahadi rajma & kadhi chawal (mandatory)",
+      "Cross Rohtang Pass (3,978 m), descend into Kullu valley",
+      "Arrive Manali (2,050 m) ~6 pm — farewells, end of Zostel trip",
+      "Free evening + dinner; board onward bus to Delhi at ~11 PM (see Day 8)"
+    ]
+  },
+  {
+    day: 8, date: "Sat 13 Jun '26", dow: "Saturday",
+    title: "Manali → Delhi (overnight bus)",
+    transit: true, stay: "To Delhi",
+    stayAlt: 1000, high: 38, low: 14,
+    glance: "Sleep on the bus, then home by mid-morning. Shower, hydrate, decompress.",
+    items: [
+      "Bus departs Manali ~11 PM Friday night (12 Jun)",
+      "Take Avomine 30 min before departure",
+      "Sleep on bus — arrives Delhi ~10–11 AM Saturday",
+      "Home: shower, unpack, laundry",
+      "Restock daily-use items, plan next trip 😊"
+    ]
+  }
+];
+
+// Altitude profile — sleep altitude per night (transit days = bus average)
+const ALTITUDE = ITINERARY.map(d => ({ day: d.day, place: d.stay, alt: d.stayAlt, transit: !!d.transit }));
+
+// Temperature data — per day (June averages, °C; transit days reflect bus journey range)
+const TEMPS = ITINERARY.map(d => ({ day: d.day, place: d.stay, high: d.high, low: d.low, transit: !!d.transit }));
+
+const PACK = {
+  "📄 Docs & Cash": [
+    "Wallet — Aadhaar + photos + cards (already sorted)",
+    "Cash ₹10–12k (₹100s & ₹500s)",
+    "Trip booking confirmation (printed + on phone)",
+    "Travel insurance certificate (printed copy)"
+  ],
+  "👕 Clothes (7 days, layered)": [
+    "Thermal innerwear top + bottom × 2 sets",
+    "Heavy down / puffer jacket × 1",
+    "Fleece or wool sweater × 1",
+    "Windproof shell jacket × 1",
+    "Trek pants (quick-dry) × 2",
+    "Lounge pants × 1 (hostel evenings)",
+    "Full-sleeve dry-fit T-shirts × 4",
+    "Casual T-shirts × 2",
+    "Underwear × 7",
+    "Wool / thermal socks × 5",
+    "Cotton socks × 2",
+    "Warm sleepwear"
+  ],
+  "🧤 Accessories": [
+    "Sunglasses — UV400 (high-altitude glare is brutal)",
+    "Beanie / wool cap",
+    "Cap with brim (sun protection)",
+    "Windproof gloves",
+    "Neck buff / muffler (multi-use: neck, mask, headband)",
+    "Neck pillow (long bus rides)",
+    "Small lock for backpack",
+    "Reusable cloth bag (dirty laundry)"
+  ],
+  "🥾 Footwear": [
+    "Trekking shoes — broken-in, ankle support",
+    "Crocs (hostel + camp + showers)",
+    "Extra shoelaces"
+  ],
+  "🧴 Toiletries": [
+    "Toothbrush + paste",
+    "Body wash / soap (small)",
+    "Travel shampoo",
+    "Sunscreen SPF 50+ (UV is intense at altitude)",
+    "Lip balm with SPF",
+    "Heavy moisturiser / cold cream (skin dries fast)",
+    "Deodorant",
+    "Wet wipes (showers will be rare)",
+    "Hand sanitizer (small)",
+    "Microfiber towel (small, fast-dry)",
+    "Toilet paper roll",
+    "Razor + comb + nail clipper"
+  ],
+  "💊 Health & AMS": [
+    "Your usual daily stack — don't skip",
+    "Diamox 250mg — start D−1, BD × 3 days (consult doctor)",
+    "Paracetamol 500mg (fever / headache)",
+    "Sinarest or equivalent (cold)",
+    "Strepsils (sore throat)",
+    "Cetirizine (allergy)",
+    "Avomine (motion sickness — CRITICAL on winding roads)",
+    "Imodium (diarrhea)",
+    "Domstal (vomiting)",
+    "ORS sachets × 6",
+    "Volini spray (muscle aches)",
+    "Bandaids + Betadine + cotton",
+    "Pulse oximeter (optional, useful at altitude)"
+  ],
+  "📱 Electronics": [
+    "Phone + charger",
+    "Apple Watch + charger",
+    "AirPods",
+    "Kindle (over iPad — lighter, longer battery, sun-readable, no distractions)",
+    "Power bank 20,000 mAh (charging spotty)",
+    "Universal adapter / extension cord",
+    "Headlamp + spare batteries",
+    "Offline maps downloaded (Google Maps + Maps.me)"
+  ],
+  "🎒 Day pack (20–25L)": [
+    "1L insulated flask (hot water/tea — lifesaver)",
+    "500 ml regular water bottle",
+    "Mixed nuts (~250g)",
+    "Dates / dried apricots (~200g)",
+    "Dark chocolate × 2",
+    "Protein / energy bars × 6",
+    "Trail mix / namkeen",
+    "Notebook + pen",
+    "Ziplock bags (electronics, wet clothes)"
+  ],
+  "📶 Connectivity": [
+    "BSNL postpaid SIM (works best in Spiti)",
+    "Jio / Airtel — only till Reckong Peo",
+    "Download offline music, books, maps before leaving",
+    "Tell family — no signal at Chandratal"
+  ]
+};
+
+const TASKS = [
+  { title: "Book bus Delhi → Shimla", meta: "Fri 5 Jun, ~7 PM ex ISBT Kashmiri Gate / MKT · HRTC or private Volvo" },
+  { title: "Book bus Manali → Delhi", meta: "Fri 12 Jun, ~11 PM ex Manali Volvo stand · arrives Delhi Sat morning" },
+  { title: "Recharge Jio", meta: "Pick a plan with validity through 13 Jun. Coverage dies after Reckong Peo — set expectations" },
+  { title: "Buy 20,000 mAh power bank", meta: "Charging will be patchy at altitude" },
+  { title: "Doctor visit for Diamox", meta: "Get a prescription. Start D−1 (5 Jun), 250 mg BD × 3 days" },
+  { title: "Pack bag", meta: "Use the packing list below — start 3 days before to avoid last-minute scramble" },
+  { title: "Download offline maps", meta: "Google Maps offline + Maps.me for the entire Shimla–Spiti–Manali corridor" },
+  { title: "Download offline content", meta: "Music, books on Kindle, podcasts — long bus rides + no signal" },
+  { title: "Charge all devices Day −1", meta: "Phone, watch, AirPods, Kindle, power bank — top up the night before" },
+  { title: "Share itinerary with family", meta: "Send dates, stays, trip leader contact, and 'no signal at Chandratal' note" }
+];
+
+const TIPS = [
+  {
+    title: "🫁 Acclimatize",
+    items: [
+      "Drink 4+ litres water daily",
+      "No alcohol or smoking above 3,500 m",
+      "Eat light, high-carb meals",
+      "Climb high, sleep low when possible",
+      "Watch for headache, nausea, breathlessness"
+    ]
+  },
+  {
+    title: "💰 Money",
+    items: [
+      "Last reliable ATM: Reckong Peo / Kaza",
+      "Carry small denominations (₹100, ₹500)",
+      "Most homestays cash-only",
+      "Tip drivers + trip leader at end"
+    ]
+  },
+  {
+    title: "📵 Connectivity",
+    items: [
+      "BSNL postpaid works best in Spiti",
+      "Jio/Airtel: spotty after Reckong Peo",
+      "No signal at Chandratal — embrace it",
+      "Wifi only at Zostels (slow)"
+    ]
+  },
+  {
+    title: "🚗 On the road",
+    items: [
+      "Long drive days — carry motion sickness pills",
+      "Sit in front if you get queasy",
+      "Window seat for photos",
+      "Restroom stops are rare — go when you can"
+    ]
+  }
+];
+
+// ============ RENDER ============
+
+// Itinerary
+document.getElementById('itinerary').innerHTML = ITINERARY.map(d => `
+  <div class="day${d.transit ? ' transit' : ''}">
+    <div class="when">
+      <div class="num">Day ${d.day}</div>
+      <div class="date">${d.date.split(" ")[1]} ${d.date.split(" ")[2]}</div>
+      <div class="dow">${d.dow}</div>
+      <div class="alt">${d.transit ? `🚌 Bus<br>~${d.stayAlt.toLocaleString()} m` : `🛏 ${d.stay}<br>${d.stayAlt.toLocaleString()} m`}</div>
+    </div>
+    <div class="what">
+      <h3>${d.title}</h3>
+      <div class="glance">${d.glance}</div>
+      <ul>${d.items.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+  </div>`).join('');
+
+// Pre-trip tasks
+document.getElementById('taskList').innerHTML = TASKS.map(t => `
+  <li onclick="this.classList.toggle('checked'); this.querySelector('input').checked = this.classList.contains('checked');">
+    <input type="checkbox">
+    <span><b>${t.title}</b><span class="meta">${t.meta}</span></span>
+  </li>`).join('');
+
+document.getElementById('resetTasks').addEventListener('click', () => {
+  document.querySelectorAll('#taskList li').forEach(li => {
+    li.classList.remove('checked');
+    li.querySelector('input').checked = false;
+  });
+});
+
+// Altitude chart (SVG area)
+function renderAltitudeChart() {
+  const svg = document.getElementById('altChart');
+  const W = 800, H = 340, padL = 60, padR = 20, padT = 30, padB = 80;
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const maxAlt = 5000, minAlt = 0;
+  const n = ALTITUDE.length;
+  const step = cw / (n - 1);
+
+  // y -> svg coordinate
+  const y = a => padT + ch - ((a - minAlt) / (maxAlt - minAlt)) * ch;
+  const x = i => padL + i * step;
+
+  // Gridlines
+  let grid = '';
+  for (let a = 0; a <= 5000; a += 1000) {
+    const yy = y(a);
+    grid += `<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>`;
+    grid += `<text x="${padL-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="#64748b">${a} m</text>`;
+  }
+
+  // Area path
+  let path = `M ${x(0)} ${y(ALTITUDE[0].alt)}`;
+  for (let i = 1; i < n; i++) path += ` L ${x(i)} ${y(ALTITUDE[i].alt)}`;
+  const areaPath = path + ` L ${x(n-1)} ${y(0)} L ${x(0)} ${y(0)} Z`;
+
+  // Points + labels
+  let points = '';
+  ALTITUDE.forEach((p, i) => {
+    const xx = x(i), yy = y(p.alt);
+    points += `<circle cx="${xx}" cy="${yy}" r="5" fill="#0ea5e9" stroke="#fff" stroke-width="2"/>`;
+    points += `<text x="${xx}" y="${yy-12}" text-anchor="middle" font-size="11" font-weight="700" fill="#0c1321">${p.alt}m</text>`;
+    points += `<text x="${xx}" y="${H-padB+18}" text-anchor="middle" font-size="11" fill="#0ea5e9" font-weight="800" letter-spacing="0.5">DAY ${p.day}</text>`;
+    points += `<text x="${xx}" y="${H-padB+34}" text-anchor="middle" font-size="11" fill="#0c1321" font-weight="700">${p.transit ? '🚌' : '🛏'} ${p.place}</text>`;
+  });
+
+  // Danger zone shading (above 3500m)
+  const dangerY = y(3500);
+  const dangerRect = `<rect x="${padL}" y="${padT}" width="${cw}" height="${dangerY-padT}" fill="#fef2f2" opacity="0.5"/>`;
+  const dangerLine = `<line x1="${padL}" y1="${dangerY}" x2="${W-padR}" y2="${dangerY}" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+  const dangerLabel = `<text x="${W-padR-4}" y="${dangerY-4}" text-anchor="end" font-size="10" font-weight="700" fill="#f43f5e">AMS risk above 3,500 m</text>`;
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="altGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.05"/>
+      </linearGradient>
+    </defs>
+    ${dangerRect}
+    ${grid}
+    ${dangerLine}
+    ${dangerLabel}
+    <path d="${areaPath}" fill="url(#altGrad)"/>
+    <path d="${path}" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linejoin="round"/>
+    ${points}
+  `;
+}
+renderAltitudeChart();
+
+// Temperature chart (dual line — high + low, with shaded range)
+function renderTempChart() {
+  const svg = document.getElementById('tempChart');
+  const W = 800, H = 340, padL = 50, padR = 20, padT = 30, padB = 80;
+  const cw = W - padL - padR, ch = H - padT - padB;
+  const maxT = 40, minT = -5;
+  const n = TEMPS.length;
+  const step = cw / (n - 1);
+
+  const y = t => padT + ch - ((t - minT) / (maxT - minT)) * ch;
+  const x = i => padL + i * step;
+
+  // Gridlines
+  let grid = '';
+  for (let t = -5; t <= 40; t += 5) {
+    const yy = y(t);
+    grid += `<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>`;
+    grid += `<text x="${padL-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="#64748b">${t}°</text>`;
+  }
+  // Zero line — emphasised
+  const zeroY = y(0);
+  grid += `<line x1="${padL}" y1="${zeroY}" x2="${W-padR}" y2="${zeroY}" stroke="#0c1321" stroke-width="1.5"/>`;
+  grid += `<text x="${W-padR-4}" y="${zeroY-4}" text-anchor="end" font-size="10" font-weight="700" fill="#0c1321">freezing</text>`;
+
+  // Build paths
+  let highPath = `M ${x(0)} ${y(TEMPS[0].high)}`;
+  let lowPath  = `M ${x(0)} ${y(TEMPS[0].low)}`;
+  for (let i = 1; i < n; i++) {
+    highPath += ` L ${x(i)} ${y(TEMPS[i].high)}`;
+    lowPath  += ` L ${x(i)} ${y(TEMPS[i].low)}`;
+  }
+  // Filled area between high and low (the daily range)
+  let rangePath = `M ${x(0)} ${y(TEMPS[0].high)}`;
+  for (let i = 1; i < n; i++) rangePath += ` L ${x(i)} ${y(TEMPS[i].high)}`;
+  for (let i = n - 1; i >= 0; i--) rangePath += ` L ${x(i)} ${y(TEMPS[i].low)}`;
+  rangePath += ' Z';
+
+  // Points + labels
+  let points = '';
+  TEMPS.forEach((p, i) => {
+    const xx = x(i);
+    const hy = y(p.high), ly = y(p.low);
+
+    points += `<circle cx="${xx}" cy="${hy}" r="4.5" fill="#f59e0b" stroke="#fff" stroke-width="2"/>`;
+    points += `<text x="${xx}" y="${hy-10}" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">${p.high}°</text>`;
+
+    points += `<circle cx="${xx}" cy="${ly}" r="4.5" fill="#0ea5e9" stroke="#fff" stroke-width="2"/>`;
+    // Place low label below the low point; if low is negative, label sits below at higher y
+    const lowLabelY = ly + 16;
+    points += `<text x="${xx}" y="${lowLabelY}" text-anchor="middle" font-size="11" font-weight="700" fill="#075985">${p.low}°</text>`;
+
+    // X-axis: Day N + place
+    points += `<text x="${xx}" y="${H-padB+18}" text-anchor="middle" font-size="10" fill="#0ea5e9" font-weight="800" letter-spacing="0.5">DAY ${p.day}</text>`;
+    points += `<text x="${xx}" y="${H-padB+34}" text-anchor="middle" font-size="11" fill="#0c1321" font-weight="700">${p.transit ? '🚌' : '🛏'} ${p.place}</text>`;
+  });
+
+  // Legend
+  const legend = `
+    <g transform="translate(${padL}, 8)">
+      <line x1="0" y1="7" x2="22" y2="7" stroke="#f59e0b" stroke-width="3"/>
+      <circle cx="11" cy="7" r="4" fill="#f59e0b"/>
+      <text x="30" y="11" font-size="11" fill="#0c1321" font-weight="700">Day high</text>
+      <line x1="110" y1="7" x2="132" y2="7" stroke="#0ea5e9" stroke-width="3"/>
+      <circle cx="121" cy="7" r="4" fill="#0ea5e9"/>
+      <text x="140" y="11" font-size="11" fill="#0c1321" font-weight="700">Night low</text>
+    </g>
+  `;
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="rangeGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.18"/>
+      </linearGradient>
+    </defs>
+    ${grid}
+    <path d="${rangePath}" fill="url(#rangeGrad)"/>
+    <path d="${highPath}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${lowPath}"  fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${points}
+    ${legend}
+  `;
+}
+renderTempChart();
+
+// Packing
+function renderPack() {
+  document.getElementById('packGrid').innerHTML = Object.entries(PACK).map(([cat, items]) => `
+    <div class="pack-cat">
+      <h3>${cat} <span class="count">${items.length}</span></h3>
+      <ul class="pack-list">
+        ${items.map(item => `
+          <li onclick="this.classList.toggle('checked'); this.querySelector('input').checked = this.classList.contains('checked'); updateProgress();">
+            <input type="checkbox"><span>${item}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>`).join('');
+}
+renderPack();
+
+function updateProgress() {
+  const total = document.querySelectorAll('.pack-list li').length;
+  const done = document.querySelectorAll('.pack-list li.checked').length;
+  // Could surface a global progress bar here later if useful
+}
+
+document.getElementById('resetPack').addEventListener('click', () => {
+  document.querySelectorAll('.pack-list li').forEach(li => {
+    li.classList.remove('checked');
+    li.querySelector('input').checked = false;
+  });
+});
+
+// Tips
+document.getElementById('tipGrid').innerHTML = TIPS.map(t => `
+  <div class="tip">
+    <h3>${t.title}</h3>
+    <ul>${t.items.map(i => `<li>${i}</li>`).join('')}</ul>
+  </div>`).join('');
+</script>
+</body>
+</html>

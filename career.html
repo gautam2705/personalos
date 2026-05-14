@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🧑‍💻 Career Operating System</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --card: #ffffff;
+    --ink: #f8fafc;
+    --dark: #0f172a;
+    --muted: #94a3b8;
+    --accent: #22d3ee;
+    --accent2: #0891b2;
+    --gold: #fbbf24;
+    --green: #10b981;
+    --pink: #f472b6;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(34,211,238,.2) 0, transparent 30%),
+      radial-gradient(circle at 88% 16%, rgba(244,114,182,.16) 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, rgba(251,191,36,.14) 0, transparent 32%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: rgba(255,255,255,.08); border: 2px dashed var(--accent);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--accent);
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 46px); margin: 12px 0 6px; letter-spacing: -0.02em; }
+  h1 .rocket { display: inline-block; animation: blast 3s infinite ease-in-out; }
+  @keyframes blast { 0%,100%{transform:translateY(0) rotate(-20deg)} 50%{transform:translateY(-6px) rotate(-8deg)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+  .btn {
+    background: #fff; border: 2px solid var(--dark); color: var(--dark);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--accent);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--dark); }
+
+  main { max-width: 1200px; margin: 0 auto; display: grid; gap: 16px; }
+
+  .section {
+    background: var(--card); color: var(--dark);
+    border: 2.5px solid var(--dark);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--accent);
+    padding: 18px 20px;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .section .sub { color: #475569; font-size: 13px; margin-bottom: 14px; }
+
+  /* North star hero */
+  .northstar {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    color: #fff;
+    border: 3px solid var(--dark);
+    border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--gold);
+    padding: 28px 32px;
+    text-align: center;
+  }
+  .northstar .label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); font-weight: 800; }
+  .northstar .statement { font-size: clamp(20px, 3.2vw, 30px); font-weight: 800; letter-spacing: -.01em; line-height: 1.3; margin: 10px 0; }
+  .northstar .current {
+    margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+  }
+  @media (max-width: 560px) { .northstar .current { grid-template-columns: 1fr; } }
+  .northstar .n {
+    background: rgba(255,255,255,.08); border-radius: 14px; padding: 12px;
+    border: 1.5px solid rgba(255,255,255,.15);
+  }
+  .northstar .n .l { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #22d3ee; font-weight: 800; }
+  .northstar .n .v { font-size: 18px; font-weight: 800; margin-top: 4px; }
+
+  /* Skill bars */
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;
+  }
+  .skill {
+    background: #f8fafc; border: 2px solid var(--dark);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .skill .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .skill .name { font-weight: 800; font-size: 14px; }
+  .skill .level { font-size: 11px; font-weight: 800; color: var(--accent2); }
+  .skill .bar {
+    margin-top: 8px; height: 10px; background: #e2e8f0;
+    border-radius: 999px; overflow: hidden; border: 1.5px solid var(--dark);
+  }
+  .skill .fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .skill .goal { font-size: 11px; color: #64748b; margin-top: 6px; font-style: italic; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* OKRs */
+  .okr {
+    background: #fffbeb; border: 2px solid var(--gold);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .okr .obj { font-weight: 800; font-size: 15px; color: #92400e; }
+  .okr .krs { margin-top: 8px; list-style: none; padding: 0; }
+  .okr .kr {
+    padding: 6px 0; display: grid; grid-template-columns: 1fr 80px; gap: 8px;
+    align-items: center; border-top: 1px dashed #fcd34d; font-size: 13px;
+  }
+  .okr .kr:first-child { border-top: none; }
+  .okr .kr-bar {
+    height: 8px; background: #fde68a; border-radius: 999px; overflow: hidden;
+  }
+  .okr .kr-fill { height: 100%; background: var(--gold); }
+
+  /* Projects */
+  .proj-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;
+  }
+  .proj {
+    background: #fff; border: 2px solid var(--dark);
+    border-radius: 12px; padding: 12px 14px;
+    position: relative;
+  }
+  .proj .status {
+    position: absolute; top: 10px; right: 10px;
+    padding: 3px 9px; border-radius: 999px; font-size: 10px; font-weight: 800;
+  }
+  .proj .status.live { background: #dcfce7; color: #166534; }
+  .proj .status.wip  { background: #fef3c7; color: #92400e; }
+  .proj .status.idea { background: #f3e8ff; color: #6b21a8; }
+  .proj .status.archived { background: #f1f5f9; color: #475569; }
+  .proj .name { font-weight: 800; font-size: 15px; padding-right: 80px; }
+  .proj .desc { font-size: 13px; color: #475569; margin-top: 4px; line-height: 1.45; }
+  .proj .tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .proj .tag { background: var(--dark); color: var(--accent); padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; }
+
+  /* Growth log */
+  .log-item {
+    background: #f0fdfa; border-left: 4px solid var(--accent);
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+  }
+  .log-item .date { font-size: 11px; color: #0e7490; font-weight: 800; }
+  .log-item .what { font-weight: 700; margin-top: 2px; font-size: 14px; }
+  .log-item .note { font-size: 13px; color: #475569; margin-top: 2px; }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.tbl th {
+    text-align: left; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: #64748b;
+    padding: 8px 6px; border-bottom: 2px solid var(--dark);
+  }
+  table.tbl td { padding: 10px 6px; border-bottom: 1px dashed #e2e8f0; vertical-align: top; }
+  table.tbl tr:last-child td { border-bottom: none; }
+
+  .people-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;
+  }
+  .person {
+    background: #fff; border: 2px solid var(--dark); border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .person .role { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--pink); font-weight: 800; }
+  .person .n { font-weight: 800; margin-top: 2px; }
+  .person .m { font-size: 12px; color: #475569; }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🧑‍💻 Career OS</span>
+  <h1>Career <span class="rocket">🚀</span></h1>
+  <p>Where I am, where I'm going, and the skills I'm compounding to get there.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="vision.html">🔭 Vision</a>
+  <a class="btn" href="principles.html">📜 Principles</a>
+  <a class="btn" href="finances.html">💰 Finances</a>
+</div>
+
+<main>
+
+  <!-- North star -->
+  <section class="northstar">
+    <div class="label">North Star</div>
+    <div class="statement">To build <b style="color:#22d3ee">AI-native products</b> that genuinely improve how people live and work — and become world-class at the craft while doing it.</div>
+    <div class="current">
+      <div class="n"><div class="l">Current Role</div><div class="v">—</div></div>
+      <div class="n"><div class="l">Years in Craft</div><div class="v">—</div></div>
+      <div class="n"><div class="l">Stage</div><div class="v">Growth → Senior → Staff</div></div>
+    </div>
+  </section>
+
+  <!-- OKRs -->
+  <section class="section">
+    <h2>🎯 Current Quarter OKRs</h2>
+    <div class="sub">What I'm actually working toward this quarter. Review weekly, grade at quarter-end.</div>
+    <div id="okrs"></div>
+  </section>
+
+  <div class="two-col">
+    <!-- Skills matrix -->
+    <section class="section">
+      <h2>📊 Skill Matrix</h2>
+      <div class="sub">Honest self-assessment. 1 = aware · 3 = proficient · 5 = can teach.</div>
+      <div class="skills-grid" id="skills"></div>
+    </section>
+
+    <!-- Projects portfolio -->
+    <section class="section">
+      <h2>🗂️ Projects Portfolio</h2>
+      <div class="sub">What I've shipped. Updated as I ship.</div>
+      <div class="proj-grid" id="projects"></div>
+    </section>
+  </div>
+
+  <!-- Growth log -->
+  <section class="section">
+    <h2>📈 Growth Log</h2>
+    <div class="sub">Promotions, titles, major wins, decisive lessons. Evidence trail.</div>
+    <div id="log"></div>
+  </section>
+
+  <!-- Career ladder -->
+  <section class="section">
+    <h2>🪜 Career Ladder</h2>
+    <div class="sub">Where I am on the ladder and what the next rung looks like.</div>
+    <table class="tbl">
+      <thead><tr><th>Level</th><th>Scope</th><th>Demonstrated By</th><th>Status</th></tr></thead>
+      <tbody id="ladder"></tbody>
+    </table>
+  </section>
+
+  <!-- Learning queue -->
+  <section class="section">
+    <h2>📚 Learning Queue</h2>
+    <div class="sub">Books, courses, papers — what to absorb next.</div>
+    <table class="tbl">
+      <thead><tr><th>Resource</th><th>Format</th><th>Why</th><th>Status</th></tr></thead>
+      <tbody id="learning"></tbody>
+    </table>
+  </section>
+
+  <div class="two-col">
+    <!-- Key people -->
+    <section class="section">
+      <h2>🤝 Key People</h2>
+      <div class="sub">My personal board of directors — mentors, sponsors, peers.</div>
+      <div class="people-grid" id="people"></div>
+    </section>
+
+    <!-- Interview/offer log -->
+    <section class="section">
+      <h2>💼 Opportunity Log</h2>
+      <div class="sub">Offers, inbound recruiter pings, roles I've been flagged for.</div>
+      <table class="tbl">
+        <thead><tr><th>Date</th><th>Company</th><th>Role</th><th>Outcome</th></tr></thead>
+        <tbody id="offers"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Public presence -->
+  <section class="section">
+    <h2>🌐 Public Presence</h2>
+    <div class="sub">Links to living artifacts of your craft.</div>
+    <table class="tbl">
+      <thead><tr><th>Channel</th><th>Handle / URL</th><th>Purpose</th></tr></thead>
+      <tbody id="public"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer class="note">Review weekly. Re-grade OKRs Friday. Annual career review: December.</footer>
+
+<script>
+// ============ EDIT ============
+
+const OKRS = [
+  {
+    objective: "Ship a meaningful AI feature end-to-end",
+    krs: [
+      { kr: "Feature in production with >1,000 weekly users",  progress: 0 },
+      { kr: "Retention > 30% week 4",                            progress: 0 },
+      { kr: "Write post-mortem / design doc",                    progress: 0 }
+    ]
+  },
+  {
+    objective: "Level up one hard technical skill",
+    krs: [
+      { kr: "Complete one rigorous course / textbook",           progress: 0 },
+      { kr: "Build one side project applying it",                progress: 0 },
+      { kr: "Write 1 blog post teaching it",                     progress: 0 }
+    ]
+  },
+  {
+    objective: "Grow my professional surface area",
+    krs: [
+      { kr: "1-on-1 with 6 people outside my team",              progress: 0 },
+      { kr: "Present in 1 public forum (blog / meetup / talk)",  progress: 0 },
+      { kr: "Have 2 career conversations with mentors",          progress: 0 }
+    ]
+  }
+];
+
+const SKILLS = [
+  // { name, level (1-5), goal }
+  { name: "System Design",         level: 3, goal: "Reach 4 — lead design of a multi-service system" },
+  { name: "Product Sense",         level: 3, goal: "Reach 4 — ship a 0→1 product from insight to launch" },
+  { name: "Writing (technical)",   level: 3, goal: "Reach 4 — one well-read post per quarter" },
+  { name: "ML / AI Fundamentals",  level: 3, goal: "Reach 4 — comfortable from paper to production" },
+  { name: "Leadership (tech)",     level: 2, goal: "Reach 3 — lead a 3-person project" },
+  { name: "Communication (verbal)",level: 3, goal: "Reach 4 — present to exec audiences" },
+  { name: "Negotiation",           level: 2, goal: "Reach 3 — negotiate my next offer with data" }
+];
+
+const PROJECTS = [
+  { name: "—", desc: "Add your shipped projects here.", status: "live", tags: ["tag"] },
+  { name: "Life OS",     desc: "Personal operating system HTML dashboard.", status: "wip",  tags: ["personal", "html", "systems"] }
+];
+
+const LOG = [
+  // { date, what, note }
+  { date: "—", what: "—", note: "Add promotions, big shipments, decisive lessons." }
+];
+
+const LADDER = [
+  // [level, scope, demonstrated by, status]
+  ["Junior",     "Task-level",      "Completes well-scoped tasks with help",             "✓ Past"],
+  ["Mid",        "Feature-level",   "Owns features end-to-end",                          "✓ Past"],
+  ["Senior",     "Project-level",   "Owns projects, mentors juniors, influences design", "◉ Current"],
+  ["Staff",      "Team-level",      "Sets technical direction, multiplies team output",  "→ Next"],
+  ["Principal",  "Org-level",       "Sets direction across teams, industry-visible",     "— Future"]
+];
+
+const LEARNING = [
+  // [resource, format, why, status]
+  ["Designing Data-Intensive Applications", "Book",   "System design depth",       "Reading"],
+  ["Deep Learning (Goodfellow)",            "Book",   "ML fundamentals",           "Queued"],
+  ["Crafting Interpreters",                 "Book",   "Low-level craft",           "Queued"],
+  ["Huberman podcast: performance series",  "Audio",  "Health/cognition edge",     "In progress"]
+];
+
+const PEOPLE = [
+  // { role, name, notes }
+  { role: "Mentor",       name: "—", notes: "Sr eng I go to for big decisions" },
+  { role: "Manager",      name: "—", notes: "Current manager" },
+  { role: "Peer / Friend",name: "—", notes: "Sparring partner for ideas" },
+  { role: "Sponsor",      name: "—", notes: "Opens doors on my behalf" }
+];
+
+const OFFERS = [
+  // [date, company, role, outcome]
+  ["—", "—", "—", "—"]
+];
+
+const PUBLIC = [
+  // [channel, handle/url, purpose]
+  ["LinkedIn",   "—", "Professional network"],
+  ["GitHub",     "—", "Code portfolio"],
+  ["Personal site / blog", "—", "Writing & craft"],
+  ["X / Twitter", "—", "Network & serendipity"]
+];
+
+// ============ RENDER ============
+
+document.getElementById('okrs').innerHTML = OKRS.map(o => `
+  <div class="okr">
+    <div class="obj">🎯 ${o.objective}</div>
+    <ul class="krs">
+      ${o.krs.map(k => `
+        <li class="kr">
+          <span>${k.kr}</span>
+          <span>
+            <div class="kr-bar"><div class="kr-fill" style="width:${k.progress}%"></div></div>
+            <div style="font-size:10px; text-align:right; color:#92400e; margin-top:2px; font-weight:800;">${k.progress}%</div>
+          </span>
+        </li>
+      `).join('')}
+    </ul>
+  </div>`).join('');
+
+document.getElementById('skills').innerHTML = SKILLS.map(s => `
+  <div class="skill">
+    <div class="head">
+      <span class="name">${s.name}</span>
+      <span class="level">${s.level}/5</span>
+    </div>
+    <div class="bar"><div class="fill" style="width:${s.level * 20}%"></div></div>
+    <div class="goal">→ ${s.goal}</div>
+  </div>`).join('');
+
+document.getElementById('projects').innerHTML = PROJECTS.map(p => `
+  <div class="proj">
+    <span class="status ${p.status}">${p.status.toUpperCase()}</span>
+    <div class="name">${p.name}</div>
+    <div class="desc">${p.desc}</div>
+    <div class="tags">${(p.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+  </div>`).join('');
+
+document.getElementById('log').innerHTML = LOG.map(l => `
+  <div class="log-item">
+    <div class="date">${l.date}</div>
+    <div class="what">${l.what}</div>
+    ${l.note ? `<div class="note">${l.note}</div>` : ''}
+  </div>`).join('');
+
+document.getElementById('ladder').innerHTML = LADDER.map(r =>
+  `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`
+).join('');
+
+document.getElementById('learning').innerHTML = LEARNING.map(r =>
+  `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`
+).join('');
+
+document.getElementById('people').innerHTML = PEOPLE.map(p => `
+  <div class="person">
+    <div class="role">${p.role}</div>
+    <div class="n">${p.name}</div>
+    <div class="m">${p.notes}</div>
+  </div>`).join('');
+
+document.getElementById('offers').innerHTML = OFFERS.map(r =>
+  `<tr><td>${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td></tr>`
+).join('');
+
+document.getElementById('public').innerHTML = PUBLIC.map(r =>
+  `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`
+).join('');
+</script>
+</body>
+</html>

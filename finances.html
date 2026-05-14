@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>💰 Financial Details</title>
+<style>
+  :root {
+    --bg: #f5f3ff;
+    --ink: #111827;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --money: #059669;
+    --debt: #dc2626;
+    --accent: #7c3aed;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 8%, #ede9fe 0, transparent 30%),
+      radial-gradient(circle at 88% 16%, #d1fae5 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, #fef3c7 0, transparent 32%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--accent);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--accent);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 46px); margin: 12px 0 6px; letter-spacing: -0.02em; }
+  h1 .coin { display: inline-block; animation: spin 3s infinite linear; }
+  @keyframes spin { 0%{transform:rotateY(0)} 100%{transform:rotateY(360deg)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+  .btn {
+    background: #fff; border: 2px solid var(--ink); color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn.primary { background: var(--accent); color: #fff; }
+
+  main { max-width: 1200px; margin: 0 auto; display: grid; gap: 16px; }
+
+  .section {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 18px 20px;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .section .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+
+  /* Net worth hero */
+  .networth {
+    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    color: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--accent);
+    padding: 24px;
+    text-align: center;
+  }
+  .networth .label { font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: #a78bfa; font-weight: 800; }
+  .networth .value { font-size: clamp(36px, 6vw, 60px); font-weight: 900; letter-spacing: -.03em; margin: 6px 0; }
+  .networth .delta { font-size: 14px; color: #34d399; font-weight: 700; }
+  .networth .breakdown {
+    margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+  }
+  @media (max-width: 520px) { .networth .breakdown { grid-template-columns: 1fr; } }
+  .networth .nb {
+    background: rgba(255,255,255,.08); border-radius: 14px; padding: 12px;
+    border: 1.5px solid rgba(255,255,255,.12);
+  }
+  .networth .nb .l { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #c4b5fd; font-weight: 800; }
+  .networth .nb .v { font-size: 22px; font-weight: 800; margin-top: 4px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.tbl th {
+    text-align: left; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 6px; border-bottom: 2px solid var(--ink);
+  }
+  table.tbl td { padding: 10px 6px; border-bottom: 1px dashed #e5e7eb; vertical-align: top; }
+  table.tbl tr:last-child td { border-bottom: none; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+  .money { color: var(--money); }
+  .debt { color: var(--debt); }
+
+  /* Budget bars */
+  .budget-row {
+    display: grid; grid-template-columns: 140px 1fr 110px; gap: 10px;
+    align-items: center; padding: 8px 0; border-bottom: 1px dashed #e5e7eb;
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-row .cat { font-weight: 700; font-size: 13px; }
+  .budget-row .bar { height: 12px; background: #f3f4f6; border-radius: 999px; overflow: hidden; border: 1.5px solid var(--ink); }
+  .budget-row .fill { height: 100%; background: var(--accent); transition: width .5s ease; }
+  .budget-row .fill.over { background: var(--debt); }
+  .budget-row .amt { font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; font-weight: 700; }
+  .budget-row .amt .of { color: var(--muted); font-weight: 500; font-size: 12px; }
+  @media (max-width: 560px) { .budget-row { grid-template-columns: 100px 1fr 90px; } }
+
+  /* Goals */
+  .goal {
+    background: #f5f3ff; border: 2px solid var(--accent);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .goal .head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .goal .name { font-weight: 800; font-size: 15px; }
+  .goal .due { font-size: 12px; color: var(--accent); font-weight: 700; }
+  .goal .bar {
+    height: 14px; background: #fff; border: 1.5px solid var(--ink);
+    border-radius: 999px; margin-top: 8px; overflow: hidden;
+  }
+  .goal .fill { height: 100%; background: linear-gradient(90deg, #a78bfa, var(--accent)); }
+  .goal .stat {
+    display: flex; justify-content: space-between; font-size: 12px; color: #4b5563; margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Subscriptions grid */
+  .subs-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;
+  }
+  .sub-card {
+    background: #fff; border: 2px solid var(--ink); border-radius: 12px;
+    padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+  }
+  .sub-card .n { font-weight: 800; font-size: 14px; }
+  .sub-card .m { font-size: 11px; color: var(--muted); }
+  .sub-card .price { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--debt); font-size: 14px; white-space: nowrap; }
+
+  .ratio-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;
+  }
+  .ratio {
+    background: #ecfdf5; border: 2px solid var(--money);
+    border-radius: 12px; padding: 10px 12px;
+  }
+  .ratio .l { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #065f46; font-weight: 800; }
+  .ratio .v { font-size: 22px; font-weight: 900; margin-top: 2px; }
+  .ratio .m { font-size: 11px; color: var(--muted); }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">💰 Financial Command Center</span>
+  <h1>Finances <span class="coin">🪙</span></h1>
+  <p>Net worth, cash flow, investments, goals — all on one page.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <button class="btn" onclick="window.print()">🖨️ Print</button>
+</div>
+
+<main>
+
+  <!-- Net worth hero -->
+  <section class="networth">
+    <div class="label">Total Net Worth</div>
+    <div class="value" id="nwValue">—</div>
+    <div class="delta" id="nwDelta">▲ — this month</div>
+    <div class="breakdown">
+      <div class="nb"><div class="l">Assets</div><div class="v" id="nwAssets">—</div></div>
+      <div class="nb"><div class="l">Liabilities</div><div class="v" id="nwDebts">—</div></div>
+      <div class="nb"><div class="l">Liquid (cash + invest)</div><div class="v" id="nwLiquid">—</div></div>
+    </div>
+  </section>
+
+  <!-- Health ratios -->
+  <section class="section">
+    <h2>📈 Financial Health</h2>
+    <div class="sub">Core ratios — targets based on common personal-finance benchmarks.</div>
+    <div class="ratio-grid">
+      <div class="ratio"><div class="l">Savings Rate</div><div class="v" id="rSavings">—%</div><div class="m">Target: 30%+</div></div>
+      <div class="ratio"><div class="l">Emergency Fund</div><div class="v" id="rEmergency">— mo</div><div class="m">Target: 6 months expenses</div></div>
+      <div class="ratio"><div class="l">Debt-to-Income</div><div class="v" id="rDTI">—%</div><div class="m">Target: &lt; 36%</div></div>
+      <div class="ratio"><div class="l">Investment Rate</div><div class="v" id="rInvest">—%</div><div class="m">Target: 20%+ of income</div></div>
+    </div>
+  </section>
+
+  <div class="two-col">
+    <!-- Assets -->
+    <section class="section">
+      <h2>🏦 Assets</h2>
+      <div class="sub">Cash, investments, property, other.</div>
+      <table class="tbl">
+        <thead><tr><th>Account</th><th>Type</th><th class="num" style="text-align:right">Balance</th></tr></thead>
+        <tbody id="assets"></tbody>
+      </table>
+    </section>
+    <!-- Liabilities -->
+    <section class="section">
+      <h2>📉 Liabilities</h2>
+      <div class="sub">Loans, credit cards, EMIs.</div>
+      <table class="tbl">
+        <thead><tr><th>Debt</th><th>Rate</th><th class="num" style="text-align:right">Balance</th></tr></thead>
+        <tbody id="debts"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Monthly budget -->
+  <section class="section">
+    <h2>📅 Monthly Budget</h2>
+    <div class="sub">Set it, track it, adjust quarterly.</div>
+    <div id="budget"></div>
+    <div style="margin-top:14px; padding-top:14px; border-top:2px dashed #e5e7eb; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:14px; font-weight:800;">
+      <span>Income: <span class="money" id="income">—</span></span>
+      <span>Spend: <span class="debt" id="spend">—</span></span>
+      <span>Surplus: <span id="surplus">—</span></span>
+    </div>
+  </section>
+
+  <!-- Investment allocation -->
+  <section class="section">
+    <h2>📊 Investment Allocation</h2>
+    <div class="sub">Target vs actual allocation across asset classes.</div>
+    <table class="tbl">
+      <thead><tr><th>Asset Class</th><th class="num" style="text-align:right">Target</th><th class="num" style="text-align:right">Actual</th><th class="num" style="text-align:right">Drift</th></tr></thead>
+      <tbody id="alloc"></tbody>
+    </table>
+    <div class="sub" style="margin-top:12px; font-size:12px;">💡 Rebalance when any class drifts more than ±5% from target.</div>
+  </section>
+
+  <div class="two-col">
+    <!-- Goals -->
+    <section class="section">
+      <h2>🎯 Financial Goals</h2>
+      <div class="sub">Short, mid, long-term targets.</div>
+      <div id="goals"></div>
+    </section>
+    <!-- Subscriptions -->
+    <section class="section">
+      <h2>🔁 Subscriptions</h2>
+      <div class="sub">Audit every 3 months. Total: <b id="subTotal">—</b> / month.</div>
+      <div class="subs-grid" id="subs"></div>
+    </section>
+  </div>
+
+  <!-- Credentials / key docs -->
+  <section class="section">
+    <h2>📁 Key Documents & Logins</h2>
+    <div class="sub">Locations, NOT passwords. Use a password manager for secrets.</div>
+    <table class="tbl">
+      <thead><tr><th>Item</th><th>Where</th><th>Notes</th></tr></thead>
+      <tbody id="docs"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer class="note">Update monthly. Deep review quarterly. Year-end audit in December.</footer>
+
+<script>
+// ============ EDIT YOUR DATA ============
+const CURRENCY = { code: 'INR', symbol: '₹', locale: 'en-IN' };
+const fmt = (n) => n == null ? '—' : CURRENCY.symbol + n.toLocaleString(CURRENCY.locale, { maximumFractionDigits: 0 });
+
+const ASSETS = [
+  // [name, type, amount]
+  ["Savings Account — Primary", "Cash",          0],
+  ["Fixed Deposit",              "Cash",          0],
+  ["Equity Mutual Funds",        "Equity",        0],
+  ["Index Fund / ETF",           "Equity",        0],
+  ["PPF / Retirement",           "Fixed Income",  0],
+  ["Gold / SGB",                 "Commodity",     0],
+  ["Crypto",                     "Alt",           0],
+  ["Real Estate (self)",         "Property",      0]
+];
+
+const DEBTS = [
+  // [name, rate, balance]
+  ["Home Loan",      "— %", 0],
+  ["Credit Card",    "— %", 0]
+];
+
+const BUDGET = [
+  // [category, budgeted, actual]
+  ["Rent / EMI",        0, 0],
+  ["Groceries",         0, 0],
+  ["Dining Out",        0, 0],
+  ["Utilities",         0, 0],
+  ["Transport / Fuel",  0, 0],
+  ["Health / Gym",      0, 0],
+  ["Subscriptions",     0, 0],
+  ["Travel",            0, 0],
+  ["Entertainment",     0, 0],
+  ["Gifts / Family",    0, 0],
+  ["Misc",              0, 0]
+];
+
+const INCOME_MONTHLY = 0;
+
+const ALLOCATION = [
+  // [class, target%, actual%]
+  ["Equity (Domestic)",    50, 0],
+  ["Equity (International)",20, 0],
+  ["Fixed Income / Bonds", 20, 0],
+  ["Gold",                  5, 0],
+  ["Crypto / Alts",         5, 0]
+];
+
+const GOALS = [
+  // { name, due, target, saved }
+  { name: "5 Kids' Investment Funds (Avik ₹1L · Mishika ₹75K · Kashvi ₹75K · Adriti ₹50K · Akshvi ₹50K)", due: "Before age 30 · by May 2026", target: 350000, saved: 0 },
+  { name: "Dubai Family Trip (17 people)",                    due: "2027",          target: 1000000,  saved: 0 },
+  { name: "House for Parents (fully paid)",                   due: "3-year",        target: 10000000, saved: 0 },
+  { name: "Toyota Camry-class Sedan",                          due: "3-year",        target: 5000000,  saved: 0 },
+  { name: "🏠 Kokapet House (partner/kids)",                  due: "done ✅",       target: 25000000, saved: 25000000 },
+  { name: "FI Corpus (₹2L/mo × 12 × 25, 4% rule)",            due: "10-year",       target: 60000000, saved: 0 },
+  { name: "Passive Income Streams (1 investment + 1 skill)",  due: "3-year",        target: 2,        saved: 0 },
+  { name: "Kid's College Fund",                                due: "By their age 18", target: 25000000, saved: 0 }
+];
+
+const SUBS = [
+  // { name, cycle, price }
+  { name: "Netflix",       cycle: "monthly", price: 0 },
+  { name: "Spotify",       cycle: "monthly", price: 0 },
+  { name: "Gym",           cycle: "monthly", price: 0 },
+  { name: "iCloud Storage",cycle: "monthly", price: 0 }
+];
+
+const DOCS = [
+  // [item, where, notes]
+  ["PAN Card",          "—", ""],
+  ["Aadhaar",           "—", ""],
+  ["Passport",          "—", "Expires —"],
+  ["Will / Nominee docs","—", "Review yearly"],
+  ["Insurance policies","—", "Health + term"],
+  ["Tax filings",       "—", "Last 7 years"]
+];
+
+// ============ RENDER ============
+
+// Assets
+const assetTotal = ASSETS.reduce((s,a) => s + a[2], 0);
+document.getElementById('assets').innerHTML = ASSETS.map(([n,t,v]) =>
+  `<tr><td><b>${n}</b></td><td>${t}</td><td class="num money">${fmt(v)}</td></tr>`
+).join('') + `<tr><td colspan="2"><b>Total Assets</b></td><td class="num money"><b>${fmt(assetTotal)}</b></td></tr>`;
+
+// Debts
+const debtTotal = DEBTS.reduce((s,d) => s + d[2], 0);
+document.getElementById('debts').innerHTML = DEBTS.map(([n,r,v]) =>
+  `<tr><td><b>${n}</b></td><td>${r}</td><td class="num debt">${fmt(v)}</td></tr>`
+).join('') + `<tr><td colspan="2"><b>Total Debt</b></td><td class="num debt"><b>${fmt(debtTotal)}</b></td></tr>`;
+
+// Net worth
+const nw = assetTotal - debtTotal;
+document.getElementById('nwValue').textContent = fmt(nw);
+document.getElementById('nwAssets').textContent = fmt(assetTotal);
+document.getElementById('nwDebts').textContent = fmt(debtTotal);
+const liquidTypes = ["Cash","Equity","Fixed Income","Alt","Commodity"];
+const liquid = ASSETS.filter(a => liquidTypes.includes(a[1])).reduce((s,a) => s + a[2], 0);
+document.getElementById('nwLiquid').textContent = fmt(liquid);
+
+// Budget
+const budgetRows = BUDGET.map(([cat, bud, act]) => {
+  const pct = bud > 0 ? Math.min(100, Math.round(act/bud*100)) : 0;
+  const over = act > bud && bud > 0;
+  return `
+    <div class="budget-row">
+      <div class="cat">${cat}</div>
+      <div class="bar"><div class="fill ${over?'over':''}" style="width:${pct}%"></div></div>
+      <div class="amt">${fmt(act)} <span class="of">/ ${fmt(bud)}</span></div>
+    </div>`;
+}).join('');
+document.getElementById('budget').innerHTML = budgetRows;
+
+const totalBudget = BUDGET.reduce((s,b) => s + b[1], 0);
+const totalSpend  = BUDGET.reduce((s,b) => s + b[2], 0);
+document.getElementById('income').textContent = fmt(INCOME_MONTHLY);
+document.getElementById('spend').textContent = fmt(totalSpend);
+const surplusEl = document.getElementById('surplus');
+const surplus = INCOME_MONTHLY - totalSpend;
+surplusEl.textContent = fmt(surplus);
+surplusEl.className = surplus >= 0 ? 'money' : 'debt';
+
+// Ratios
+const savingsRate = INCOME_MONTHLY > 0 ? Math.round(surplus / INCOME_MONTHLY * 100) : 0;
+document.getElementById('rSavings').textContent = savingsRate + '%';
+const monthlyExpense = totalSpend || totalBudget;
+const emergencyMonths = monthlyExpense > 0 ? (liquid / monthlyExpense).toFixed(1) : '—';
+document.getElementById('rEmergency').textContent = emergencyMonths + ' mo';
+const dti = INCOME_MONTHLY > 0 ? Math.round(DEBTS.reduce((s,d) => s + d[2]*0.02, 0) / INCOME_MONTHLY * 100) : 0;
+document.getElementById('rDTI').textContent = dti + '%';
+const investTotal = ASSETS.filter(a => ["Equity","Fixed Income","Alt","Commodity"].includes(a[1])).reduce((s,a) => s + a[2], 0);
+const investRate = INCOME_MONTHLY > 0 ? Math.round((investTotal/12) / (INCOME_MONTHLY * 12) * 100) : 0;
+document.getElementById('rInvest').textContent = investRate + '%';
+
+// Allocation
+document.getElementById('alloc').innerHTML = ALLOCATION.map(([c,t,a]) => {
+  const drift = a - t;
+  const driftCls = Math.abs(drift) > 5 ? 'debt' : 'money';
+  const sign = drift >= 0 ? '+' : '';
+  return `<tr><td><b>${c}</b></td><td class="num">${t}%</td><td class="num">${a}%</td><td class="num ${driftCls}">${sign}${drift}%</td></tr>`;
+}).join('');
+
+// Goals
+document.getElementById('goals').innerHTML = GOALS.map(g => {
+  const pct = g.target > 0 ? Math.min(100, Math.round(g.saved/g.target*100)) : 0;
+  return `
+    <div class="goal">
+      <div class="head"><div class="name">${g.name}</div><div class="due">${g.due}</div></div>
+      <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+      <div class="stat"><span>${fmt(g.saved)} saved</span><span>${pct}% of ${fmt(g.target)}</span></div>
+    </div>`;
+}).join('');
+
+// Subs
+const subMonthly = SUBS.reduce((s,x) => s + (x.cycle === 'yearly' ? x.price/12 : x.price), 0);
+document.getElementById('subTotal').textContent = fmt(subMonthly);
+document.getElementById('subs').innerHTML = SUBS.map(x => `
+  <div class="sub-card">
+    <div><div class="n">${x.name}</div><div class="m">${x.cycle}</div></div>
+    <div class="price">${fmt(x.price)}</div>
+  </div>`).join('');
+
+// Docs
+document.getElementById('docs').innerHTML = DOCS.map(([n,w,notes]) =>
+  `<tr><td><b>${n}</b></td><td>${w}</td><td>${notes}</td></tr>`
+).join('');
+</script>
+</body>
+</html>

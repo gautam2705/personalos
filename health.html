@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🩺 Health History</title>
+<style>
+  :root {
+    --bg: #f0fdfa;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --card: #ffffff;
+    --accent: #0d9488;
+    --accent2: #14b8a6;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --ok: #10b981;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, #ccfbf1 0, transparent 28%),
+      radial-gradient(circle at 90% 18%, #e0f2fe 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, #fef3c7 0, transparent 32%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--accent);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--accent);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 {
+    font-size: clamp(28px, 4.4vw, 46px);
+    margin: 12px 0 6px; letter-spacing: -0.02em;
+  }
+  h1 .beat { display: inline-block; animation: beat 1.4s infinite; }
+  @keyframes beat { 0%,100%{transform:scale(1)} 20%{transform:scale(1.15)} 40%{transform:scale(.95)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .btn {
+    background: #fff; border: 2px solid var(--ink); color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px;
+    box-shadow: 3px 3px 0 var(--ink);
+    text-decoration: none; display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--ink); }
+
+  main { max-width: 1200px; margin: 0 auto; display: grid; gap: 16px; }
+
+  .section {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 18px 20px;
+  }
+  .section h2 {
+    margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+
+  .vitals {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;
+  }
+  .vital {
+    background: #f0fdfa; border: 2px solid var(--accent);
+    border-radius: 12px; padding: 10px 12px;
+  }
+  .vital .label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 800; }
+  .vital .value { font-size: 22px; font-weight: 900; letter-spacing: -.02em; margin-top: 2px; }
+  .vital .meta { font-size: 11px; color: var(--muted); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+
+  .items { display: grid; gap: 8px; }
+  .item {
+    background: #f8fafc; border: 2px solid var(--ink); border-radius: 12px;
+    padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+  }
+  .item .name { font-weight: 800; font-size: 14px; }
+  .item .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .item .tag {
+    background: var(--ink); color: #fff; font-size: 10px; font-weight: 800;
+    padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+  }
+  .item.active .tag { background: var(--ok); }
+  .item.watch .tag { background: var(--warn); }
+  .item.alert .tag { background: var(--danger); }
+
+  table.tbl {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  table.tbl th {
+    text-align: left; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 6px; border-bottom: 2px solid var(--ink);
+  }
+  table.tbl td { padding: 10px 6px; border-bottom: 1px dashed #e2e8f0; vertical-align: top; }
+  table.tbl tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+  .pill.ok { background: #ecfdf5; color: #065f46; border: 1px solid #34d399; }
+  .pill.warn { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+  .pill.bad { background: #fef2f2; color: #991b1b; border: 1px solid #f87171; }
+
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 6px; top: 4px; bottom: 4px;
+    width: 3px; background: var(--accent); border-radius: 2px;
+  }
+  .t-item { position: relative; padding: 6px 0 14px; }
+  .t-item::before {
+    content: ""; position: absolute; left: -24px; top: 10px;
+    width: 15px; height: 15px; background: var(--accent); border-radius: 50%;
+    border: 3px solid #fff; box-shadow: 0 0 0 2px var(--ink);
+  }
+  .t-item .when { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: .05em; }
+  .t-item .what { font-weight: 800; font-size: 14px; margin-top: 2px; }
+  .t-item .note { font-size: 13px; color: #334155; margin-top: 2px; }
+
+  .emergency {
+    background: #fef2f2; border: 3px solid var(--danger);
+    border-radius: 18px; box-shadow: 5px 5px 0 var(--danger);
+    padding: 16px 20px;
+  }
+  .emergency h2 { color: var(--danger); }
+  .ec-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;
+  }
+  .ec {
+    background: #fff; border: 2px solid var(--danger); border-radius: 12px; padding: 10px 12px;
+  }
+  .ec .role { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--danger); font-weight: 800; }
+  .ec .who { font-weight: 800; font-size: 15px; margin-top: 2px; }
+  .ec .num { font-size: 13px; color: #334155; font-variant-numeric: tabular-nums; }
+
+  footer.note {
+    text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px;
+  }
+
+  /* Body weight log */
+  .weight-entry {
+    display: flex; gap: 8px; align-items: center;
+    background: #f0fdfa; border: 2px dashed var(--accent);
+    border-radius: 12px; padding: 12px; margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .weight-entry input {
+    border: 2px solid var(--ink); border-radius: 8px;
+    padding: 7px 10px; font-size: 14px; font-family: inherit;
+    background: #fff; color: var(--ink); outline: none;
+  }
+  .weight-entry input:focus { border-color: var(--accent); }
+  .weight-entry input[type="date"] { min-width: 140px; }
+  .weight-entry input[type="number"] { width: 100px; }
+  .weight-entry button {
+    background: var(--accent); color: #fff; border: 2px solid var(--ink);
+    border-radius: 8px; padding: 7px 18px; font-weight: 800;
+    cursor: pointer; font-size: 14px;
+    box-shadow: 2px 2px 0 var(--ink);
+    transition: transform .1s;
+  }
+  .weight-entry button:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+  .weight-entry .hint { font-size: 11px; color: var(--muted); margin-left: auto; font-style: italic; }
+  .weight-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px; margin-bottom: 14px;
+  }
+  .wstat {
+    background: #fff; border: 2px solid var(--ink); border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .wstat .l { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .wstat .v { font-size: 22px; font-weight: 900; margin-top: 2px; letter-spacing: -.02em; }
+  .wstat .m { font-size: 11px; color: var(--muted); }
+  .weight-chart-wrap {
+    background: #fafafa; border: 1.5px solid var(--ink);
+    border-radius: 10px; padding: 10px; margin-bottom: 14px;
+    overflow-x: auto;
+  }
+  #weightChart { width: 100%; height: 220px; display: block; }
+  .weight-log-details { margin-top: 8px; }
+  .weight-log-details > summary {
+    cursor: pointer; font-weight: 700; padding: 8px 0; list-style: none;
+    color: var(--accent); font-size: 13px;
+  }
+  .weight-log-details > summary::-webkit-details-marker { display: none; }
+  .weight-log-details > summary::after { content: " ▾"; transition: transform .2s; display: inline-block; }
+  .weight-log-details[open] > summary::after { transform: rotate(180deg); }
+  #weightLog table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+  #weightLog th { text-align: left; padding: 6px 8px; border-bottom: 2px solid var(--ink); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 800; }
+  #weightLog td { padding: 6px 8px; border-bottom: 1px dashed #e2e8f0; }
+  #weightLog .del { background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 800; font-size: 16px; }
+  #weightLog .del:hover { color: #991b1b; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🩺 Personal Health Record</span>
+  <h1>Health History <span class="beat">❤️</span></h1>
+  <p>Single source of truth for vitals, conditions, medications & medical history.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="supplements.html">💊 Supplements</a>
+  <a class="btn" href="meal-plan.html">🍽️ Meal Plan</a>
+  <a class="btn" href="workout-plan.html">💪 Workout Plan</a>
+  <button class="btn" onclick="window.print()">🖨️ Print</button>
+</div>
+
+<main>
+
+  <!-- Quick vitals -->
+  <section class="section">
+    <h2>📊 Snapshot</h2>
+    <div class="sub">Last updated: <b>May 2026</b> · DOB <b>27 May 1996</b> · Age <b>29</b></div>
+    <div class="vitals">
+      <div class="vital"><div class="label">Blood Type</div><div class="value">B+</div><div class="meta">—</div></div>
+      <div class="vital"><div class="label">Height</div><div class="value">163 cm</div><div class="meta">5 ft 4 in</div></div>
+      <div class="vital"><div class="label">Weight</div><div class="value">63 kg</div><div class="meta">Target: 58 kg</div></div>
+      <div class="vital"><div class="label">BMI</div><div class="value">23.7</div><div class="meta">Healthy 18.5–24.9 · target BMI 21.8</div></div>
+      <div class="vital"><div class="label">Resting HR</div><div class="value">55 bpm</div><div class="meta">Low (fitness + bisoprolol)</div></div>
+      <div class="vital"><div class="label">Blood Pressure</div><div class="value">Controlled</div><div class="meta">Target &lt; 130/80 (post-MI)</div></div>
+      <div class="vital"><div class="label">Fasting Glucose</div><div class="value">90 mg/dL</div><div class="meta">In range · Jan 2026</div></div>
+      <div class="vital"><div class="label">HbA1c</div><div class="value">5.9 %</div><div class="meta">Pre-diabetic · target &lt; 5.7 · Mar 2026</div></div>
+      <div class="vital"><div class="label">VO₂ Max</div><div class="value">43.1</div><div class="meta">May 2026 · above-average for age</div></div>
+    </div>
+  </section>
+
+  <!-- 3-year health targets -->
+  <section class="section">
+    <h2>🎯 3-Year Health Targets</h2>
+    <div class="sub">The markers I'm pushing toward — symbolic of sustained resilience, not competition.</div>
+    <table class="tbl">
+      <thead><tr><th>Marker</th><th>Target</th><th>Current</th><th>Gap</th></tr></thead>
+      <tbody>
+        <tr><td><b>Body Fat</b></td><td>&lt; 15% (DEXA-verified)</td><td>— (DEXA pending)</td><td style="color:#64748b">baseline needed</td></tr>
+        <tr><td><b>HDL</b></td><td>&gt; 45 mg/dL</td><td>33.6</td><td style="color:#dc2626">+11.4 to go</td></tr>
+        <tr><td><b>Triglycerides</b></td><td>&lt; 100 mg/dL</td><td>278</td><td style="color:#dc2626">−178 to go</td></tr>
+        <tr><td><b>Homocysteine</b></td><td>&lt; 10 µmol/L</td><td>22</td><td style="color:#dc2626">−12 to go</td></tr>
+        <tr><td><b>hs-CRP</b></td><td>&lt; 1.0 mg/L</td><td>1.7</td><td style="color:#dc2626">−0.7 to go</td></tr>
+        <tr><td><b>Resting HR</b></td><td>&lt; 55 bpm</td><td>55</td><td style="color:#059669">at target ✓</td></tr>
+        <tr><td><b>VO₂ Max</b></td><td>&gt; 45</td><td>43.1</td><td style="color:#dc2626">+1.9 to go</td></tr>
+        <tr><td><b>Weight</b></td><td>58 kg</td><td>63 kg</td><td style="color:#dc2626">−5 kg to go</td></tr>
+        <tr><td><b>Activity Frequency</b></td><td>5–6×/week (lifelong)</td><td>Current rhythm</td><td style="color:#059669">at target ✓</td></tr>
+      </tbody>
+    </table>
+    <div class="sub" style="margin-top:12px; font-size:12px;">
+      💪 <b>Endurance milestone</b> (3-year · cardiologist-cleared): one of — Half Marathon (21K) · 2 km open-water swim · 100 km cycle ride. Pick whichever gets medical green light.
+    </div>
+  </section>
+
+  <!-- Body weight log -->
+  <section class="section">
+    <h2>⚖️ Body Weight Log</h2>
+    <div class="sub">Weigh daily — first thing in the morning, after the bathroom, before food/water. Trust the <b>7-day rolling average</b>, not single-day readings. Data saves in your browser (localStorage).</div>
+
+    <div class="weight-entry">
+      <input type="date" id="weightDate">
+      <input type="number" id="weightValue" placeholder="kg" step="0.1" min="30" max="200">
+      <button id="weightAdd">+ Add</button>
+      <span class="hint">Enter to add · re-entering same date overwrites</span>
+    </div>
+
+    <div class="weight-stats" id="weightStats"></div>
+
+    <div class="weight-chart-wrap">
+      <svg id="weightChart" viewBox="0 0 600 220" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <details class="weight-log-details">
+      <summary>📜 View all entries</summary>
+      <div id="weightLog"></div>
+    </details>
+  </section>
+
+  <div class="two-col">
+    <section class="section">
+      <h2>🩹 Active Conditions</h2>
+      <div class="sub">What's on your chart today.</div>
+      <div class="items" id="conditions"></div>
+    </section>
+    <section class="section">
+      <h2>⚠️ Allergies & Intolerances</h2>
+      <div class="sub">Share with every doctor. Keep up to date.</div>
+      <div class="items" id="allergies"></div>
+    </section>
+  </div>
+
+  <!-- Medications -->
+  <section class="section">
+    <h2>💊 Current Medications</h2>
+    <div class="sub">Active prescriptions (non-supplement). See <a href="supplements.html">supplements</a> for nutrients.</div>
+    <table class="tbl">
+      <thead>
+        <tr><th>Medication</th><th>Dose</th><th>Frequency</th><th>Purpose</th><th>Since</th></tr>
+      </thead>
+      <tbody id="meds"></tbody>
+    </table>
+  </section>
+
+  <!-- Lab history -->
+  <section class="section">
+    <h2>🧪 Recent Lab Results</h2>
+    <div class="sub">Most recent blood panel. Flag anything out of range.</div>
+    <table class="tbl">
+      <thead>
+        <tr><th>Marker</th><th>Value</th><th>Reference</th><th>Flag</th><th>Date</th></tr>
+      </thead>
+      <tbody id="labs"></tbody>
+    </table>
+  </section>
+
+  <!-- CBC -->
+  <section class="section">
+    <h2>🩸 Complete Blood Count (CBC)</h2>
+    <div class="sub">Full haematology panel · all values in range · 1 Jan 2026.</div>
+    <table class="tbl">
+      <thead>
+        <tr><th>Marker</th><th>Value</th><th>Reference</th><th>Flag</th></tr>
+      </thead>
+      <tbody id="cbc"></tbody>
+    </table>
+  </section>
+
+  <!-- Lipid panel trend -->
+  <section class="section">
+    <h2>📈 Biomarker Trends — Jan → Mar 2026</h2>
+    <div class="sub">Two-point trend across cardiovascular, metabolic, inflammation, and nutrient markers. Post-MI LDL target is <b>&lt; 70 mg/dL</b>; post-MI ApoB target is <b>&lt; 65 mg/dL</b>.</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Marker</th>
+          <th>Target</th>
+          <th style="text-align:right">1 Jan 2026</th>
+          <th style="text-align:right">27 Mar 2026</th>
+          <th style="text-align:center">Trend</th>
+        </tr>
+      </thead>
+      <tbody id="lipidTrend"></tbody>
+    </table>
+  </section>
+
+  <!-- Pending tests -->
+  <section class="section">
+    <h2>📋 Pending Tests & Follow-ups</h2>
+    <div class="sub">Tests worth scheduling given the current picture. Priority by cardiac relevance.</div>
+    <table class="tbl">
+      <thead>
+        <tr><th>Test</th><th>Why it matters</th><th style="text-align:center">Priority</th></tr>
+      </thead>
+      <tbody id="pendingTests"></tbody>
+    </table>
+  </section>
+
+  <!-- Eye prescription -->
+  <section class="section">
+    <h2>👓 Eye Prescription</h2>
+    <div class="sub">Moderate myopia both eyes · mild astigmatism (right) · total PD <b>65 mm</b>.</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Eye</th>
+          <th style="text-align:center">SPH</th>
+          <th style="text-align:center">CYL</th>
+          <th style="text-align:center">AXIS</th>
+          <th style="text-align:center">PD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Left (OS)</b></td>
+          <td style="text-align:center">−5.50</td>
+          <td style="text-align:center">0.00</td>
+          <td style="text-align:center">—</td>
+          <td style="text-align:center">32.5</td>
+        </tr>
+        <tr>
+          <td><b>Right (OD)</b></td>
+          <td style="text-align:center">−5.00</td>
+          <td style="text-align:center">−0.50</td>
+          <td style="text-align:center">90</td>
+          <td style="text-align:center">32.5</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="sub" style="margin-top:12px; font-size:12px;">
+      💡 Moderate myopia (−3 to −6 D) raises long-term risk of retinal detachment, glaucoma, and early cataract. Annual dilated eye exam recommended — especially given family cardiac history means you'll also want regular retinal checks for any hypertensive/diabetic changes.
+    </div>
+  </section>
+
+  <!-- Vaccinations -->
+  <section class="section">
+    <h2>💉 Vaccinations</h2>
+    <div class="sub">Keep boosters on schedule.</div>
+    <table class="tbl">
+      <thead><tr><th>Vaccine</th><th>Last Dose</th><th>Next Due</th><th>Notes</th></tr></thead>
+      <tbody id="vax"></tbody>
+    </table>
+  </section>
+
+  <div class="two-col">
+    <section class="section">
+      <h2>📜 Medical Timeline</h2>
+      <div class="sub">Significant events: procedures, diagnoses, injuries.</div>
+      <div class="timeline" id="timeline"></div>
+    </section>
+    <section class="section">
+      <h2>🧬 Family History</h2>
+      <div class="sub">Genetic risks to screen for.</div>
+      <div class="items" id="family"></div>
+    </section>
+  </div>
+
+  <!-- Doctors & insurance -->
+  <section class="section">
+    <h2>🏥 Care Team & Insurance</h2>
+    <div class="sub">Who to call, what's covered.</div>
+    <table class="tbl">
+      <thead><tr><th>Role</th><th>Name / Provider</th><th>Contact</th><th>Notes</th></tr></thead>
+      <tbody id="care"></tbody>
+    </table>
+  </section>
+
+  <!-- Emergency -->
+  <section class="emergency">
+    <h2>🚨 In Case of Emergency</h2>
+    <div class="sub" style="color:#7f1d1d">First responders should see this first.</div>
+    <div class="ec-grid" id="emergency"></div>
+  </section>
+
+</main>
+
+<footer class="note">Private to you. Review every 6 months. Sync with your doctor yearly.</footer>
+
+<script>
+// ============ EDIT YOUR DATA BELOW ============
+
+const CONDITIONS = [
+  { name: "Post-MI / Coronary Artery Disease",
+    meta: "MI on 7 June 2024 (age 28) · Primary PTCA to LAD with stent · POBA to Diagonal · LAD stent patent on 10 June 2024 follow-up CAG · PLV antegrade collaterals · on secondary prevention",
+    status: "watch" }
+];
+
+const ALLERGIES = [
+  { name: "None known", meta: "No known food, drug, or environmental allergies", status: "active" }
+];
+
+const MEDS = [
+  // [name, dose, frequency, purpose, since]
+  ["Bisoprolol",          "2.5 mg", "Once daily",             "Beta-blocker · lowers HR, BP, cardiac workload",             "June 2024"],
+  ["Ecosprin (Aspirin)",  "75 mg",  "Once daily — afternoon", "Antiplatelet · prevents clotting, secondary prevention",     "June 2024"],
+  ["Rosuvastatin",        "40 mg",  "Once daily — evening",   "Statin · LDL reduction, plaque stabilization",               "June 2024"]
+];
+
+const LABS = [
+  // [marker, value, reference, flag ('ok'|'warn'|'bad'), date]
+  // --- Cardiovascular / Lipids ---
+  ["ApoB",               "156.58 mg/dL", "< 90 · < 65 post-MI",  "bad",  "27 Mar 2026"],
+  ["ApoA1",              "85.72 mg/dL",  "107–177",              "bad",  "27 Mar 2026"],
+  ["LDL",                "158 mg/dL",    "< 100 · < 70 post-MI", "bad",  "27 Mar 2026"],
+  ["HDL",                "33.6 mg/dL",   "40–60",                "bad",  "27 Mar 2026"],
+  ["Total Cholesterol",  "219 mg/dL",    "< 200",                "warn", "27 Mar 2026"],
+  ["Triglycerides",      "278 mg/dL",    "< 150",                "bad",  "27 Mar 2026"],
+  ["Non-HDL",            "158 mg/dL",    "< 130",                "warn", "27 Mar 2026"],
+  ["VLDL",               "27 mg/dL",     "< 30",                 "ok",   "27 Mar 2026"],
+  ["Total Chol / HDL",   "6.52",         "< 4.97",               "bad",  "27 Mar 2026"],
+  ["Atherogenic Index",  "0.24",         "< 0.11",               "bad",  "1 Jan 2026"],
+  // --- Inflammation / CV risk ---
+  ["hs-CRP",             "1.7 mg/L",     "< 1.0 (low risk)",     "warn", "27 Mar 2026"],
+  ["Homocysteine",       "22 µmol/L",    "< 15",                 "bad",  "27 Mar 2026"],
+  // --- Metabolic ---
+  ["HbA1c",              "5.9 %",        "< 5.7 (target 5.4)",   "bad",  "27 Mar 2026"],
+  ["Fasting Glucose",    "90 mg/dL",     "70–100",               "ok",   "1 Jan 2026"],
+  ["Uric Acid",          "5.93 mg/dL",   "3.5–7.2",              "ok",   "1 Jan 2026"],
+  // --- Thyroid ---
+  ["TSH",                "5.348 µIU/mL", "0.34–5.60 (optimal <4)","warn","1 Jan 2026"],
+  ["Free T3",            "3.37 pg/mL",   "2.5–3.9",              "ok",   "1 Jan 2026"],
+  ["Free T4",            "0.74 ng/dL",   "0.61–1.12",            "ok",   "1 Jan 2026"],
+  ["Anti-TPO Antibody",  "15.7 IU/mL",   "6–34",                 "ok",   "1 Jan 2026"],
+  ["Anti-Thyroglobulin", "18.7 IU/mL",   "< 115",                "ok",   "1 Jan 2026"],
+  // --- Vitamins / Minerals ---
+  ["Vitamin D (25-OH)",  "36.8 ng/mL",   "30–100 (target 50+)",  "warn", "27 Mar 2026"],
+  ["Vitamin B12",        "581 pg/mL",    "190–900",              "ok",   "1 Jan 2026"],
+  ["Folate (Serum)",     "12.4 ng/mL",   "3.89–26.8",            "ok",   "1 Jan 2026"],
+  ["Ferritin",           "44 ng/mL",     "23.9–336.2",           "ok",   "1 Jan 2026"],
+  ["Calcium (serum)",    "9.8 mg/dL",    "8.8–10.6",             "ok",   "1 Jan 2026"],
+  // --- Hormonal ---
+  ["Total Testosterone", "391 ng/dL",    "249–836 (low-normal)", "ok",   "1 Jan 2026"],
+  // --- Autoimmune ---
+  ["ANA",                "0.1 (Negative)", "< 0.7",              "ok",   "1 Jan 2026"]
+];
+
+// Biomarker trend (Jan 2026 → Mar 2026). For HDL / ApoA1 / Vitamin D higher is better.
+// Row: [marker, target, janValue, marValue, higherIsBetter, group]
+const LIPID_TREND = [
+  // Most clinically significant first
+  ["HbA1c",              "< 5.7 %",            5.7,   5.9,    false, "Metabolic"],
+  ["Homocysteine",       "< 15 µmol/L",        12.9,  22,     false, "CV Risk"],
+  ["hs-CRP",             "< 1.0 mg/L",         0.8,   1.7,    false, "CV Risk"],
+  ["ApoB",               "< 90 · < 65 post-MI", 143,  156.58, false, "CV Risk"],
+  ["ApoA1",              "107–177 mg/dL",      77.9,  85.72,  true,  "CV Risk"],
+  ["LDL",                "< 70 post-MI",       158.6, 158,    false, "Lipids"],
+  ["Triglycerides",      "< 150 mg/dL",        123,   278,    false, "Lipids"],
+  ["Non-HDL",            "< 130 mg/dL",        183,   158,    false, "Lipids"],
+  ["Total Cholesterol",  "< 200 mg/dL",        214,   219,    false, "Lipids"],
+  ["HDL",                "40–60 mg/dL",        31,    33.6,   true,  "Lipids"],
+  ["VLDL",               "< 30 mg/dL",         24.6,  27,     false, "Lipids"],
+  ["Total Chol / HDL",   "< 4.97",             6.95,  6.52,   false, "Lipids"],
+  ["Atherogenic Index",  "< 0.11",             0.24,  null,   false, "Lipids"],
+  ["Vitamin D (25-OH)",  "30–100 ng/mL",       34.57, 36.8,   true,  "Nutrient"]
+];
+
+const PENDING_TESTS = [
+  // [test, why, priority]
+  ["Lp(a) — Lipoprotein(a)",       "Genetic CV risk marker. Very strong cardiac family history makes this especially relevant — one-time lifetime test.", "high"],
+  ["2D Echo",                      "Baseline cardiac function post-MI. Standard periodic test for LAD stent patients.", "high"],
+  ["ECG (resting)",                "Periodic follow-up for post-MI. Catch arrhythmia / ischemic changes early.", "high"],
+  ["Omega-3 Index",                "Reflects EPA+DHA in RBC membranes. Target > 8%. Useful given TG of 278 and cardiac profile.", "medium"],
+  ["RBC Magnesium",                "Tissue-level Mg status — more reliable than serum Mg. Supports BP, rhythm, insulin sensitivity.", "medium"],
+  ["Full Abdomen Ultrasound",      "Baseline check for fatty liver (common with rising TG + HbA1c), kidney, gallbladder.", "medium"],
+  ["Free Testosterone",            "Total T is low-normal (391). Free T clarifies whether bioavailable T is adequate.", "low"]
+];
+
+// CBC — all values in range as of 1 Jan 2026
+const CBC = [
+  // [marker, value, reference, flag]
+  ["Hemoglobin",                 "14 g/dL",            "13 – 17 g/dL",        "ok"],
+  ["Packed Cell Volume (PCV/HCT)","40.6 %",            "40 – 50 %",           "ok"],
+  ["RBC Count",                  "4.68 million/cu.mm", "4.5 – 5.5",           "ok"],
+  ["MCV",                        "86.7 fL",            "83 – 101 fL",         "ok"],
+  ["MCH",                        "29.9 pg",            "27 – 32 pg",          "ok"],
+  ["MCHC",                       "34.5 g/dL",          "31.5 – 34.5 g/dL",    "ok"],
+  ["RDW",                        "12.6 %",             "11.6 – 14.0 %",       "ok"],
+  ["Total Leukocyte Count (TLC)","6,820 cells/cu.mm",  "4,000 – 10,000",      "ok"],
+  ["Neutrophils",                "61.6 %",             "40 – 80 %",           "ok"],
+  ["Lymphocytes",                "28.6 %",             "20 – 40 %",           "ok"],
+  ["Eosinophils",                "4.5 %",              "1 – 6 %",             "ok"],
+  ["Monocytes",                  "4.3 %",              "2 – 10 %",            "ok"],
+  ["Basophils",                  "1 %",                "0 – 2 %",             "ok"],
+  ["Absolute Neutrophil Count",  "4,201 cells/cu.mm",  "2,000 – 7,000",       "ok"],
+  ["Absolute Lymphocyte Count",  "1,951 cells/cu.mm",  "1,000 – 3,000",       "ok"],
+  ["Absolute Eosinophil Count",  "307 cells/cu.mm",    "20 – 500",            "ok"],
+  ["Absolute Monocyte Count",    "293 cells/cu.mm",    "200 – 1,000",         "ok"],
+  ["Absolute Basophil Count",    "68 cells/cu.mm",     "0 – 100",             "ok"],
+  ["Neutrophil–Lymphocyte Ratio","2.15",               "0.78 – 3.53",         "ok"],
+  ["Platelet Count",             "273,000 cells/cu.mm","150,000 – 410,000",   "ok"],
+  ["MPV",                        "10.9 fL",            "8.1 – 13.9 fL",       "ok"]
+];
+
+const VAX = [
+  // [vaccine, last dose, next due, notes]
+  ["Tetanus (Tdap)", "—", "Every 10 years", ""],
+  ["Influenza",      "—", "Annually",       "Seasonal"],
+  ["COVID-19",       "—", "Per guidance",   ""],
+  ["Hepatitis B",    "—", "Complete",       ""]
+];
+
+const TIMELINE = [
+  { when: "27 May 1996",   what: "Born",                             note: "B+ blood type" },
+  { when: "7 June 2024",   what: "Myocardial Infarction (MI)",       note: "Heart attack at age 28. Primary PTCA performed on LAD with stent placement; POBA to Diagonal branch." },
+  { when: "10 June 2024",  what: "Follow-up Coronary Angiogram",     note: "LAD stent patent. PLV antegrade collaterals noted." },
+  { when: "2024 → 2025",   what: "Dual Antiplatelet Therapy (DAPT)", note: "Brilinta (ticagrelor) 90 mg twice daily + Ecosprin. Brilinta discontinued after standard 12-month DAPT course." },
+  { when: "May 2026",      what: "VO₂ max: 43.1",                    note: "Fitness marker — above-average for age; strong cardiac recovery." }
+];
+
+const FAMILY = [
+  { name: "Father",                meta: "MI · underwent coronary bypass surgery (CABG)", status: "alert" },
+  { name: "Mother",                meta: "MI · stent placed (PCI)",                        status: "alert" },
+  { name: "Grandmother",           meta: "Passed away from a cardiac event",                status: "alert" },
+  { name: "Maternal Grandparent",  meta: "MI · stent placed (PCI)",                         status: "alert" }
+];
+
+const CARE = [
+  // [role, name, contact, notes]
+  ["Primary Care", "—", "—", ""],
+  ["Dentist",      "—", "—", "Cleaning every 6 mo"],
+  ["Ophthalmologist","—","—","Annual eye exam"],
+  ["Dermatologist","—","—","Annual skin check"],
+  ["Insurance",    "—", "Policy #—", ""]
+];
+
+const EMERGENCY = [
+  // { role, who, num }
+  { role: "Next of kin", who: "—", num: "—" },
+  { role: "Doctor",      who: "—", num: "—" },
+  { role: "Local ER",    who: "—", num: "—" }
+];
+
+// ============ RENDER ============
+
+function renderItems(id, arr) {
+  document.getElementById(id).innerHTML = arr.map(x => `
+    <div class="item ${x.status || ''}">
+      <div>
+        <div class="name">${x.name}</div>
+        <div class="meta">${x.meta || ''}</div>
+      </div>
+      <span class="tag">${(x.status || 'note').toUpperCase()}</span>
+    </div>`).join('');
+}
+
+function renderTable(id, rows, cellMap) {
+  document.getElementById(id).innerHTML = rows.map(r =>
+    `<tr>${r.map((c,i) => `<td>${cellMap ? cellMap(c,i,r) : c}</td>`).join('')}</tr>`
+  ).join('');
+}
+
+renderItems('conditions', CONDITIONS);
+renderItems('allergies',  ALLERGIES);
+renderItems('family',     FAMILY);
+
+renderTable('meds', MEDS);
+renderTable('labs', LABS, (c, i) => i === 3 ? `<span class="pill ${c}">${c.toUpperCase()}</span>` : c);
+renderTable('cbc',  CBC,  (c, i) => i === 3 ? `<span class="pill ${c}">${c.toUpperCase()}</span>` : c);
+renderTable('vax',  VAX);
+renderTable('care', CARE);
+
+// Lipid trend — per-cell flag + trend arrow
+function flagFor(marker, value, higherIsBetter) {
+  if (value == null) return 'ok';
+  const m = marker.toLowerCase();
+  // Lipids
+  if (m.includes('total cholesterol')) return value < 200 ? 'ok' : value < 240 ? 'warn' : 'bad';
+  if (m.includes('triglycer'))         return value < 150 ? 'ok' : value < 200 ? 'warn' : 'bad';
+  if (m === 'hdl')                     return value >= 40 ? 'ok' : value >= 35 ? 'warn' : 'bad';
+  if (m.includes('non-hdl'))           return value < 130 ? 'ok' : value < 160 ? 'warn' : 'bad';
+  if (m === 'ldl')                     return value < 70  ? 'ok' : value < 100 ? 'warn' : 'bad';
+  if (m === 'vldl')                    return value < 30  ? 'ok' : value < 40  ? 'warn' : 'bad';
+  if (m.includes('atherogenic'))       return value < 0.11 ? 'ok' : value < 0.21 ? 'warn' : 'bad';
+  if (m.includes('chol / hdl'))        return value < 4.97 ? 'ok' : value < 5.5  ? 'warn' : 'bad';
+  // Apolipoproteins
+  if (m === 'apob')                    return value < 90 ? 'ok' : value < 130 ? 'warn' : 'bad';
+  if (m === 'apoa1')                   return value >= 107 ? 'ok' : value >= 90 ? 'warn' : 'bad';
+  // Metabolic
+  if (m.includes('hba1c'))             return value < 5.7 ? 'ok' : value < 5.9 ? 'warn' : 'bad';
+  // Inflammation / CV
+  if (m.includes('homocyst'))          return value < 10 ? 'ok' : value < 15 ? 'warn' : 'bad';
+  if (m.includes('hs-crp'))            return value < 1.0 ? 'ok' : value < 3.0 ? 'warn' : 'bad';
+  // Nutrient
+  if (m.includes('vitamin d'))         return value >= 50 ? 'ok' : value >= 30 ? 'warn' : 'bad';
+  return 'ok';
+}
+document.getElementById('lipidTrend').innerHTML = LIPID_TREND.map(([marker, target, v1, v2, higherIsBetter, group]) => {
+  const f1 = flagFor(marker, v1, higherIsBetter);
+  const f2 = v2 == null ? null : flagFor(marker, v2, higherIsBetter);
+  let trend = '<span style="color:#94a3b8">—</span>';
+  if (v2 != null) {
+    const delta = v2 - v1;
+    const pct = Math.abs(delta / v1 * 100);
+    if (Math.abs(delta) < 0.01) {
+      trend = `<span style="color:#94a3b8">→ 0%</span>`;
+    } else {
+      const up = delta > 0;
+      const isGood = higherIsBetter ? up : !up;
+      const color = isGood ? '#059669' : '#dc2626';
+      const arrow = up ? '▲' : '▼';
+      trend = `<span style="color:${color};font-weight:800">${arrow} ${pct.toFixed(0)}%</span>`;
+    }
+  }
+  const groupColor = {
+    'Metabolic': '#fef3c7',
+    'CV Risk':   '#fee2e2',
+    'Lipids':    '#dbeafe',
+    'Nutrient':  '#dcfce7'
+  }[group] || '#f1f5f9';
+  const groupText = {
+    'Metabolic': '#92400e',
+    'CV Risk':   '#991b1b',
+    'Lipids':    '#1e40af',
+    'Nutrient':  '#166534'
+  }[group] || '#475569';
+  const groupTag = group ? `<span style="display:inline-block;margin-left:8px;background:${groupColor};color:${groupText};padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase">${group}</span>` : '';
+  return `
+    <tr>
+      <td><b>${marker}</b>${groupTag}</td>
+      <td style="font-size:12px;color:#64748b">${target}</td>
+      <td style="text-align:right">${v1} <span class="pill ${f1}">${f1.toUpperCase()}</span></td>
+      <td style="text-align:right">${v2 == null ? '—' : `${v2} <span class="pill ${f2}">${f2.toUpperCase()}</span>`}</td>
+      <td style="text-align:center">${trend}</td>
+    </tr>`;
+}).join('');
+
+// Pending tests
+document.getElementById('pendingTests').innerHTML = PENDING_TESTS.map(([test, why, priority]) => {
+  const pColor = priority === 'high' ? 'bad' : priority === 'medium' ? 'warn' : 'ok';
+  return `
+    <tr>
+      <td><b>${test}</b></td>
+      <td style="font-size:13px;color:#475569">${why}</td>
+      <td style="text-align:center"><span class="pill ${pColor}">${priority.toUpperCase()}</span></td>
+    </tr>`;
+}).join('');
+
+document.getElementById('timeline').innerHTML = TIMELINE.map(t => `
+  <div class="t-item">
+    <div class="when">${t.when}</div>
+    <div class="what">${t.what}</div>
+    <div class="note">${t.note || ''}</div>
+  </div>`).join('');
+
+document.getElementById('emergency').innerHTML = EMERGENCY.map(e => `
+  <div class="ec">
+    <div class="role">${e.role}</div>
+    <div class="who">${e.who}</div>
+    <div class="num">${e.num}</div>
+  </div>`).join('');
+
+// ============ BODY WEIGHT LOG ============
+const WEIGHT_KEY = 'lifeOS_bodyWeight_v1';
+const WEIGHT_GOAL = 58;
+const WEIGHT_START = 63;
+
+const loadWeights = () => {
+  try { return JSON.parse(localStorage.getItem(WEIGHT_KEY)) || []; }
+  catch { return []; }
+};
+const saveWeights = (data) => localStorage.setItem(WEIGHT_KEY, JSON.stringify(data));
+
+function addWeight(date, weight) {
+  const data = loadWeights();
+  const idx = data.findIndex(d => d.date === date);
+  if (idx >= 0) data[idx] = { date, weight };
+  else data.push({ date, weight });
+  data.sort((a, b) => a.date.localeCompare(b.date));
+  saveWeights(data);
+  renderWeight();
+}
+
+function deleteWeight(date) {
+  const data = loadWeights().filter(d => d.date !== date);
+  saveWeights(data);
+  renderWeight();
+}
+
+function rollingAvg(arr) {
+  if (!arr.length) return null;
+  return arr.reduce((s, d) => s + d.weight, 0) / arr.length;
+}
+
+function renderWeight() {
+  const data = loadWeights(); // already sorted asc
+  const latest = data[data.length - 1] || null;
+  const avg7  = rollingAvg(data.slice(-7));
+  const avg7Prev = data.length >= 8 ? rollingAvg(data.slice(-14, -7)) : null;
+  const weeklyChange = avg7 != null && avg7Prev != null ? avg7 - avg7Prev : null;
+  const gap = avg7 != null ? avg7 - WEIGHT_GOAL : null;
+  const fromStart = avg7 != null ? avg7 - WEIGHT_START : null;
+
+  const statsEl = document.getElementById('weightStats');
+  if (!data.length) {
+    statsEl.innerHTML = `
+      <div class="wstat" style="grid-column:1/-1;text-align:center;color:var(--muted);padding:20px">
+        No entries yet — add your first weight above. Goal: ${WEIGHT_START} kg → <b>${WEIGHT_GOAL} kg</b>.
+      </div>`;
+  } else {
+    const trendColor = weeklyChange == null ? '#94a3b8' : weeklyChange < 0 ? '#059669' : weeklyChange > 0 ? '#dc2626' : '#78716c';
+    const trendSign = weeklyChange != null && weeklyChange > 0 ? '+' : '';
+    const gapColor = gap != null && gap <= 0 ? '#059669' : '#dc2626';
+    const progressPct = fromStart != null ? Math.max(0, Math.min(100, ((WEIGHT_START - avg7) / (WEIGHT_START - WEIGHT_GOAL)) * 100)) : 0;
+    statsEl.innerHTML = `
+      <div class="wstat"><div class="l">Latest</div><div class="v">${latest.weight.toFixed(1)} kg</div><div class="m">${latest.date}</div></div>
+      <div class="wstat"><div class="l">7-day Avg</div><div class="v" style="color:var(--accent)">${avg7.toFixed(2)} kg</div><div class="m">trust this number</div></div>
+      <div class="wstat"><div class="l">Weekly Change</div><div class="v" style="color:${trendColor}">${weeklyChange != null ? trendSign + weeklyChange.toFixed(2) + ' kg' : '—'}</div><div class="m">vs prior 7-day avg</div></div>
+      <div class="wstat"><div class="l">Gap to ${WEIGHT_GOAL} kg</div><div class="v" style="color:${gapColor}">${gap > 0 ? '+' + gap.toFixed(1) : gap.toFixed(1)} kg</div><div class="m">target weight</div></div>
+      <div class="wstat"><div class="l">Progress</div><div class="v">${progressPct.toFixed(0)}%</div><div class="m">of ${WEIGHT_START}→${WEIGHT_GOAL} journey</div></div>
+      <div class="wstat"><div class="l">Entries</div><div class="v">${data.length}</div><div class="m">total logs</div></div>
+    `;
+  }
+
+  drawWeightChart(data);
+  renderWeightLog(data);
+}
+
+function drawWeightChart(sorted) {
+  const svg = document.getElementById('weightChart');
+  if (!sorted.length) {
+    svg.innerHTML = '<text x="300" y="110" text-anchor="middle" fill="#94a3b8" font-size="14">Chart appears after first entry</text>';
+    return;
+  }
+  const last60 = sorted.slice(-60);
+  const W = 600, H = 220, PAD_L = 42, PAD_R = 14, PAD_T = 30, PAD_B = 32;
+  const cW = W - PAD_L - PAD_R;
+  const cH = H - PAD_T - PAD_B;
+  const weights = last60.map(d => d.weight);
+  const lo = Math.min(WEIGHT_GOAL - 0.5, ...weights) - 0.5;
+  const hi = Math.max(WEIGHT_START + 0.5, ...weights) + 0.5;
+  const range = hi - lo || 1;
+  const x = i => PAD_L + (last60.length <= 1 ? cW / 2 : (i / (last60.length - 1)) * cW);
+  const y = w => PAD_T + ((hi - w) / range) * cH;
+  const linePath = last60.map((d, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(d.weight).toFixed(1)}`).join(' ');
+  const rolling = last60.map((_, i) => {
+    const slice = last60.slice(Math.max(0, i - 6), i + 1);
+    return rollingAvg(slice);
+  });
+  const rollPath = rolling.map((w, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(w).toFixed(1)}`).join(' ');
+  const goalY = y(WEIGHT_GOAL);
+  const startY = y(WEIGHT_START);
+  const pts = last60.map((d, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(d.weight).toFixed(1)}" r="2.5" fill="#0d9488" opacity="0.5"></circle>`).join('');
+  const yTicks = [];
+  for (let i = 0; i <= 4; i++) {
+    const v = lo + (range * i / 4);
+    const yy = PAD_T + cH - (cH * i / 4);
+    yTicks.push(`<text x="${PAD_L - 6}" y="${yy.toFixed(1)}" text-anchor="end" fill="#78716c" font-size="10" dy="3">${v.toFixed(1)}</text>`);
+    yTicks.push(`<line x1="${PAD_L}" y1="${yy.toFixed(1)}" x2="${W - PAD_R}" y2="${yy.toFixed(1)}" stroke="#f5f5f4" stroke-width="1"></line>`);
+  }
+  svg.innerHTML = `
+    ${yTicks.join('')}
+    <line x1="${PAD_L}" y1="${startY.toFixed(1)}" x2="${W - PAD_R}" y2="${startY.toFixed(1)}" stroke="#dc2626" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"></line>
+    <text x="${W - PAD_R}" y="${(startY - 3).toFixed(1)}" text-anchor="end" fill="#dc2626" font-size="9" font-weight="700">Start ${WEIGHT_START}</text>
+    <line x1="${PAD_L}" y1="${goalY.toFixed(1)}" x2="${W - PAD_R}" y2="${goalY.toFixed(1)}" stroke="#10b981" stroke-width="2" stroke-dasharray="4 4"></line>
+    <text x="${W - PAD_R}" y="${(goalY - 4).toFixed(1)}" text-anchor="end" fill="#10b981" font-size="10" font-weight="800">Goal ${WEIGHT_GOAL}</text>
+    <line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${H - PAD_B}" stroke="#d6d3d1" stroke-width="1"></line>
+    <line x1="${PAD_L}" y1="${H - PAD_B}" x2="${W - PAD_R}" y2="${H - PAD_B}" stroke="#d6d3d1" stroke-width="1"></line>
+    <text x="${PAD_L}" y="${H - 10}" fill="#78716c" font-size="10">${last60[0].date}</text>
+    <text x="${W - PAD_R}" y="${H - 10}" text-anchor="end" fill="#78716c" font-size="10">${last60[last60.length - 1].date}</text>
+    <path d="${linePath}" stroke="#0d9488" stroke-width="1.5" fill="none" opacity="0.4"></path>
+    <path d="${rollPath}" stroke="#b45309" stroke-width="3" fill="none"></path>
+    ${pts}
+    <g transform="translate(${PAD_L + 6}, 14)">
+      <line x1="0" y1="0" x2="18" y2="0" stroke="#b45309" stroke-width="3"></line>
+      <text x="24" y="3" fill="#b45309" font-size="10" font-weight="800">7-day avg</text>
+      <line x1="98" y1="0" x2="116" y2="0" stroke="#0d9488" stroke-width="1.5" opacity="0.5"></line>
+      <text x="122" y="3" fill="#0d9488" font-size="10">daily</text>
+    </g>
+  `;
+}
+
+function renderWeightLog(data) {
+  const wrap = document.getElementById('weightLog');
+  if (!data.length) { wrap.innerHTML = '<p style="color:var(--muted);font-size:13px;margin:8px 0;">No entries yet.</p>'; return; }
+  const rows = [...data].reverse().map(d => {
+    const idx = data.findIndex(x => x.date === d.date);
+    const window7 = data.slice(Math.max(0, idx - 6), idx + 1);
+    const avg = rollingAvg(window7);
+    return `
+      <tr>
+        <td>${d.date}</td>
+        <td><b>${d.weight.toFixed(1)} kg</b></td>
+        <td style="color:var(--muted)">${avg.toFixed(2)} kg</td>
+        <td><button class="del" data-date="${d.date}" title="Delete entry">×</button></td>
+      </tr>`;
+  }).join('');
+  wrap.innerHTML = `
+    <table>
+      <thead><tr><th>Date</th><th>Weight</th><th>7-day Avg</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// Wire up inputs
+document.getElementById('weightDate').value = new Date().toISOString().slice(0, 10);
+document.getElementById('weightAdd').addEventListener('click', () => {
+  const date = document.getElementById('weightDate').value;
+  const weight = parseFloat(document.getElementById('weightValue').value);
+  if (!date || isNaN(weight) || weight < 30 || weight > 200) return;
+  addWeight(date, weight);
+  document.getElementById('weightValue').value = '';
+  document.getElementById('weightValue').focus();
+});
+document.getElementById('weightValue').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('weightAdd').click();
+});
+document.getElementById('weightLog').addEventListener('click', e => {
+  if (e.target.classList.contains('del')) deleteWeight(e.target.dataset.date);
+});
+
+renderWeight();
+</script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>💊 Daily Supplements</title>
+<style>
+  :root {
+    --bg: #fffbeb;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --morn: #fb923c;
+    --noon: #f59e0b;
+    --eve: #8b5cf6;
+    --night: #1e40af;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 12% 10%, #fed7aa 0, transparent 28%),
+      radial-gradient(circle at 88% 18%, #ddd6fe 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, #fef3c7 0, transparent 32%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--morn);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: #c2410c;
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 46px); margin: 12px 0 6px; letter-spacing: -0.02em; }
+  h1 .pill-emoji { display: inline-block; animation: wobble 2.8s infinite; }
+  @keyframes wobble { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-12deg)} 75%{transform:rotate(12deg)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+  .btn {
+    background: #fff; border: 2px solid var(--ink); color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn.primary { background: var(--morn); color: #fff; }
+
+  main { max-width: 1200px; margin: 0 auto; display: grid; gap: 16px; }
+
+  /* Stack summary */
+  .summary {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;
+  }
+  .sum-card {
+    background: #fff; border: 2.5px solid var(--ink);
+    border-radius: 14px; box-shadow: 4px 4px 0 var(--ink);
+    padding: 12px 14px;
+  }
+  .sum-card .l { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 800; }
+  .sum-card .v { font-size: 24px; font-weight: 900; letter-spacing: -.02em; margin-top: 2px; }
+  .sum-card .m { font-size: 12px; color: var(--muted); }
+
+  /* Time of day groups */
+  .tod-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;
+  }
+  .tod {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 16px 18px;
+    position: relative; overflow: hidden;
+  }
+  .tod::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px;
+  }
+  .tod[data-time="morning"]::before   { background: var(--morn); }
+  .tod[data-time="midday"]::before    { background: var(--noon); }
+  .tod[data-time="evening"]::before   { background: var(--eve); }
+  .tod[data-time="night"]::before     { background: var(--night); }
+
+  .tod h2 {
+    margin: 6px 0 2px; font-size: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tod .when {
+    font-size: 12px; color: var(--muted); font-weight: 700; margin-bottom: 12px;
+  }
+
+  .supp {
+    background: #fafafa; border: 2px solid var(--ink);
+    border-radius: 12px; padding: 10px 12px; margin-bottom: 8px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .supp:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+  .supp .head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  }
+  .supp .name { font-weight: 800; font-size: 14px; }
+  .supp .dose { font-size: 11px; font-weight: 800; color: #fff;
+    background: var(--ink); padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .supp .purpose { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .supp .foot { font-size: 11px; color: #374151; margin-top: 4px; font-style: italic; }
+
+  /* Detail modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15,18,28,.55);
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; z-index: 50; backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 22px; max-width: 640px; width: 100%;
+    max-height: 90vh; overflow: auto; border: 3px solid var(--ink);
+    box-shadow: 8px 10px 0 var(--morn);
+  }
+  .modal header {
+    padding: 18px 22px; border-bottom: 2px solid #f1f5f9;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; background: #fff; z-index: 2;
+  }
+  .modal header h2 { margin: 0; font-size: 22px; }
+  .modal .close {
+    background: #fff; border: 2px solid var(--ink); border-radius: 12px;
+    width: 36px; height: 36px; cursor: pointer; font-size: 18px; font-weight: 700;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .modal .body { padding: 18px 22px 22px; }
+  .modal .row {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 8px 0; border-bottom: 1px dashed #e5e7eb;
+    font-size: 14px;
+  }
+  .modal .row .k { color: var(--muted); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
+  .modal .row .v { font-weight: 600; text-align: right; }
+
+  .section {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 18px 20px;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .section .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.tbl th {
+    text-align: left; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 6px; border-bottom: 2px solid var(--ink);
+  }
+  table.tbl td { padding: 10px 6px; border-bottom: 1px dashed #e5e7eb; vertical-align: top; }
+  table.tbl tr:last-child td { border-bottom: none; }
+
+  .interact {
+    background: #fef2f2; border: 2px solid #ef4444;
+    border-radius: 12px; padding: 12px 14px;
+    color: #991b1b; font-size: 13px;
+  }
+  .interact h3 { margin: 0 0 6px; font-size: 14px; color: #991b1b; }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">💊 Daily Stack</span>
+  <h1>Supplements <span class="pill-emoji">🧪</span></h1>
+  <p>What you take, when, why — plus interactions and refill schedule.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="health.html">🩺 Health</a>
+  <a class="btn" href="meal-plan.html">🍽️ Meal Plan</a>
+  <button class="btn" onclick="window.print()">🖨️ Print</button>
+</div>
+
+<main>
+
+  <!-- Stack summary -->
+  <div class="summary" id="summary"></div>
+
+  <!-- Time of day groups -->
+  <div class="tod-grid" id="todGrid"></div>
+
+  <!-- Interactions -->
+  <section class="section">
+    <h2>⚠️ Interactions & Warnings</h2>
+    <div class="sub">Things to avoid combining, and known side effects to watch for.</div>
+    <div id="warnings"></div>
+  </section>
+
+  <!-- Cycle / planning -->
+  <section class="section">
+    <h2>🔁 Cycles & Refills</h2>
+    <div class="sub">Some supplements benefit from cycling. Track refill dates here.</div>
+    <table class="tbl">
+      <thead><tr><th>Supplement</th><th>Cycle</th><th>Last Refill</th><th>Next Refill</th><th>Source</th></tr></thead>
+      <tbody id="refills"></tbody>
+    </table>
+  </section>
+
+  <!-- Tests to monitor -->
+  <section class="section">
+    <h2>🧪 What to Test</h2>
+    <div class="sub">Markers to re-check annually to confirm stack is working.</div>
+    <table class="tbl">
+      <thead><tr><th>Marker</th><th>Why</th><th>Frequency</th><th>Last Checked</th></tr></thead>
+      <tbody id="tests"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <header>
+      <h2 id="m-title">Supplement</h2>
+      <button class="close" id="closeBtn">✕</button>
+    </header>
+    <div class="body" id="m-body"></div>
+  </div>
+</div>
+
+<footer class="note">Not medical advice. Review annually with a doctor. Blood tests beat guesses.</footer>
+
+<script>
+// ============ EDIT YOUR STACK ============
+
+const STACK = [
+  {
+    time: "morning", label: "🌅 Morning", when: "6–9 AM · with / around breakfast",
+    items: [
+      {
+        name: "Garlic (raw cloves)",
+        dose: "2 cloves",
+        purpose: "Allicin — cardiovascular, mild antiplatelet, antimicrobial",
+        take: "~6 AM pre-breakfast · crush & wait 10 min to activate allicin",
+        brand: "Kitchen",
+        note: "⚠ Antiplatelet effect stacks with aspirin — keep cardiologist informed"
+      },
+      {
+        name: "Flax Seeds (ground)",
+        dose: "1 tbsp",
+        purpose: "ALA omega-3, lignans, soluble fiber — LDL & TG support",
+        take: "With breakfast or shake",
+        brand: "—",
+        note: "Grind fresh — whole seeds pass undigested"
+      },
+      {
+        name: "Vitamin D3 + K2 (MK-7)",
+        dose: "10,000 IU D3 + K2 MK-7",
+        purpose: "Raise Vit D from 36.8 → 50+ ng/mL · K2 routes calcium to bones, not arteries",
+        take: "Morning with fat (eggs / nuts / ghee)",
+        brand: "—",
+        note: "Retest 25-OH Vit D in 3 months. Aggressive dose — aim 50–80, avoid > 100."
+      },
+      {
+        name: "Curcumin Complex",
+        dose: "1 capsule",
+        purpose: "Anti-inflammatory — target hs-CRP (currently 1.7)",
+        take: "With fat-containing meal",
+        brand: "—",
+        note: "⚠ Mild antiplatelet — stacks with aspirin. Look for Meriva / BCM-95 / piperine."
+      },
+      {
+        name: "Fish Oil (EPA + DHA)",
+        dose: "1 capsule",
+        purpose: "Omega-3 — target triglycerides (278 mg/dL) + cardiac protection",
+        take: "With meal",
+        brand: "—",
+        note: "⚠ Mild antiplatelet — stacks with aspirin. For TG 278, therapeutic dose is 2–4 g EPA+DHA — check per-capsule content."
+      },
+      {
+        name: "CoQ10 (Ubiquinone / Ubiquinol)",
+        dose: "—",
+        purpose: "Offsets statin-induced CoQ10 depletion · mitochondrial energy · cardiac support",
+        take: "Morning with fat (pairs well with D3 / fish oil)",
+        brand: "—",
+        note: "Particularly relevant on rosuvastatin 40 mg (max-dose statin). Typical dose 100–200 mg. Ubiquinol form has better absorption than ubiquinone, especially over age 40."
+      },
+      {
+        name: "Brazil Nut OR Zincovite",
+        dose: "1 nut · OR 1 tablet",
+        purpose: "Brazil nut = selenium (55–96 µg/nut) · Zincovite = multivitamin + zinc 22.5 mg",
+        take: "Morning with food — alternate days",
+        brand: "—",
+        note: "Never > 1 Brazil nut/day (selenium toxicity). Rotate to avoid over-selenium."
+      },
+      {
+        name: "Apple Cider Vinegar (with the mother)",
+        dose: "1 tbsp (15 ml)",
+        purpose: "Post-meal glycemic blunting, satiety, gut — relevant with HbA1c at 5.9",
+        take: "~10 AM · diluted in 300 ml water · sip through a straw",
+        brand: "Raw / unfiltered (Bragg's, Dabur, etc.)",
+        note: "Rinse mouth after (protects enamel). Don't exceed 2 tbsp/day. Matches 10 AM slot in the meal-plan hydration schedule."
+      }
+    ]
+  },
+  {
+    time: "midday", label: "☀️ Afternoon", when: "After lunch · 1–3 PM",
+    items: [
+      {
+        name: "Homocysteine Defence",
+        dose: "1 tablet",
+        purpose: "Methylated B6 + folate + B12 + TMG — drive down homocysteine (currently 22 µmol/L, target < 15)",
+        take: "After lunch",
+        brand: "—",
+        note: "Retest homocysteine 6–8 weeks after starting. If still high, consider MTHFR genotyping."
+      },
+      {
+        name: "Niacin (Vitamin B3)",
+        dose: "28 mg",
+        purpose: "HDL support, lipid metabolism",
+        take: "After lunch",
+        brand: "—",
+        note: "Nutritional dose. Therapeutic HDL/TG effect needs 500–2000 mg with LFT monitoring — discuss with cardiologist before escalating."
+      },
+      {
+        name: "Chia Seeds",
+        dose: "1 tbsp",
+        purpose: "ALA omega-3, soluble fiber, magnesium",
+        take: "Soak 10 min in water / shake before eating",
+        brand: "—",
+        note: "Part of 3 PM snack in the meal plan"
+      }
+    ]
+  },
+  {
+    time: "evening", label: "🌆 Pre-dinner", when: "~5–6 PM · before dinner",
+    items: [
+      {
+        name: "Psyllium Husk",
+        dose: "1 tsp",
+        purpose: "Soluble fiber — LDL reduction, glycemic control, bowel regularity",
+        take: "Mix in 250 ml water, drink immediately before it thickens",
+        brand: "—",
+        note: "⏱ 2-hour gap from oral medications (bisoprolol, rosuvastatin) to avoid reduced absorption"
+      }
+    ]
+  },
+  {
+    time: "night", label: "🌙 Night", when: "10 PM · 45 min before bed",
+    items: [
+      {
+        name: "Magnesium Glycinate",
+        dose: "—",
+        purpose: "Sleep quality, muscle relaxation, cardiac rhythm, insulin sensitivity",
+        take: "45 min before bed",
+        brand: "—",
+        note: "Glycinate = gentle on GI. Typical dose 200–400 mg elemental Mg. Don't combine with calcium."
+      }
+    ]
+  }
+];
+
+const WARNINGS = [
+  { title: "⚠️ Stacked bleeding risk: Aspirin + Fish Oil + Garlic + Curcumin",
+    detail: "All four have antiplatelet effects. Combined with Ecosprin 75 mg, overall bleeding tendency is elevated. Not wrong — but every doctor (dentist, surgeon, ER) must see the full list. Before any procedure or new bleeding event, escalate to cardiologist." },
+  { title: "Vitamin D3 10,000 IU is aggressive dosing",
+    detail: "Fine short-term to correct deficiency, but retest 25-OH D at 3 months. Target 50–80 ng/mL long-term; avoid > 100 ng/mL (toxicity). K2 MK-7 pairing is correct." },
+  { title: "Brazil nut — 1/day maximum",
+    detail: "Each nut delivers 55–96 µg selenium. RDA is 55 µg, upper limit 400 µg. More than one nut daily risks selenium toxicity (brittle nails, hair loss, GI distress). Alternate with Zincovite." },
+  { title: "Niacin 28 mg is nutritional, not therapeutic",
+    detail: "For HDL/TG improvement, therapeutic niacin is 500–2000 mg (immediate or extended release) requiring liver-enzyme monitoring and flushing tolerance. Current dose will not meaningfully shift lipids." },
+  { title: "Psyllium — 2-hour gap from medications",
+    detail: "Bulk fiber can reduce absorption of oral meds. Keep 2+ hours between psyllium and bisoprolol / rosuvastatin / any tablet." },
+  { title: "Homocysteine retest due in 6–8 weeks",
+    detail: "Baseline 22 µmol/L (target < 15). Recheck after 6–8 weeks on Homocysteine Defence. If still high, MTHFR gene test is worth considering — some people need specifically methylfolate + methylcobalamin forms." },
+  { title: "Fish oil dosing may be sub-therapeutic for your TG",
+    detail: "One standard capsule is usually 300 mg EPA+DHA. For TG of 278 mg/dL, most guidelines call for 2–4 g EPA+DHA daily (prescription icosapent ethyl is often used post-MI). Check your product's per-capsule dose and discuss with cardiologist." }
+];
+
+const REFILLS = [
+  // [supplement, cycle, last refill, next refill, source]
+  ["Garlic (raw cloves)",          "Continuous (kitchen)",              "—", "—", "Local"],
+  ["Flax Seeds (ground + whole)",  "Continuous",                        "—", "—", "Local"],
+  ["Homocysteine Defence",         "Continuous — retest HCY at 6–8 wk", "—", "—", "—"],
+  ["Niacin 28 mg",                 "Continuous",                        "—", "—", "—"],
+  ["Vitamin D3 + K2 MK-7",         "3 months then retest D",            "—", "—", "—"],
+  ["Curcumin Complex",             "Continuous",                        "—", "—", "—"],
+  ["Fish Oil",                     "Continuous",                        "—", "—", "—"],
+  ["CoQ10",                        "Continuous (while on statin)",      "—", "—", "—"],
+  ["Chia Seeds",                   "Continuous",                        "—", "—", "Local"],
+  ["Psyllium Husk",                "Continuous",                        "—", "—", "Local"],
+  ["Magnesium Glycinate",          "Continuous",                        "—", "—", "—"],
+  ["Brazil Nuts",                  "1/day max — rotate with Zincovite", "—", "—", "Local"],
+  ["Zincovite",                    "Alternate days with Brazil nut",    "—", "—", "Pharmacy"],
+  ["Apple Cider Vinegar (raw)",    "Continuous",                        "—", "—", "Local"]
+];
+
+const TESTS = [
+  // [marker, why, frequency, last checked]
+  ["Homocysteine",           "Track response to Homocysteine Defence (current 22 · target < 15)", "6–8 weeks",  "27 Mar 2026: 22"],
+  ["Vitamin D (25-OH)",      "Confirm 10k IU pushes into 50–80 range without overshoot",          "3 months",   "27 Mar 2026: 36.8"],
+  ["Lipid Panel + ApoB",     "Effect of niacin + fish oil + psyllium + fiber on LDL & TG",        "2–3 months", "27 Mar 2026"],
+  ["hs-CRP",                 "Track inflammation response to curcumin + fish oil",                "3 months",   "27 Mar 2026: 1.7"],
+  ["HbA1c",                  "Glycemic control — critical with pre-diabetic trend (5.9)",         "3 months",   "27 Mar 2026: 5.9"],
+  ["Liver Enzymes (ALT/AST)","On niacin + rosuvastatin — both can elevate LFTs",                   "3–6 months", "—"],
+  ["Omega-3 Index",          "Validate fish oil dose is adequate (target > 8%)",                   "3–6 months", "Not done"],
+  ["Ferritin",               "Aspirin + flax + low-normal starting ferritin — monitor GI losses",  "Annually",   "1 Jan 2026: 44"],
+  ["TSH",                    "Baseline TSH 5.348 is near ceiling — watch for subclinical hypoT",   "6 months",   "1 Jan 2026: 5.348"]
+];
+
+// ============ RENDER ============
+
+// Summary stats
+const totalItems = STACK.reduce((s, g) => s + g.items.length, 0);
+const morningCount = STACK.find(g => g.time === 'morning')?.items.length || 0;
+document.getElementById('summary').innerHTML = `
+  <div class="sum-card"><div class="l">Total Stack</div><div class="v">${totalItems}</div><div class="m">supplements daily</div></div>
+  <div class="sum-card"><div class="l">Time Blocks</div><div class="v">${STACK.length}</div><div class="m">across the day</div></div>
+  <div class="sum-card"><div class="l">Morning Dose</div><div class="v">${morningCount}</div><div class="m">items AM</div></div>
+  <div class="sum-card"><div class="l">Review Cycle</div><div class="v">12 mo</div><div class="m">annual blood work</div></div>
+`;
+
+// Time of day groups
+const todGrid = document.getElementById('todGrid');
+todGrid.innerHTML = STACK.map((g, gi) => `
+  <div class="tod" data-time="${g.time}">
+    <h2>${g.label}</h2>
+    <div class="when">${g.when}</div>
+    ${g.items.map((s, i) => `
+      <div class="supp" data-g="${gi}" data-i="${i}">
+        <div class="head">
+          <span class="name">${s.name}</span>
+          <span class="dose">${s.dose}</span>
+        </div>
+        <div class="purpose">${s.purpose}</div>
+        ${s.take ? `<div class="foot">⏱ ${s.take}</div>` : ''}
+      </div>
+    `).join('')}
+  </div>
+`).join('');
+
+// Warnings
+document.getElementById('warnings').innerHTML = WARNINGS.map(w => `
+  <div class="interact" style="margin-bottom:8px;">
+    <h3>⚠️ ${w.title}</h3>
+    <div>${w.detail}</div>
+  </div>
+`).join('');
+
+// Refills
+document.getElementById('refills').innerHTML = REFILLS.map(r =>
+  `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`
+).join('');
+
+// Tests
+document.getElementById('tests').innerHTML = TESTS.map(t =>
+  `<tr><td><b>${t[0]}</b></td><td>${t[1]}</td><td>${t[2]}</td><td>${t[3]}</td></tr>`
+).join('');
+
+// Modal
+const modal = document.getElementById('modal');
+document.getElementById('closeBtn').addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+document.querySelectorAll('.supp').forEach(el => {
+  el.addEventListener('click', () => {
+    const g = +el.dataset.g, i = +el.dataset.i;
+    const s = STACK[g].items[i];
+    document.getElementById('m-title').textContent = s.name;
+    document.getElementById('m-body').innerHTML = `
+      <div class="row"><div class="k">Dose</div><div class="v">${s.dose}</div></div>
+      <div class="row"><div class="k">Time</div><div class="v">${STACK[g].label}</div></div>
+      <div class="row"><div class="k">Purpose</div><div class="v">${s.purpose}</div></div>
+      <div class="row"><div class="k">How to take</div><div class="v">${s.take || '—'}</div></div>
+      <div class="row"><div class="k">Brand</div><div class="v">${s.brand || '—'}</div></div>
+      ${s.note ? `<div style="margin-top:12px;padding:10px 12px;background:#fef3c7;border:2px dashed #f59e0b;border-radius:10px;font-size:13px;">💡 ${s.note}</div>` : ''}
+    `;
+    modal.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>

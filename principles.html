@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>📜 Life Principles & Decision Rules</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --ink: #0c0a09;
+    --paper: #fffdf7;
+    --muted: #78716c;
+    --accent: #d97706;
+    --accent2: #92400e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', 'Segoe UI', system-ui, serif;
+    background:
+      radial-gradient(circle at 10% 10%, #fef3c7 0, transparent 28%),
+      radial-gradient(circle at 90% 15%, #fed7aa 0, transparent 30%),
+      radial-gradient(circle at 50% 95%, #fde68a 0, transparent 30%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 900px; margin: 0 auto 22px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--accent);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--accent2);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  h1 { font-size: clamp(32px, 5vw, 54px); margin: 14px 0 6px; letter-spacing: -0.02em; font-family: 'Georgia', serif; }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 16px; font-style: italic; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 22px; font-family: 'Segoe UI', sans-serif; }
+  .btn {
+    background: #fff; border: 2px solid var(--ink); color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.active { background: var(--ink); color: #fff; }
+
+  main { max-width: 1100px; margin: 0 auto; }
+
+  .manifesto {
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--accent);
+    padding: 28px 32px;
+    margin-bottom: 18px;
+    font-size: 18px;
+    line-height: 1.65;
+    font-style: italic;
+    text-align: center;
+  }
+  .manifesto b { font-style: normal; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; font-family: 'Segoe UI', sans-serif; }
+
+  .grid {
+    display: grid; grid-template-columns: 1fr; gap: 14px;
+  }
+
+  .principle {
+    background: var(--paper);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 20px 24px;
+    position: relative;
+  }
+  .principle .num {
+    position: absolute; top: -18px; left: 20px;
+    background: var(--accent); color: #fff;
+    width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-weight: 900; font-size: 18px;
+    border: 2.5px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .principle .cat {
+    position: absolute; top: 16px; right: 20px;
+    background: var(--ink); color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: .1em;
+    text-transform: uppercase; font-family: 'Segoe UI', sans-serif;
+  }
+  .principle .rule {
+    font-size: 22px; font-weight: 700; letter-spacing: -.01em; line-height: 1.3;
+    margin: 18px 0 12px; padding-right: 80px;
+  }
+  .principle .why, .principle .how {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px; color: #44403c;
+    margin-top: 10px; line-height: 1.5;
+  }
+  .principle .lbl {
+    font-size: 10px; font-weight: 800; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--accent);
+    display: block; margin-bottom: 4px;
+  }
+
+  /* Decision rules — more tactical */
+  .section {
+    background: var(--paper);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 22px 24px;
+    margin-top: 24px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 22px; font-family: 'Georgia', serif; }
+  .section .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; font-family: 'Segoe UI', sans-serif; }
+
+  .rule-card {
+    background: #fff; border: 2px solid var(--ink);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+  }
+  .rule-card .trigger {
+    font-size: 11px; font-weight: 800; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .rule-card .then {
+    font-weight: 700; font-size: 15px; margin-top: 4px;
+  }
+  .rule-card .note {
+    font-size: 12px; color: var(--muted); margin-top: 4px; font-style: italic;
+  }
+
+  .mental-models {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;
+  }
+  .mm {
+    background: #fff; border: 2px solid var(--ink);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .mm .n { font-weight: 800; font-size: 14px; }
+  .mm .d { font-size: 12px; color: #44403c; margin-top: 4px; line-height: 1.45; }
+
+  footer.note {
+    text-align: center; color: var(--muted); margin-top: 30px;
+    font-size: 13px; font-family: 'Segoe UI', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">📜 Personal Constitution</span>
+  <h1>Principles</h1>
+  <p>"The unexamined life is not worth living." — Socrates</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="vision.html">🔭 Vision</a>
+  <a class="btn" href="career.html">🧑‍💻 Career</a>
+</div>
+
+<main>
+
+  <!-- Manifesto -->
+  <div class="manifesto">
+    I am building a life of <b>health</b>, <b>craft</b>, <b>depth</b>, and <b>freedom</b>.<br>
+    I trade short-term comfort for long-term compounding.<br>
+    I optimize for <b>truth</b>, <b>energy</b>, and <b>people I love</b>.
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" id="filters"></div>
+
+  <!-- Principles grid -->
+  <div class="grid" id="grid"></div>
+
+  <!-- Decision rules -->
+  <section class="section">
+    <h2>⚖️ If-Then Decision Rules</h2>
+    <div class="sub">Pre-committed rules that remove willpower from the loop.</div>
+    <div id="rules"></div>
+  </section>
+
+  <!-- Mental models -->
+  <section class="section">
+    <h2>🧠 Mental Models I Use</h2>
+    <div class="sub">Lenses for thinking — reach for these when stuck.</div>
+    <div class="mental-models" id="models"></div>
+  </section>
+
+  <!-- Red flags -->
+  <section class="section">
+    <h2>🚩 Red Flags (In Self & Others)</h2>
+    <div class="sub">Warning signs that trigger a pause and re-evaluation.</div>
+    <div id="flags"></div>
+  </section>
+
+</main>
+
+<footer class="note">Re-read quarterly. Revise annually. Edit freely — principles should evolve with you.</footer>
+
+<script>
+// ============ PRINCIPLES ============
+const PRINCIPLES = [
+  {
+    category: "Health",
+    rule: "Sleep is non-negotiable. Everything else bends first.",
+    why: "Every system — cognition, hormones, mood, will — collapses without 7+ hours. No hack replaces sleep.",
+    how: "Lights out by 10:30 PM. No screens after 9:30 PM. If I have to choose between one more task and sleep, sleep wins."
+  },
+  {
+    category: "Health",
+    rule: "Move every single day. Lift three times a week.",
+    why: "The body you don't use, you lose. Strength is the single best predictor of longevity past 40.",
+    how: "Miss a workout? Walk 30 min minimum. Never two rest days in a row."
+  },
+  {
+    category: "Money",
+    rule: "Pay myself first. Spend what remains.",
+    why: "If savings depend on leftovers, there are no leftovers. The market rewards time, not timing.",
+    how: "Auto-debit investments on salary day. Adjust lifestyle to what's left, not the other way around."
+  },
+  {
+    category: "Money",
+    rule: "Buy assets, not status.",
+    why: "Lifestyle inflation is a prison with gold bars. Every upgrade raises my hostage price.",
+    how: "Before any purchase > ₹10k: wait 72 hours. If I still want it, I still want it."
+  },
+  {
+    category: "Craft",
+    rule: "Ship something every week.",
+    why: "Momentum > motivation. Finished and imperfect beats polished and hypothetical every time.",
+    how: "Friday = ship day. Even a half-baked version in public beats a masterpiece on my hard drive."
+  },
+  {
+    category: "Craft",
+    rule: "Quality of input = quality of output.",
+    why: "I am the average of what I consume. Junk inputs → junk thoughts → junk work.",
+    how: "No news before noon. Read books > articles. If a feed makes me dumber, I unsubscribe."
+  },
+  {
+    category: "Relationships",
+    rule: "Show up. Repeatedly. Over years.",
+    why: "Trust is built slowly and lost instantly. No one remembers the clever thing I said; they remember that I was there.",
+    how: "Block time for people before time for projects. Send the message. Make the call. Attend."
+  },
+  {
+    category: "Relationships",
+    rule: "Assume good intent. Ask, don't infer.",
+    why: "Most conflict is bad communication, not bad people. My first interpretation is almost always wrong.",
+    how: "Replace 'why did they do X?' with 'tell me what happened?' before reacting."
+  },
+  {
+    category: "Mind",
+    rule: "Default to writing. Fuzzy thinking can hide in a head but not on a page.",
+    why: "If I can't write it clearly, I don't understand it. Writing is the forcing function for thinking.",
+    how: "Every major decision gets a written one-pager. Journal 10 min nightly."
+  },
+  {
+    category: "Mind",
+    rule: "Strong opinions, weakly held.",
+    why: "Conviction drives action; humility allows correction. Stubbornness is the cost of being wrong longer.",
+    how: "State my position clearly, then ask: what would change my mind? If the answer is 'nothing,' that's ego, not truth."
+  },
+  {
+    category: "Time",
+    rule: "One big thing per day. Not three.",
+    why: "A to-do list of 10 things is a wishlist. Focus is saying no to 99 good things.",
+    how: "Pick the ONE thing at breakfast. Protect 90 min for it. Everything else is gravy."
+  },
+  {
+    category: "Time",
+    rule: "If it's not a 'hell yes,' it's a no.",
+    why: "Every yes is a no to everything else. My calendar is my life.",
+    how: "Add friction: sleep on meetings, commitments, and invites before accepting."
+  }
+];
+
+// ============ DECISION RULES ============
+const DECISION_RULES = [
+  { trigger: "Before buying something > ₹10,000", then: "Wait 72 hours.",            note: "Impulse evaporates, real wants persist." },
+  { trigger: "Angry or exhausted",                  then: "No decision. Sleep first.", note: "High emotion = low judgement." },
+  { trigger: "Three people I respect disagree with me", then: "Steelman them before defending my view.", note: "Might be right, might be wrong — worth the hour." },
+  { trigger: "Can't explain it in one sentence",   then: "I don't understand it yet.", note: "Buy it, commit to it, advocate for it? Not yet." },
+  { trigger: "Decision is reversible",              then: "Decide fast — move.",       note: "Most decisions are Type 2 — act, learn, adjust." },
+  { trigger: "Decision is irreversible",            then: "Slow down. Consult 3 people.", note: "Marriage, major surgery, big investments, quitting jobs." },
+  { trigger: "Someone offers 'guaranteed returns'", then: "Walk away.",                note: "Nothing is guaranteed. The confidence is the con." },
+  { trigger: "Feeling FOMO on a trade / trend",    then: "Do nothing for 30 days.",   note: "If it's still a good idea, it'll still be one." },
+  { trigger: "Arguing with someone online",        then: "Close the tab.",             note: "Nobody has ever been convinced on Twitter." }
+];
+
+// ============ MENTAL MODELS ============
+const MODELS = [
+  { name: "Inversion",         desc: "Instead of 'how do I succeed?' ask 'how would I guarantee failure?' Then don't do those things." },
+  { name: "Circle of Competence", desc: "Stay where I have real edge. Enter new circles slowly and with tuition (small bets)." },
+  { name: "Second-Order Thinking", desc: "Ask 'and then what?' three times. First-order solutions often create second-order problems." },
+  { name: "Opportunity Cost",  desc: "Every yes is a no to something else. Compare to the second-best option, not to zero." },
+  { name: "Via Negativa",      desc: "Subtract before you add. Removing what's harmful beats piling on 'optimizations.'" },
+  { name: "Pre-mortem",        desc: "Imagine the project failed. Work backwards from the failure to find risks now." },
+  { name: "Asymmetry",         desc: "Seek positions where upside > downside by 10x+. Cheap tries, expensive wins." },
+  { name: "Compound Interest", desc: "Small edges, repeated daily. Habits, savings, relationships — all obey the same equation." }
+];
+
+// ============ RED FLAGS ============
+const FLAGS = [
+  { trigger: "In myself", then: "I'm justifying instead of deciding.", note: "Long rationalizations = answer I don't want to face." },
+  { trigger: "In myself", then: "Skipping workouts or sleep 'just this week.'", note: "'Just this week' becomes 'this quarter.'" },
+  { trigger: "In myself", then: "Avoiding conversations I know I need to have.", note: "The conversation doesn't get easier. The stakes do." },
+  { trigger: "In others", then: "Inconsistency between words and actions.",     note: "Watch feet, not mouths." },
+  { trigger: "In others", then: "How they treat people who can't help them.",   note: "That's the real person." },
+  { trigger: "In others", then: "Constant urgency and drama.",                  note: "Chaos is contagious. Distance myself." }
+];
+
+// ============ RENDER ============
+
+const categories = [...new Set(PRINCIPLES.map(p => p.category))];
+const filtersEl = document.getElementById('filters');
+filtersEl.innerHTML = `<button class="btn active" data-cat="all">All</button>` +
+  categories.map(c => `<button class="btn" data-cat="${c}">${c}</button>`).join('');
+
+const grid = document.getElementById('grid');
+function renderPrinciples(filter = 'all') {
+  grid.innerHTML = PRINCIPLES
+    .filter(p => filter === 'all' || p.category === filter)
+    .map((p, i) => `
+      <div class="principle">
+        <div class="num">${i + 1}</div>
+        <div class="cat">${p.category}</div>
+        <div class="rule">${p.rule}</div>
+        <div class="why"><span class="lbl">Why</span>${p.why}</div>
+        <div class="how"><span class="lbl">How to apply</span>${p.how}</div>
+      </div>
+    `).join('');
+}
+renderPrinciples();
+
+filtersEl.addEventListener('click', e => {
+  if (!e.target.matches('button')) return;
+  filtersEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderPrinciples(e.target.dataset.cat);
+});
+
+document.getElementById('rules').innerHTML = DECISION_RULES.map(r => `
+  <div class="rule-card">
+    <div class="trigger">IF · ${r.trigger}</div>
+    <div class="then">→ ${r.then}</div>
+    ${r.note ? `<div class="note">${r.note}</div>` : ''}
+  </div>`).join('');
+
+document.getElementById('models').innerHTML = MODELS.map(m => `
+  <div class="mm">
+    <div class="n">${m.name}</div>
+    <div class="d">${m.desc}</div>
+  </div>`).join('');
+
+document.getElementById('flags').innerHTML = FLAGS.map(f => `
+  <div class="rule-card">
+    <div class="trigger">🚩 ${f.trigger}</div>
+    <div class="then">${f.then}</div>
+    ${f.note ? `<div class="note">${f.note}</div>` : ''}
+  </div>`).join('');
+</script>
+</body>
+</html>

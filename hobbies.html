@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎨 Hobbies</title>
+<style>
+  :root {
+    --bg: #fff1f2;
+    --ink: #1f2330;
+    --muted: #64748b;
+    --card: #ffffff;
+    --accent: #e11d48;
+
+    --cycling:  #0ea5e9;
+    --swimming: #06b6d4;
+    --tt:       #f97316;
+    --squash:   #16a34a;
+    --badminton:#eab308;
+    --yoga:     #8b5cf6;
+    --reading:  #a16207;
+    --chess:    #1f2937;
+    --shooting: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, #fce7f3 0, transparent 28%),
+      radial-gradient(circle at 88% 16%, #bae6fd 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, #fef3c7 0, transparent 32%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--accent);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--accent);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 46px); margin: 12px 0 6px; letter-spacing: -0.02em; }
+  h1 .paint { display: inline-block; animation: tilt 3s infinite ease-in-out; }
+  @keyframes tilt { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(12deg)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+  .btn {
+    background: #fff; border: 2px solid var(--ink); color: var(--ink);
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.active { background: var(--ink); color: #fff; }
+
+  .filters {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 18px;
+  }
+
+  main { max-width: 1200px; margin: 0 auto; }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin-bottom: 20px;
+  }
+  .stat {
+    background: #fff; border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 10px 14px;
+  }
+  .stat .l { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .stat .v { font-size: 22px; font-weight: 900; letter-spacing: -.02em; margin-top: 2px; }
+  .stat .m { font-size: 11px; color: var(--muted); }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 2.5px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--ink);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: transform .14s ease, box-shadow .14s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover { transform: translate(-2px,-3px); box-shadow: 7px 8px 0 var(--ink); }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -32px; right: -32px;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    opacity: .18;
+  }
+  .card[data-c="cycling"]::before   { background: var(--cycling); }
+  .card[data-c="swimming"]::before  { background: var(--swimming); }
+  .card[data-c="tt"]::before        { background: var(--tt); }
+  .card[data-c="squash"]::before    { background: var(--squash); }
+  .card[data-c="badminton"]::before { background: var(--badminton); }
+  .card[data-c="yoga"]::before      { background: var(--yoga); }
+  .card[data-c="reading"]::before   { background: var(--reading); }
+  .card[data-c="chess"]::before     { background: var(--chess); }
+  .card[data-c="shooting"]::before  { background: var(--shooting); }
+
+  .card .head {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+    position: relative; z-index: 1;
+  }
+  .card .icon { font-size: 36px; line-height: 1; }
+  .card .lvl {
+    background: var(--ink); color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: .1em;
+    text-transform: uppercase; white-space: nowrap;
+  }
+  .card .lvl.beginner     { background: #eab308; color: #422006; }
+  .card .lvl.intermediate { background: #3b82f6; color: #fff; }
+  .card .lvl.advanced     { background: #10b981; color: #064e3b; }
+  .card .lvl.exploring    { background: #94a3b8; color: #0f172a; }
+
+  .card h3 {
+    margin: 10px 0 2px;
+    font-size: 20px; letter-spacing: -.01em;
+  }
+  .card .since { font-size: 12px; color: var(--muted); }
+  .card .freq {
+    margin-top: 10px;
+    background: #f1f5f9;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #334155;
+    font-weight: 700;
+  }
+  .card .preview {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.45;
+    min-height: 38px;
+  }
+  .card .footer {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1.5px dashed #e2e8f0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: var(--muted);
+  }
+  .card .footer .counts { font-weight: 800; color: var(--ink); }
+  .card .footer .open { color: var(--ink); font-weight: 700; }
+  .card .footer .open::after { content: " →"; transition: transform .15s ease; display: inline-block; }
+  .card:hover .footer .open::after { transform: translateX(4px); }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15,18,28,.55);
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; z-index: 50; backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 22px; max-width: 780px; width: 100%;
+    max-height: 92vh; overflow: auto; border: 3px solid var(--ink);
+    box-shadow: 8px 10px 0 var(--accent);
+    animation: pop .18s ease-out;
+  }
+  @keyframes pop { from { transform: scale(.96); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+  .modal header {
+    padding: 18px 22px; border-bottom: 2px solid #f1f5f9;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    position: sticky; top: 0; background: #fff; z-index: 2;
+  }
+  .modal header .ic { font-size: 30px; }
+  .modal header h2 { margin: 0; font-size: 22px; }
+  .modal header .sub { font-size: 12px; color: var(--muted); }
+  .modal .close {
+    background: #fff; border: 2px solid var(--ink); border-radius: 12px;
+    width: 36px; height: 36px; cursor: pointer; font-size: 18px; font-weight: 700;
+    box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0;
+  }
+  .modal .body { padding: 18px 22px 22px; }
+
+  .block {
+    border: 2px solid var(--ink);
+    border-radius: 14px; padding: 14px 16px;
+    margin-bottom: 12px;
+    background: #fafafa;
+  }
+  .block h3 {
+    margin: 0 0 6px;
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+    color: var(--muted);
+  }
+  .block .status-text {
+    font-size: 14px; color: #334155; line-height: 1.55;
+  }
+  .block ul {
+    margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.7;
+  }
+  .block ul li { margin-bottom: 2px; }
+  .block .empty {
+    color: #94a3b8; font-style: italic; font-size: 13px;
+  }
+
+  .block.goals      { background: #fef3c7; border-color: #f59e0b; }
+  .block.goals      h3 { color: #92400e; }
+  .block.learning   { background: #dbeafe; border-color: #3b82f6; }
+  .block.learning   h3 { color: #1e40af; }
+  .block.wantto     { background: #ede9fe; border-color: #8b5cf6; }
+  .block.wantto     h3 { color: #5b21b6; }
+  .block.gear       { background: #f1f5f9; border-color: var(--ink); }
+  .block.prs        { background: #dcfce7; border-color: #16a34a; }
+  .block.prs        h3 { color: #166534; }
+
+  .meta-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px; margin-bottom: 12px;
+  }
+  .meta-cell {
+    background: #fff; border: 1.5px solid var(--ink);
+    border-radius: 10px; padding: 8px 12px;
+  }
+  .meta-cell .k { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .meta-cell .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🎨 Hobbies & Play</span>
+  <h1>Hobbies <span class="paint">🎨</span></h1>
+  <p>What I play at, practice, and learn outside of work.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="workout-plan.html">💪 Workout</a>
+  <a class="btn" href="health.html">🩺 Health</a>
+</div>
+
+<main>
+
+  <!-- Stats -->
+  <div class="stats" id="stats"></div>
+
+  <!-- Filters -->
+  <div class="filters" id="filters"></div>
+
+  <!-- Cards grid -->
+  <div class="grid" id="grid"></div>
+
+</main>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <header>
+      <span class="ic" id="m-icon">🎨</span>
+      <div style="flex:1;">
+        <h2 id="m-title">Hobby</h2>
+        <div class="sub" id="m-sub"></div>
+      </div>
+      <button class="close" id="closeBtn" aria-label="Close">✕</button>
+    </header>
+    <div class="body" id="m-body"></div>
+  </div>
+</div>
+
+<footer class="note">Fill in hobbies one-by-one. Review quarterly — add PRs, bump levels, retire what you've outgrown.</footer>
+
+<script>
+// ============ EDIT YOUR HOBBIES ============
+// Fields per hobby:
+//   id, icon, name, category ('active' | 'mind'),
+//   level ('exploring' | 'beginner' | 'intermediate' | 'advanced'),
+//   since, frequency, status (short summary),
+//   goals[], learning[], wantToLearn[], gear[], prs[]
+// Leave arrays empty [] while you haven't decided — the UI handles empties gracefully.
+
+const HOBBIES = [
+  {
+    id: "cycling",
+    icon: "🚴",
+    name: "Cycling",
+    category: "active",
+    level: "beginner",
+    since: "November 2025",
+    frequency: "10–15 km daily · morning/evening",
+    status: "Started cycling Nov 2025. Daily rides on a Decathlon EXPL 50. Focus is endurance — building an aerobic base to handle progressively longer rides. Current cruising pace ~17–18 km/h; longest ride so far is 30 km.",
+    goals: [
+      "🎯 40 km single ride",
+      "🎯 50 km single ride",
+      "🎯 75 km single ride",
+      "🎯 100 km (century) ride",
+      "🏙️ Loop Hyderabad Outer Ring Road (~158 km)",
+      "🌴 Cycling trip around Sri Lanka — or explore an Indian state by bike"
+    ],
+    learning: [
+      "Building aerobic base — steady-pace endurance training",
+      "Pacing longer rides and recovering between them"
+    ],
+    wantToLearn: [
+      "Upgrade bike & gear when distances demand it — likely a road/endurance bike, clipless pedals, cycling computer, and a long-ride nutrition/hydration strategy"
+    ],
+    gear: [
+      "Decathlon EXPL 50 (MTB hardtail)"
+    ],
+    prs: [
+      "Longest ride: 30 km",
+      "Cruising pace: ~17–18 km/h"
+    ]
+  },
+  {
+    id: "swimming",
+    icon: "🏊",
+    name: "Swimming",
+    category: "active",
+    level: "beginner",
+    since: "April 2026",
+    frequency: "— (plan assumes ~3×/week)",
+    status: "Just started in April 2026. Very beginner — can swim ~10 m continuous. Learning the three core strokes (freestyle, backstroke, breaststroke) properly. <b>Year-end goal: 1000 m continuous by Dec 2026.</b>",
+    goals: [
+      "🗓️ <b>May 2026</b>: 10 m → 25 m freestyle continuous · breathing + float drills",
+      "🗓️ <b>Jun 2026</b>: 50 m freestyle continuous · bilateral breathing every 3 strokes",
+      "🗓️ <b>Jul 2026</b>: 100 m freestyle · start backstroke basics",
+      "🗓️ <b>Aug 2026</b>: 200 m continuous · 50 m backstroke · intro breaststroke",
+      "🗓️ <b>Sep 2026</b>: 400 m continuous · 100 m backstroke",
+      "🗓️ <b>Oct 2026</b>: 600 m continuous · 100 m in all three strokes",
+      "🗓️ <b>Nov 2026</b>: 800 m continuous",
+      "🏆 <b>Dec 2026</b>: <b>1000 m continuous</b> — year-end goal"
+    ],
+    learning: [
+      "Breathing rhythm — exhaling underwater, bilateral breathing",
+      "Body position — horizontal alignment and streamline",
+      "Freestyle stroke mechanics — catch, pull, recovery"
+    ],
+    wantToLearn: [
+      "Freestyle — clean form and endurance",
+      "Backstroke — proper technique",
+      "Breaststroke — proper technique"
+    ],
+    gear: [],
+    prs: [
+      "Longest swim: 10 m (April 2026 — starting point)"
+    ]
+  },
+  {
+    id: "tt",
+    icon: "🏓",
+    name: "Table Tennis",
+    category: "active",
+    level: "beginner",
+    since: "June 2024",
+    frequency: "~1×/month",
+    status: "Self-taught casual player since June 2024. Know the basics and can beat recreational society players, but no formal training. Currently playing only ~once a month — frequency is the main bottleneck. <b>Next step: find a coach.</b>",
+    goals: [
+      "📅 Lift frequency to 2–3× per month minimum",
+      "🎓 Start formal coaching with a qualified trainer",
+      "🏓 Build clean forehand & backhand drive technique",
+      "🌀 Learn topspin and spin control",
+      "🦶 Develop footwork — ready stance, side-to-side recovery",
+      "🎯 Serve variations — short, long, side-spin",
+      "🏟️ Progress from society-level to club-level play"
+    ],
+    learning: [],
+    wantToLearn: [
+      "Find a coach / TT academy nearby",
+      "Proper forehand & backhand drives",
+      "Topspin and underspin control",
+      "Footwork and ready position",
+      "Serve + receive technique"
+    ],
+    gear: [],
+    prs: [
+      "Can beat recreational society players"
+    ]
+  },
+  {
+    id: "squash",
+    icon: "🎾",
+    name: "Squash",
+    category: "active",
+    level: "beginner",
+    since: "January 2026",
+    frequency: "~1×/week",
+    status: "Picked up in January 2026 — very new, playing casually once a week. Not prioritizing formal training; it's a fun rotation hobby, not a focus area.",
+    goals: [
+      "Keep it in the weekly rotation for mobility and fun",
+      "Revisit for coaching post-2026 if interest grows"
+    ],
+    learning: [],
+    wantToLearn: [],
+    gear: [],
+    prs: []
+  },
+  {
+    id: "badminton",
+    icon: "🏸",
+    name: "Badminton",
+    category: "active",
+    level: "beginner",
+    since: "May 2024",
+    frequency: "1–2×/week · doubles",
+    status: "Recreational doubles since May 2024 — self-taught, no formal technique. <b>Coaching starts July 2026.</b> Primary hobby for rest of 2026 alongside swimming. Plan: rebuild technique → footwork → power → tactics.",
+    goals: [
+      "🗓️ <b>May–Jun 2026</b>: Prep — audit gear, find coach, film baseline match, daily shadow footwork",
+      "🗓️ <b>Jul 2026</b>: Coaching begins — grips, ready position, forehand clear",
+      "🗓️ <b>Aug 2026</b>: Backhand clear, net shots, drop shots, 6-corner footwork",
+      "🗓️ <b>Sep 2026</b>: Smash, defensive blocks, doubles rotation",
+      "🗓️ <b>Oct 2026</b>: Jump smash, drives, deception (slice, wristwork)",
+      "🗓️ <b>Nov 2026</b>: Tactics — doubles formations, singles coverage, match sims",
+      "🏆 <b>Dec 2026</b>: Play a club tournament or structured competitive match"
+    ],
+    learning: [
+      "Pre-coaching prep — gear audit, coach shortlist, daily shadow footwork"
+    ],
+    wantToLearn: [
+      "Three grips — forehand, backhand, thumb",
+      "Six-corner footwork",
+      "Full stroke range — clear, drop, smash, drive, net, serves",
+      "Deception — slicing, wristwork, holding the shot",
+      "Doubles tactics — formations, rotation, signals",
+      "Conditioning — agility, explosive lunges, 3-set cardio"
+    ],
+    gear: [
+      "Racket audit — string tension & grip",
+      "Non-marking court shoes",
+      "Feather shuttles (training) · plastic (casual)"
+    ],
+    prs: [
+      "Baseline: recreational doubles, 1–2×/week, self-taught"
+    ]
+  },
+  {
+    id: "yoga",
+    icon: "🧘",
+    name: "Yoga",
+    category: "active",
+    level: "exploring",
+    since: "—",
+    frequency: "— (plan: 15–30 min daily)",
+    status: "Yet to start — building a progression plan. Aim is a <b>daily practice</b> of 15–30 min for flexibility, mobility, and calm. Complements the existing strength + cardio routine (see <a href='workout-plan.html' style='color:#8b5cf6;font-weight:800;'>workout plan</a>).",
+    goals: [
+      "🗓️ <b>Month 1</b>: Daily 15 min · breathing basics + 6 foundation poses · 3 rounds of Surya Namaskar",
+      "🗓️ <b>Month 2</b>: Daily 20 min · 5 rounds Surya Namaskar · standing poses (Warrior 1/2, Triangle, Tree)",
+      "🗓️ <b>Month 3</b>: Daily 25 min · full beginner flow · hip openers (Pigeon, Butterfly) + forward folds",
+      "🗓️ <b>Month 4</b>: Daily 30 min · intro strength poses (Plank, Side Plank, Crow prep)",
+      "🗓️ <b>Month 5</b>: Daily 30 min · intro inversions — Legs-up-wall, Shoulder stand · add 5 min pranayama",
+      "🏆 <b>Month 6</b>: Hold Crow (Bakasana) 10 s · 3-min Shoulder stand · 10 min meditation",
+      "🗓️ <b>Month 7–9</b>: Headstand (Sirsasana) progression · backbends (Bridge → Wheel)",
+      "🗓️ <b>Month 10–12</b>: Explore styles (Hatha / Vinyasa / Ashtanga / Yin) · consider a week-long retreat"
+    ],
+    learning: [],
+    wantToLearn: [
+      "Foundational asanas and the Surya Namaskar flow",
+      "Pranayama — alternate nostril, kapalabhati, bhramari",
+      "Inversions — Shoulder stand, Headstand, Handstand",
+      "Arm balances — Crow, Side Crow, Firefly",
+      "Meditation — starting with 5 min, building to 20 min",
+      "Yoga styles — Hatha vs Vinyasa vs Ashtanga vs Yin"
+    ],
+    gear: [
+      "Essentials: yoga mat (6 mm, non-slip)",
+      "Optional: blocks, strap, bolster"
+    ],
+    prs: []
+  },
+  {
+    id: "reading",
+    icon: "📚",
+    name: "Reading Books",
+    category: "mind",
+    level: "advanced",
+    since: "2017",
+    frequency: "~15 books/year",
+    status: "162 books logged since 2017 · 6/15 on this year's target · 7 currently in progress, 23 on the wishlist. Full library with ratings, search & filters → <a href='books.html' style='color:#b45309;font-weight:800;'>books.html</a>",
+    goals: [
+      "Hit the yearly target: 15 books/year (6/15 done for 2026)",
+      "Clear the currently-reading backlog — 7 books in progress",
+      "Work steadily through the 23-book wishlist"
+    ],
+    learning: [],
+    wantToLearn: [
+      "📍 <b>India Challenge</b> — one book from every state & UT of India. Counts if: the author is from that state, the story is set there, or it's about the region. (0/36)",
+      "🕉️ <b>World Religions Challenge</b> — one book about each major world religion. (0/8)",
+      "See the trackers → <a href='books.html#challenges' style='color:#b45309;font-weight:800;'>books.html</a>"
+    ],
+    gear: [],
+    prs: []
+  },
+  {
+    id: "chess",
+    icon: "♟️",
+    name: "Chess",
+    category: "mind",
+    level: "beginner",
+    since: "January 2026",
+    frequency: "—",
+    status: "<b>~950 rapid</b> · plays mostly by intuition, no formal study yet. Goal: <b>1200 by May 2027</b>, 1500 lifetime. Need to add structure — openings, tactics, endgames — on top of the intuitive pattern recognition.",
+    goals: [
+      "🎯 <b>1200 rapid by May 2027</b> (+250 in 12 months)",
+      "🎯 <b>1500 rapid lifetime</b>",
+      "🗓️ <b>May–Jul 2026</b>: 20 puzzles/day · learn 1 opening as White, 2 as Black · tactical motifs (pins, forks, skewers)",
+      "🗓️ <b>Aug–Oct 2026</b>: 3–5 rated games/week with analysis · king+pawn endgames · middlegame principles",
+      "🗓️ <b>Nov 2026–Jan 2027</b>: rook endgames · positional concepts (weak squares, outposts, pawn structure)",
+      "🏆 <b>Feb–May 2027</b>: consolidate repertoire · cross 1200 rapid"
+    ],
+    learning: [],
+    wantToLearn: [
+      "Opening repertoire — 1 solid system as White, 2 as Black (vs 1.e4 and 1.d4)",
+      "Tactical motifs — pins, forks, skewers, discovered attacks, removing the defender",
+      "Endgame fundamentals — king+pawn, opposition, Lucena & Philidor, basic rook endings",
+      "Middlegame principles — piece activity, pawn structure, weak squares",
+      "Post-game analysis habit — annotate own games with engine",
+      "Study classic games — Capablanca, Fischer, Carlsen"
+    ],
+    gear: [],
+    prs: [
+      "Current: ~950 rapid",
+      "Started: January 2026 (intuition-based play)"
+    ]
+  },
+  {
+    id: "shooting",
+    icon: "🎯",
+    name: "Air Pistol Shooting",
+    category: "active",
+    level: "exploring",
+    since: "—",
+    frequency: "Planned for 2027",
+    status: "Haven't shot yet — fascinated by the precision and discipline of competitive air pistol. Plan is to begin in <b>2027</b> with 10 m or 25 m. Starting completely fresh: find a licensed range, learn the fundamentals, then decide which discipline to focus on.",
+    goals: [
+      "🔰 First session at a licensed shooting range",
+      "🔰 Learn fundamentals: stance, grip, breathing, trigger control",
+      "🎯 Shoot a full 10-shot group at 10 m",
+      "⚖️ Decide between 10 m and 25 m focus",
+      "🏆 Stretch goal: compete in a local / state-level meet"
+    ],
+    learning: [],
+    wantToLearn: [
+      "Basics of 10 m air pistol technique",
+      "Differences between 10 m and 25 m disciplines",
+      "Gear selection — first air pistol, eyewear, safety standards, licensing requirements in India",
+      "Find a coach / club / licensed range nearby"
+    ],
+    gear: [],
+    prs: []
+  }
+];
+
+// ============ RENDER ============
+
+const CATEGORIES = { all: "All", active: "🏃 Active", mind: "🧠 Mind" };
+
+// Stats
+function renderStats() {
+  const n = HOBBIES.length;
+  const active = HOBBIES.filter(h => h.category === 'active').length;
+  const mind = HOBBIES.filter(h => h.category === 'mind').length;
+  const lvlCount = HOBBIES.reduce((acc, h) => { acc[h.level] = (acc[h.level]||0)+1; return acc; }, {});
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="l">Total</div><div class="v">${n}</div><div class="m">hobbies tracked</div></div>
+    <div class="stat"><div class="l">Active</div><div class="v">${active}</div><div class="m">physical / sport</div></div>
+    <div class="stat"><div class="l">Mind</div><div class="v">${mind}</div><div class="m">thinking / learning</div></div>
+    <div class="stat"><div class="l">Intermediate+</div><div class="v">${(lvlCount.intermediate||0)+(lvlCount.advanced||0)}</div><div class="m">proficient level</div></div>
+  `;
+}
+renderStats();
+
+// Filters
+const filtersEl = document.getElementById('filters');
+filtersEl.innerHTML = Object.entries(CATEGORIES).map(([k, v], i) =>
+  `<button class="btn ${i === 0 ? 'active' : ''}" data-cat="${k}">${v}</button>`
+).join('');
+
+// Grid
+function renderGrid(cat = 'all') {
+  const grid = document.getElementById('grid');
+  const filtered = HOBBIES.filter(h => cat === 'all' || h.category === cat);
+  grid.innerHTML = filtered.map((h, i) => {
+    const realIdx = HOBBIES.indexOf(h);
+    const counts = [
+      h.goals?.length || 0,
+      h.learning?.length || 0,
+      h.wantToLearn?.length || 0
+    ].reduce((a,b) => a+b, 0);
+    const preview = h.status ? h.status.substring(0, 110) + (h.status.length > 110 ? '…' : '')
+                             : '— add a short status note —';
+    return `
+      <article class="card" data-c="${h.id}" data-i="${realIdx}">
+        <div class="head">
+          <span class="icon">${h.icon}</span>
+          <span class="lvl ${h.level}">${h.level}</span>
+        </div>
+        <h3>${h.name}</h3>
+        <div class="since">since ${h.since || '—'}</div>
+        <div class="freq">⏱ ${h.frequency || '—'}</div>
+        <div class="preview">${preview}</div>
+        <div class="footer">
+          <span class="counts">${counts} item${counts === 1 ? '' : 's'} tracked</span>
+          <span class="open">Open</span>
+        </div>
+      </article>`;
+  }).join('');
+
+  grid.querySelectorAll('.card').forEach(c => {
+    c.addEventListener('click', () => openModal(+c.dataset.i));
+  });
+}
+renderGrid();
+
+filtersEl.addEventListener('click', e => {
+  if (!e.target.matches('button')) return;
+  filtersEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderGrid(e.target.dataset.cat);
+});
+
+// Modal
+const modal = document.getElementById('modal');
+document.getElementById('closeBtn').addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+function listOrEmpty(arr, emptyText) {
+  if (!arr || arr.length === 0) return `<div class="empty">${emptyText}</div>`;
+  return `<ul>${arr.map(x => `<li>${x}</li>`).join('')}</ul>`;
+}
+
+function openModal(i) {
+  const h = HOBBIES[i];
+  document.getElementById('m-icon').textContent = h.icon;
+  document.getElementById('m-title').textContent = h.name;
+  document.getElementById('m-sub').textContent =
+    `${h.level.charAt(0).toUpperCase() + h.level.slice(1)} · ${h.category === 'active' ? 'Physical' : 'Mind'}`;
+
+  document.getElementById('m-body').innerHTML = `
+    <div class="meta-grid">
+      <div class="meta-cell"><div class="k">Level</div><div class="v">${h.level}</div></div>
+      <div class="meta-cell"><div class="k">Since</div><div class="v">${h.since || '—'}</div></div>
+      <div class="meta-cell"><div class="k">Frequency</div><div class="v">${h.frequency || '—'}</div></div>
+    </div>
+
+    <div class="block">
+      <h3>📝 Current Status</h3>
+      <div class="status-text">${h.status || '<span class="empty">— write where you are today —</span>'}</div>
+    </div>
+
+    <div class="block goals">
+      <h3>🎯 Progression Goals</h3>
+      ${listOrEmpty(h.goals, '— set your next milestones —')}
+    </div>
+
+    <div class="block learning">
+      <h3>📘 Currently Learning</h3>
+      ${listOrEmpty(h.learning, '— what are you focused on right now? —')}
+    </div>
+
+    <div class="block wantto">
+      <h3>✨ Want to Learn / Get Started With</h3>
+      ${listOrEmpty(h.wantToLearn, '— ideas for the future —')}
+    </div>
+
+    ${h.gear && h.gear.length ? `
+      <div class="block gear">
+        <h3>🎒 Gear / Setup</h3>
+        ${listOrEmpty(h.gear, '')}
+      </div>` : ''}
+
+    ${h.prs && h.prs.length ? `
+      <div class="block prs">
+        <h3>🏆 PRs & Milestones</h3>
+        ${listOrEmpty(h.prs, '')}
+      </div>` : ''}
+  `;
+  modal.classList.add('open');
+}
+</script>
+</body>
+</html>

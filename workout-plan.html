@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>💪 Weekly Training Plan</title>
+<style>
+  :root {
+    --mon: #f97316;
+    --tue: #22c55e;
+    --wed: #ef4444;
+    --thu: #3b82f6;
+    --fri: #ec4899;
+    --sat: #14b8a6;
+    --sun: #a855f7;
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --ink: #f8fafc;
+    --muted: #94a3b8;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    background:
+      radial-gradient(circle at 12% 10%, rgba(239,68,68,.18) 0, transparent 30%),
+      radial-gradient(circle at 88% 14%, rgba(59,130,246,.18) 0, transparent 32%),
+      radial-gradient(circle at 50% 92%, rgba(168,85,247,.15) 0, transparent 35%),
+      var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 24px 12px 50px;
+  }
+
+  header.hero {
+    text-align: center;
+    max-width: 1400px;
+    margin: 0 auto 18px;
+  }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: rgba(255,255,255,.08); border: 2px dashed #f59e0b;
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: #fbbf24;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  h1 {
+    font-size: clamp(28px, 4.4vw, 46px);
+    margin: 12px 0 6px;
+    letter-spacing: -0.02em;
+  }
+  h1 .flex { display: inline-block; transform-origin: 50% 70%; animation: flex 2.6s infinite ease-in-out; }
+  @keyframes flex { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18) rotate(-6deg)} }
+  header.hero p { color: var(--muted); margin: 4px 0 18px; font-size: 15px; }
+
+  .week-strip {
+    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    max-width: 1100px; margin: 0 auto 6px;
+  }
+  .week-strip .pill {
+    background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.15);
+    border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700;
+    color: #e2e8f0;
+  }
+  .week-strip .pill .d { color: #94a3b8; margin-right: 4px; }
+
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    margin: 16px 0;
+  }
+  .btn {
+    background: #fff; border: 2px solid #1f2330; color: #1f2330;
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px;
+    box-shadow: 3px 3px 0 #fbbf24;
+    transition: transform .12s ease, box-shadow .12s ease;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #fbbf24; }
+  .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #fbbf24; }
+  .btn.primary { background: #fbbf24; color: #1f2330; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(180px, 1fr));
+    gap: 10px;
+    max-width: 100%; margin: 0 auto;
+    padding: 0 6px 12px;
+    overflow-x: auto;
+  }
+
+  .card {
+    background: var(--card);
+    color: #1f2330;
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    border: 2.5px solid #0f172a;
+    box-shadow: 4px 4px 0 #0f172a;
+    cursor: pointer;
+    transition: transform .14s ease, box-shadow .14s ease;
+    position: relative; overflow: hidden;
+    min-width: 0;
+  }
+  .card:hover { transform: translate(-2px,-3px); box-shadow: 6px 7px 0 #0f172a; }
+  .card.rest { background: #f1f5f9; border-style: dashed; cursor: default; }
+  .card.rest:hover { transform: none; box-shadow: 4px 4px 0 #0f172a; }
+  .card .stripe {
+    position: absolute; top: 0; left: 0; right: 0; height: 6px;
+  }
+  .card[data-day="Mon"] .stripe { background: var(--mon); }
+  .card[data-day="Tue"] .stripe { background: var(--tue); }
+  .card[data-day="Wed"] .stripe { background: var(--wed); }
+  .card[data-day="Thu"] .stripe { background: var(--thu); }
+  .card[data-day="Fri"] .stripe { background: var(--fri); }
+  .card[data-day="Sat"] .stripe { background: var(--sat); }
+  .card[data-day="Sun"] .stripe { background: var(--sun); }
+
+  .card .day {
+    margin-top: 6px;
+    font-weight: 800; font-size: 15px; letter-spacing: -.01em;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 6px;
+  }
+  .card .day .count {
+    background: #0f172a; color: #fbbf24; padding: 2px 7px; border-radius: 999px;
+    font-size: 9px; font-weight: 800;
+  }
+  .card .focus {
+    margin-top: 4px;
+    font-weight: 700; font-size: 13px; line-height: 1.25;
+  }
+  .card[data-day="Mon"] .focus { color: var(--mon); }
+  .card[data-day="Tue"] .focus { color: var(--tue); }
+  .card[data-day="Wed"] .focus { color: var(--wed); }
+  .card[data-day="Thu"] .focus { color: var(--thu); }
+  .card[data-day="Fri"] .focus { color: var(--fri); }
+  .card[data-day="Sat"] .focus { color: var(--sat); }
+  .card[data-day="Sun"] .focus { color: var(--sun); }
+
+  .card .preview {
+    margin-top: 8px;
+    list-style: none; padding: 0;
+    font-size: 11px; color: #475569; line-height: 1.4;
+  }
+  .card .preview li {
+    padding: 2px 0; border-top: 1px dashed #e5e7eb;
+    display: flex; justify-content: space-between; gap: 6px;
+  }
+  .card .preview li:first-child { border-top: none; }
+  .card .preview li .ex { color: #1f2330; font-weight: 600; }
+  .card .preview li .sx { color: #64748b; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .card .preview .more { color: #94a3b8; font-style: italic; padding-top: 4px; }
+
+  .card .footer {
+    margin-top: 10px; padding-top: 8px; border-top: 1.5px dashed #e5e7eb;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: #64748b;
+  }
+  .card .footer .tap { color: #1f2330; font-weight: 700; }
+  .card .footer .tap::after { content: " →"; transition: transform .15s ease; display: inline-block; }
+  .card:hover .footer .tap::after { transform: translateX(4px); }
+
+  .card.rest .body {
+    text-align: center; padding: 28px 0 18px;
+  }
+  .card.rest .body .big {
+    font-size: 32px; font-weight: 900; letter-spacing: -.02em; color: #475569;
+  }
+  .card.rest .body .small {
+    font-size: 12px; color: #94a3b8; margin-top: 6px;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; z-index: 50; backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #fff; color: #0f172a;
+    border-radius: 22px; max-width: 820px; width: 100%;
+    max-height: 90vh; overflow: auto; border: 3px solid #0f172a;
+    box-shadow: 8px 10px 0 #fbbf24;
+    animation: pop .18s ease-out;
+  }
+  @keyframes pop { from { transform: scale(.96); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+  .modal header {
+    padding: 18px 22px; border-bottom: 2px solid #f1f5f9;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; background: #fff; z-index: 2;
+  }
+  .modal header h2 { margin: 0; font-size: 22px; }
+  .modal header .focus-tag {
+    background: #fef3c7; color: #92400e; padding: 4px 10px;
+    border-radius: 999px; font-size: 12px; font-weight: 700;
+  }
+  .modal .close {
+    background: #fff; border: 2px solid #0f172a; border-radius: 12px;
+    width: 36px; height: 36px; cursor: pointer; font-size: 18px; font-weight: 700;
+    box-shadow: 3px 3px 0 #0f172a;
+  }
+  .modal .body { padding: 18px 22px 22px; }
+  .modal table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  .modal th {
+    text-align: left; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: #64748b;
+    padding: 8px 8px; border-bottom: 2px solid #0f172a;
+  }
+  .modal td {
+    padding: 10px 8px; border-bottom: 1px dashed #e2e8f0;
+    vertical-align: top;
+  }
+  .modal td.ex { font-weight: 700; }
+  .modal td.center { text-align: center; font-variant-numeric: tabular-nums; }
+  .modal td.weight { font-weight: 600; color: #0f172a; }
+  .modal tr:last-child td { border-bottom: none; }
+  .modal tr.bw td.weight { color: #64748b; font-style: italic; font-weight: 500; }
+
+  .modal .summary {
+    margin-top: 14px; padding: 12px 14px;
+    background: #f8fafc; border-radius: 12px; border: 1.5px dashed #cbd5e1;
+    font-size: 13px; color: #475569;
+    display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between;
+  }
+  .modal .summary b { color: #0f172a; }
+
+  footer.note {
+    text-align: center; color: var(--muted); margin-top: 28px;
+    font-size: 13px;
+  }
+
+  /* Evening routine */
+  .evening {
+    max-width: 1400px; margin: 22px auto 0;
+    background: linear-gradient(135deg, rgba(99,102,241,.18), rgba(168,85,247,.18));
+    border: 3px solid #fbbf24; border-radius: 22px;
+    box-shadow: 6px 6px 0 #fbbf24;
+    padding: 18px 20px;
+  }
+  .evening .ehead {
+    display: flex; justify-content: space-between; align-items: baseline;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 4px;
+  }
+  .evening h2 {
+    margin: 0; font-size: 20px;
+    color: #fbbf24;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .evening .when {
+    background: #fbbf24; color: #0f172a; padding: 4px 10px;
+    border-radius: 999px; font-size: 12px; font-weight: 800;
+  }
+  .evening .sub { color: #cbd5e1; font-size: 13px; margin: 4px 0 14px; }
+  .evening-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 8px;
+  }
+  .evening-grid .ex {
+    background: #fff; color: #0f172a;
+    border: 2px solid #0f172a; border-radius: 10px;
+    padding: 8px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .evening-grid .ex .name {
+    font-weight: 800; font-size: 13px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 4px;
+  }
+  .evening-grid .ex .name .vol {
+    background: #0f172a; color: #fbbf24; padding: 1px 7px; border-radius: 999px;
+    font-size: 10px; font-weight: 800;
+  }
+  .evening-grid .ex .focus { font-size: 11px; color: #64748b; font-style: italic; }
+
+  .cycle-card {
+    margin-top: 12px;
+    background: #fbbf24; color: #0f172a;
+    border: 3px solid #0f172a;
+    border-radius: 14px;
+    padding: 12px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 800; flex-wrap: wrap; gap: 12px;
+  }
+  .cycle-card .left { display: flex; gap: 12px; align-items: center; }
+  .cycle-card .left .icon { font-size: 28px; }
+  .cycle-card .km { font-size: 26px; font-weight: 900; letter-spacing: -.02em; }
+  .cycle-card .note { font-size: 12px; font-weight: 600; opacity: .85; }
+
+  /* Stretch blocks inside modal */
+  .stretch-block {
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    border: 2px dashed;
+  }
+  .stretch-block.warmup  { background: #f0fdf4; border-color: #86efac; }
+  .stretch-block.cooldown{ background: #eff6ff; border-color: #93c5fd; }
+  .stretch-block .st-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-weight: 800; font-size: 14px; margin-bottom: 6px;
+    gap: 8px; flex-wrap: wrap;
+  }
+  .stretch-block.warmup .st-head  { color: #166534; }
+  .stretch-block.cooldown .st-head{ color: #1e40af; }
+  .stretch-block .st-meta {
+    font-size: 11px; color: #64748b; font-weight: 600;
+  }
+  .stretch-block ul {
+    list-style: none; padding: 0; margin: 0;
+    font-size: 13px;
+  }
+  .stretch-block ul li {
+    display: flex; justify-content: space-between; gap: 8px;
+    padding: 4px 0;
+    border-top: 1px dashed rgba(0,0,0,.08);
+  }
+  .stretch-block ul li:first-child { border-top: none; }
+  .stretch-block ul li .nm { font-weight: 600; color: #1f2330; }
+  .stretch-block ul li .vl { color: #475569; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* Racquet Sports pre-warmup section */
+  .racquet {
+    max-width: 1400px; margin: 18px auto 0;
+    background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(14,165,233,.18));
+    border: 3px solid #22c55e; border-radius: 22px;
+    box-shadow: 6px 6px 0 #22c55e;
+    padding: 18px 20px;
+  }
+  .racquet.cool {
+    background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(168,85,247,.18));
+    border-color: #3b82f6;
+    box-shadow: 6px 6px 0 #3b82f6;
+  }
+  .racquet .rhead {
+    display: flex; justify-content: space-between; align-items: baseline;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 4px;
+  }
+  .racquet h2 {
+    margin: 0; font-size: 20px; color: #22c55e;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .racquet.cool h2 { color: #3b82f6; }
+  .racquet .when {
+    background: #22c55e; color: #0f172a; padding: 4px 10px;
+    border-radius: 999px; font-size: 12px; font-weight: 800;
+  }
+  .racquet.cool .when { background: #3b82f6; color: #fff; }
+  .racquet .sub { color: #cbd5e1; font-size: 13px; margin: 4px 0 14px; }
+  .racquet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .racquet-grid .ex {
+    background: #fff; color: #0f172a;
+    border: 2px solid #0f172a; border-radius: 10px;
+    padding: 8px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .racquet-grid .ex .name {
+    font-weight: 800; font-size: 13px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 4px;
+  }
+  .racquet-grid .ex .name .vol {
+    background: #22c55e; color: #0f172a; padding: 1px 7px; border-radius: 999px;
+    font-size: 10px; font-weight: 800;
+  }
+  .racquet.cool .racquet-grid .ex .name .vol { background: #3b82f6; color: #fff; }
+  .racquet-grid .ex .focus { font-size: 11px; color: #64748b; font-style: italic; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">🏋️ Weekly Training Plan</span>
+  <h1>Train Hard <span class="flex">💪</span></h1>
+  <p>🌅 Morning gym (6 days) · 🌙 evening core circuit + cycling (every day) · 🎯 Goal: −3 kg fat loss</p>
+  <div class="week-strip" id="weekStrip"></div>
+</header>
+
+<div class="controls">
+  <button class="btn primary" id="todayBtn">⭐ Show Today</button>
+  <button class="btn" onclick="window.print()">🖨️ Quick Print</button>
+  <a class="btn" href="workout-plan-poster.html" target="_blank" rel="noopener">📄 Open Printable Poster</a>
+  <a class="btn" href="meal-plan.html">🍽️ Meal Plan</a>
+</div>
+
+<main class="grid" id="grid"></main>
+
+<section class="evening" id="evening"></section>
+
+<section class="racquet" id="racquet"></section>
+
+<section class="racquet cool" id="racquetCool"></section>
+
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <header>
+      <div>
+        <h2 id="m-title">Day</h2>
+        <div id="m-focus" class="focus-tag" style="margin-top:6px; display:inline-block;"></div>
+      </div>
+      <button class="close" id="closeBtn" aria-label="Close">✕</button>
+    </header>
+    <div class="body" id="m-body"></div>
+  </div>
+</div>
+
+<footer class="note">
+  Form &gt; ego. Pre-workout: day-specific warm-up stretches + 10 min incline walk. Post-workout: day-specific cool-down stretches. Rest 45–60 s between sets.
+</footer>
+
+<script>
+const DAILY_BURN = {
+  Mon: 2700, Tue: 2420, Wed: 2700, Thu: 2780,
+  Fri: 2420, Sat: 2700, Sun: 2750
+};
+
+const PLAN = [
+  {
+    d: "Mon", day: "Monday", focus: "Chest + Triceps", emoji: "🔥",
+    exercises: [
+      ["Incline Dumbbell Press",          "3", "10–12",     "5–7.5 kg each"],
+      ["Machine Chest Press",             "3", "10–12",     "15–25 kg"],
+      ["Pec Deck / Cable Fly",            "3", "12–15",     "10–15 kg"],
+      ["Rope Tricep Pushdown",            "3", "12–15",     "10–20 kg"],
+      ["Overhead Cable Tricep Extension", "3", "12–15",     "10–15 kg"]
+    ],
+    warmup: [
+      ["Arm circles",             "10 each direction"],
+      ["Cross-body arm swings",   "10 each side"],
+      ["Wall slides",             "10 reps"],
+      ["Push-up to down-dog",     "8 reps"]
+    ],
+    cooldown: [
+      ["Doorway chest stretch",       "30 s / side"],
+      ["Cross-body shoulder stretch", "30 s / side"],
+      ["Overhead triceps stretch",    "30 s / arm"],
+      ["Child's pose",                "45 s"]
+    ]
+  },
+  {
+    d: "Tue", day: "Tuesday", focus: "Back + Biceps", emoji: "🪢",
+    exercises: [
+      ["Lat Pulldown",          "4", "10–12", "20–30 kg"],
+      ["Seated Cable Row",      "3", "10–12", "15–25 kg"],
+      ["Face Pulls",            "3", "15",    "7.5–15 kg"],
+      ["Incline Dumbbell Curl", "3", "12",    "4–6 kg each"],
+      ["Hammer Curl",           "3", "12",    "5–7.5 kg each"]
+    ],
+    warmup: [
+      ["Cat–cow",              "10 reps"],
+      ["Thoracic rotations",   "10 each side"],
+      ["Band pull-aparts",     "15 reps"],
+      ["Scapular pull-ups",    "8 reps"]
+    ],
+    cooldown: [
+      ["Child's pose (side reach)", "30 s / side"],
+      ["Doorway lat stretch",       "30 s / side"],
+      ["Wall biceps stretch",       "30 s / arm"],
+      ["Seated forward fold",       "45 s"]
+    ]
+  },
+  {
+    d: "Wed", day: "Wednesday", rest: true, msg: "Full rest day"
+  },
+  {
+    d: "Thu", day: "Thursday", focus: "Legs (Quads + Glutes)", emoji: "🦵",
+    exercises: [
+      ["Leg Press",             "4", "10–12",  "40–60 kg"],
+      ["Goblet Squat",          "3", "10–12",  "8–12 kg dumbbell"],
+      ["Walking Lunges",        "3", "12/leg", "5–7.5 kg each"],
+      ["Leg Extension",         "3", "12–15",  "15–25 kg"],
+      ["Standing Calf Raises",  "4", "15",     "15–30 kg"]
+    ],
+    warmup: [
+      ["Leg swings (front–back)", "10 / leg"],
+      ["Leg swings (lateral)",    "10 / leg"],
+      ["Bodyweight squats",       "15 reps"],
+      ["Walking knee hugs",       "10 steps"]
+    ],
+    cooldown: [
+      ["Standing quad stretch",    "30 s / leg"],
+      ["Pigeon pose",              "45 s / side"],
+      ["Figure-4 glute stretch",   "30 s / side"],
+      ["Standing calf stretch",    "30 s / leg"]
+    ]
+  },
+  {
+    d: "Fri", day: "Friday", focus: "Shoulders + Core", emoji: "💪",
+    exercises: [
+      ["Seated Dumbbell Shoulder Press","3", "10–12",     "5–7.5 kg each"],
+      ["Dumbbell Lateral Raises",       "4", "12–15",     "2.5–5 kg each"],
+      ["Rear Delt Fly Machine",         "3", "15",        "10–20 kg"],
+      ["Hanging Knee Raises",           "3", "12–15",     "Bodyweight"],
+      ["Pallof Press",                  "3", "12/side",   "5–10 kg"]
+    ],
+    warmup: [
+      ["Arm circles",         "10 each direction"],
+      ["Shoulder rolls",      "10 each direction"],
+      ["Torso twists",        "10 / side"],
+      ["Dead bug",            "8 / side"]
+    ],
+    cooldown: [
+      ["Cross-body shoulder stretch", "30 s / side"],
+      ["Sleeper stretch",             "30 s / side"],
+      ["Child's pose",                "45 s"],
+      ["Seated spinal twist",         "30 s / side"]
+    ]
+  },
+  {
+    d: "Sat", day: "Saturday", focus: "Posterior Chain (Hams + Glutes)", emoji: "⚡",
+    exercises: [
+      ["Romanian Deadlift",         "3", "10–12",  "15–25 kg"],
+      ["Hamstring Curl",            "3", "12–15",  "10–20 kg"],
+      ["Hip Thrust / Glute Bridge", "4", "12",     "20–35 kg"],
+      ["Bulgarian Split Squat",     "3", "10/leg", "5–7.5 kg each"],
+      ["Standing Calf Raises",      "3", "15",     "15–30 kg"]
+    ],
+    warmup: [
+      ["Hip hinges (bodyweight)",   "10 reps"],
+      ["Leg swings (front–back)",   "10 / leg"],
+      ["Glute bridges",             "12 reps"],
+      ["Good mornings (light)",     "10 reps"]
+    ],
+    cooldown: [
+      ["Seated forward fold",        "45 s"],
+      ["Standing hamstring stretch", "30 s / leg"],
+      ["Pigeon pose",                "45 s / side"],
+      ["Cobra / low-back decompress","30 s"]
+    ]
+  },
+  {
+    d: "Sun", day: "Sunday", focus: "Arms + Core", emoji: "💥",
+    exercises: [
+      ["EZ Bar Curl",      "3", "12",        "7.5–15 kg"],
+      ["Rope Pushdown",    "3", "12–15",     "10–20 kg"],
+      ["Hammer Curl",      "3", "12",        "5–7.5 kg each"],
+      ["Cable Crunches",   "3", "15",        "10–15 kg"],
+      ["Side Planks",      "3", "30–45 sec", "Bodyweight"]
+    ],
+    warmup: [
+      ["Arm circles",       "10 each direction"],
+      ["Wrist circles",     "10 each direction"],
+      ["Torso twists",      "10 / side"],
+      ["Dead bug",          "8 / side"]
+    ],
+    cooldown: [
+      ["Overhead triceps stretch", "30 s / arm"],
+      ["Wall biceps stretch",      "30 s / arm"],
+      ["Seated spinal twist",      "30 s / side"],
+      ["Cobra pose",               "30 s"]
+    ]
+  }
+];
+
+// Reorder Mon-first for natural week feel? Keeping Sun first is fine but most people read Mon-Sun. Let me reorder.
+const ORDER = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+PLAN.sort((a,b) => ORDER.indexOf(a.d) - ORDER.indexOf(b.d));
+
+const grid = document.getElementById('grid');
+const strip = document.getElementById('weekStrip');
+
+PLAN.forEach((d, i) => {
+  // Week strip
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.innerHTML = `<span class="d">${d.d}</span> ${d.rest ? "Rest" : d.focus}`;
+  strip.appendChild(pill);
+
+  // Card
+  const card = document.createElement('article');
+  card.className = 'card' + (d.rest ? ' rest' : '');
+  card.dataset.day = d.d;
+  card.dataset.index = i;
+
+  if (d.rest) {
+    card.innerHTML = `
+      <div class="stripe"></div>
+      <div class="day"><span>${d.day}</span></div>
+      <div class="body">
+        <div class="big">😌</div>
+        <div class="big" style="font-size:18px; margin-top:4px;">REST</div>
+        <div class="small">${d.msg}</div>
+        <div class="small" style="margin-top:8px;color:#10b981;font-weight:700;">🔥 ~${DAILY_BURN[d.d]} kcal/day</div>
+      </div>
+    `;
+  } else {
+    const previewItems = d.exercises.slice(0, 5).map(([ex, sets, reps]) =>
+      `<li><span class="ex">${ex}</span><span class="sx">${sets}×${reps}</span></li>`
+    ).join('');
+    const more = d.exercises.length > 5 ? `<div class="more">+ ${d.exercises.length - 5} more…</div>` : '';
+    card.innerHTML = `
+      <div class="stripe"></div>
+      <div class="day">
+        <span>${d.day}</span>
+        <span class="count">${d.exercises.length} ex</span>
+      </div>
+      <div class="focus">${d.emoji} ${d.focus}</div>
+      <ul class="preview">${previewItems}${more}</ul>
+      <div class="footer">
+        <span>🔥 ~${DAILY_BURN[d.d]} kcal</span>
+        <span class="tap">Open</span>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(i));
+  }
+  grid.appendChild(card);
+});
+
+const modal = document.getElementById('modal');
+const mTitle = document.getElementById('m-title');
+const mFocus = document.getElementById('m-focus');
+const mBody = document.getElementById('m-body');
+
+function openModal(i) {
+  const d = PLAN[i];
+  if (d.rest) return;
+  mTitle.textContent = `${d.day} ${d.emoji}`;
+  mFocus.textContent = d.focus;
+
+  const totalSets = d.exercises.reduce((s, e) => s + parseInt(e[1], 10), 0);
+  const rows = d.exercises.map(([ex, sets, reps, weight]) => {
+    const isBW = /bodyweight/i.test(weight);
+    return `
+      <tr class="${isBW ? 'bw' : ''}">
+        <td class="ex">${ex}</td>
+        <td class="center">${sets}</td>
+        <td class="center">${reps}</td>
+        <td class="weight">${weight}</td>
+      </tr>`;
+  }).join('');
+
+  mBody.innerHTML = `
+    ${renderStretch('warmup', '🧘‍♂️ Warm-up Stretches', '~3 min · before main sets', d.warmup)}
+    <table>
+      <thead>
+        <tr>
+          <th>Exercise</th>
+          <th class="center" style="text-align:center;">Sets</th>
+          <th class="center" style="text-align:center;">Reps</th>
+          <th>Suggested Starting Weight</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    ${renderStretch('cooldown', '🧘 Cool-down Stretches', '~3 min · hold each 30 s', d.cooldown)}
+    <div class="summary">
+      <span><b>${d.exercises.length}</b> exercises</span>
+      <span><b>${totalSets}</b> total working sets</span>
+      <span>Rest: <b>45–60 s</b> between sets (keep pace up for fat loss)</span>
+      <span>Estimated time: <b>~30–40 min</b></span>
+      <span style="color:#065f46;">🔥 Day burn: <b>~${DAILY_BURN[d.d]} kcal</b></span>
+    </div>
+  `;
+  modal.classList.add('open');
+}
+
+function renderStretch(kind, title, meta, list) {
+  if (!list || !list.length) return '';
+  const items = list.map(([nm, vl]) =>
+    `<li><span class="nm">${nm}</span><span class="vl">${vl}</span></li>`
+  ).join('');
+  return `
+    <div class="stretch-block ${kind}">
+      <div class="st-head"><span>${title}</span><span class="st-meta">${meta}</span></div>
+      <ul>${items}</ul>
+    </div>
+  `;
+}
+
+document.getElementById('closeBtn').addEventListener('click', () => modal.classList.remove('open'));
+modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+  const idx = PLAN.findIndex(d => d.d === today);
+  if (idx >= 0 && !PLAN[idx].rest) openModal(idx);
+});
+
+// Evening routine
+const EVENING = [
+  ["Jumping Jacks",     "Warm-up / cardio",     "60 sec"],
+  ["Flutter Kicks",     "Lower abs",            "30 sec"],
+  ["Feet-Off Crunches", "Upper abs",            "15 reps"],
+  ["Mountain Climbers", "Conditioning",         "30 sec"],
+  ["Hollow Hold",       "Deep core",            "30 sec"],
+  ["Leg Raises",        "Lower abs",            "15 reps"],
+  ["Alternate V-Ups",   "Full core",            "12 reps"],
+  ["Side Plank",        "Obliques / stability", "30 sec/side"]
+];
+
+(function renderEvening(){
+  const el = document.getElementById('evening');
+  el.innerHTML = `
+    <div class="ehead">
+      <h2>🌙 Evening Routine</h2>
+      <span class="when">Every day</span>
+    </div>
+    <div class="sub">Bodyweight core circuit — repeat <b>2–3 rounds</b>, 15 s rest between exercises, 60 s rest between rounds.</div>
+    <div class="evening-grid">
+      ${EVENING.map(([name, focus, vol]) => `
+        <div class="ex">
+          <div class="name"><span>${name}</span><span class="vol">${vol}</span></div>
+          <div class="focus">${focus}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="cycle-card">
+      <div class="left">
+        <span class="icon">🚴</span>
+        <div>
+          <div class="km">15 km cycling</div>
+          <div class="note">After the core circuit · steady pace · ~40–55 min</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;font-weight:700;opacity:.7;">Daily target</div>
+        <div style="font-size:20px;font-weight:900;">~330 kcal</div>
+      </div>
+    </div>
+  `;
+})();
+
+// Racquet Sports warm-up
+const RACQUET = [
+  ["Light jog in place",        "Heart rate + ankles",    "60 sec"],
+  ["Arm circles",               "Shoulder capsule",       "10 each way"],
+  ["Shoulder rolls",            "Upper traps / scapula",  "10 each way"],
+  ["Wrist + forearm circles",   "Grip / racquet control", "10 each way"],
+  ["Torso twists",              "Thoracic rotation",      "10 / side"],
+  ["Leg swings (front–back)",   "Hip flexion/extension",  "10 / leg"],
+  ["Leg swings (lateral)",      "Hip abduction",          "10 / leg"],
+  ["Walking lunges + twist",    "Hips + core",            "10 steps"],
+  ["Side shuffles",             "Lateral quickness",      "20 sec / side"],
+  ["High knees → butt kicks",   "Dynamic cardio",         "30 sec each"],
+  ["Bodyweight squats",         "Quad + glute activation","10 reps"],
+  ["Shadow swings (forehand/backhand)","Sport-specific",  "10 each"]
+];
+
+(function renderRacquet(){
+  const el = document.getElementById('racquet');
+  el.innerHTML = `
+    <div class="rhead">
+      <h2>🎾 Before Racquet Sports</h2>
+      <span class="when">Dynamic warm-up · ~8 min</span>
+    </div>
+    <div class="sub">Full-body mobility + joint activation before tennis / badminton / squash. Move through each, no long holds — you want blood flow, not to cool muscles down.</div>
+    <div class="racquet-grid">
+      ${RACQUET.map(([name, focus, vol]) => `
+        <div class="ex">
+          <div class="name"><span>${name}</span><span class="vol">${vol}</span></div>
+          <div class="focus">${focus}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+})();
+
+// Racquet Sports cool-down (post-game full-body stretch)
+const RACQUET_COOL = [
+  ["Standing forward fold",  "Hamstrings / low back",   "45 sec"],
+  ["90-90 hip stretch",      "Internal + external hip", "45 sec / side"],
+  ["Pigeon pose",            "Deep glutes",             "60 sec / side"],
+  ["Lizard pose",            "Hip flexors / adductors", "45 sec / side"],
+  ["Frog stretch",           "Adductors / inner thigh", "60 sec"],
+  ["Inch worm",              "Hamstrings → shoulders",  "6–8 reps"],
+  ["Cobra stretch",          "Abs / hip flexors",       "30 sec × 2"],
+  ["Child's pose",           "Lats / spine release",    "60 sec"],
+  ["Full-body reach + fold", "Decompress end-to-end",   "30 sec"]
+];
+
+(function renderRacquetCool(){
+  const el = document.getElementById('racquetCool');
+  el.innerHTML = `
+    <div class="rhead">
+      <h2>🧊 After Racquet Sports</h2>
+      <span class="when">Static cool-down · 1–10 min</span>
+    </div>
+    <div class="sub">Post-game full-body decompress. Breathe slowly through each hold. Scale duration: <b>~1 min</b> quick reset to <b>~10 min</b> full flexibility session — pick the holds that feel tightest that day.</div>
+    <div class="racquet-grid">
+      ${RACQUET_COOL.map(([name, focus, vol]) => `
+        <div class="ex">
+          <div class="name"><span>${name}</span><span class="vol">${vol}</span></div>
+          <div class="focus">${focus}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+})();
+</script>
+</body>
+</html>

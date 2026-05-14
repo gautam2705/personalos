@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Weekly Training Plan — Printable Poster</title>
+<style>
+  @page { size: A4 portrait; margin: 8mm; }
+  :root {
+    --mon:#f97316; --tue:#22c55e; --wed:#ef4444;
+    --thu:#3b82f6; --fri:#ec4899; --sat:#14b8a6; --sun:#a855f7;
+    --ink:#0f172a; --muted:#475569;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    color: var(--ink);
+    background: #f8fafc;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 0 auto;
+    padding: 8mm 8mm 6mm; background: #f8fafc; position: relative;
+  }
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 3px solid var(--ink); padding-bottom: 6px; margin-bottom: 6px;
+  }
+  .header h1 {
+    margin: 0; font-size: 22pt; letter-spacing: -.02em;
+  }
+  .header .sub {
+    font-size: 8.5pt; color: var(--muted); text-align: right; line-height: 1.35;
+  }
+  .header .sub b { color: var(--ink); }
+
+  .week-strip {
+    display: flex; gap: 4px; margin-bottom: 6px;
+    font-size: 7.5pt;
+  }
+  .week-strip .pill {
+    flex: 1; background: #fff; border: 1.5px solid var(--ink);
+    border-radius: 6px; padding: 4px 6px; text-align: center;
+    font-weight: 700;
+  }
+  .week-strip .pill.rest { background: #e2e8f0; color: var(--muted); }
+  .week-strip .pill .d { display: block; font-size: 6.5pt; color: var(--muted); margin-bottom: 1px; }
+
+  .day {
+    border: 2px solid var(--ink); border-radius: 7px; background: #fff;
+    margin-bottom: 3px; padding: 0; position: relative; overflow: hidden;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .day::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 4px;
+  }
+  .day[data-d="Mon"]::before { background: var(--mon); }
+  .day[data-d="Wed"]::before { background: var(--wed); }
+  .day[data-d="Thu"]::before { background: var(--thu); }
+  .day[data-d="Sat"]::before { background: var(--sat); }
+  .day[data-d="Sun"]::before { background: var(--sun); }
+
+  .day .head {
+    padding: 3px 8px 3px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+  .day .head .name {
+    font-weight: 800; font-size: 10pt;
+  }
+  .day .head .focus {
+    font-weight: 700; font-size: 8.5pt;
+  }
+  .day[data-d="Mon"] .head .focus { color: var(--mon); }
+  .day[data-d="Tue"] .head .focus { color: var(--tue); }
+  .day[data-d="Wed"] .head .focus { color: var(--wed); }
+  .day[data-d="Thu"] .head .focus { color: var(--thu); }
+  .day[data-d="Fri"] .head .focus { color: var(--fri); }
+  .day[data-d="Sat"] .head .focus { color: var(--sat); }
+  .day[data-d="Sun"] .head .focus { color: var(--sun); }
+  .day .head .meta {
+    font-size: 6.8pt; color: var(--muted); font-weight: 600;
+  }
+
+  .day table {
+    width: 100%; border-collapse: collapse;
+    font-size: 7.2pt; line-height: 1.18;
+  }
+  .day table th {
+    text-align: left; font-size: 6.2pt; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 2px 8px 2px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 700; background: #fafafa;
+  }
+  .day table td {
+    padding: 1.8px 8px 1.8px 12px;
+    border-bottom: 1px dashed #f1f5f9;
+  }
+  .day table tr:last-child td { border-bottom: none; }
+  .day table td.ex { font-weight: 700; }
+  .day table td.center { text-align: center; font-variant-numeric: tabular-nums; width: 32px; }
+  .day table td.weight { color: #334155; font-weight: 600; width: 30%; }
+  .day table tr.bw td.weight { color: var(--muted); font-style: italic; font-weight: 500; }
+
+  .footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 4px; padding-top: 5px; border-top: 2px solid var(--ink);
+    font-size: 7.5pt; color: var(--muted);
+  }
+  .footer b { color: var(--ink); }
+
+  .evening {
+    background: linear-gradient(135deg, #fef3c7, #fef9c3);
+    border: 2px solid var(--ink); border-radius: 8px;
+    padding: 5px 9px 6px; margin-bottom: 5px;
+  }
+  .evening .etop {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .evening .etop .ttl { font-weight: 800; font-size: 9pt; }
+  .evening .etop .meta { font-size: 7pt; color: var(--muted); font-weight: 600; }
+  .evening .etop .when { background: var(--ink); color: #fbbf24; padding: 2px 8px; border-radius: 999px; font-size: 7pt; font-weight: 800; }
+  .evening-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px 6px;
+  }
+  .evening-grid .ex {
+    background: #fff; border: 1.2px solid var(--ink); border-radius: 5px;
+    padding: 2px 5px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 4px;
+    font-size: 7pt; line-height: 1.25;
+  }
+  .evening-grid .ex .nm { font-weight: 700; }
+  .evening-grid .ex .vl { color: #92400e; font-weight: 700; white-space: nowrap; font-size: 6.8pt; }
+  .evening .cycle {
+    margin-top: 5px;
+    background: var(--ink); color: #fbbf24;
+    border-radius: 6px; padding: 4px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 800; font-size: 8pt;
+  }
+  .evening .cycle .big { font-size: 10pt; font-weight: 900; }
+
+  @media print {
+    body { background: #fff; }
+    .sheet { background: #fff; padding: 0; }
+    .no-print { display: none !important; }
+  }
+  .toolbar {
+    position: fixed; top: 14px; right: 14px; z-index: 99;
+  }
+  .toolbar button {
+    background: #0f172a; color: #fff; border: 0; border-radius: 999px;
+    padding: 8px 14px; font-weight: 700; cursor: pointer; font-size: 13px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button onclick="window.print()">🖨️ Print poster</button>
+</div>
+
+<div class="sheet">
+  <div class="header">
+    <div>
+      <h1>💪 Weekly Training Plan</h1>
+      <div style="font-size:8.5pt;color:var(--muted);margin-top:2px;">🌅 Morning gym (6 days) · 🌙 Evening core circuit + cycling daily · 🎯 Goal: −3 kg fat loss</div>
+    </div>
+    <div class="sub">
+      <b>Pre-workout:</b> 10 min stretching + 10 min incline walk<br>
+      <b>Rest between sets:</b> 45–60 s (keep pace up for fat loss)<br>
+      <b>Progress:</b> add 2.5 kg when you hit top of rep range
+    </div>
+  </div>
+
+  <div class="week-strip" id="weekStrip"></div>
+
+  <div class="evening" id="evening"></div>
+
+  <div id="days"></div>
+
+  <div class="footer">
+    <span><b>Form &gt; ego.</b> Track logs week to week. Deload every 4–6 weeks.</span>
+    <span>Weekly avg burn: <b>~2640 kcal/day</b> · Hydrate 💧 · Sleep 7–9 h</span>
+  </div>
+</div>
+
+<script>
+const DAILY_BURN = {
+  Mon: 2700, Tue: 2720, Wed: 2420, Thu: 2780, Fri: 2700, Sat: 2780, Sun: 2700
+};
+
+const PLAN = [
+  { d: "Mon", day: "Monday",    focus: "Chest + Triceps",              emoji: "🔥",
+    exercises: [
+      ["Incline Dumbbell Press",          "3","10–12",  "5–7.5 kg each"],
+      ["Machine Chest Press",             "3","10–12",  "15–25 kg"],
+      ["Pec Deck / Cable Fly",            "3","12–15",  "10–15 kg"],
+      ["Rope Tricep Pushdown",            "3","12–15",  "10–20 kg"],
+      ["Overhead Cable Tricep Extension", "3","12–15",  "10–15 kg"]
+    ]},
+  { d: "Tue", day: "Tuesday",   focus: "Back + Biceps",                emoji: "🪢",
+    exercises: [
+      ["Lat Pulldown",          "4","10–12", "20–30 kg"],
+      ["Seated Cable Row",      "3","10–12", "15–25 kg"],
+      ["Face Pulls",            "3","15",    "7.5–15 kg"],
+      ["Incline Dumbbell Curl", "3","12",    "4–6 kg each"],
+      ["Hammer Curl",           "3","12",    "5–7.5 kg each"]
+    ]},
+  { d: "Thu", day: "Thursday",  focus: "Legs (Quads + Glutes)",        emoji: "🦵",
+    exercises: [
+      ["Leg Press",            "4","10–12",  "40–60 kg"],
+      ["Goblet Squat",         "3","10–12",  "8–12 kg dumbbell"],
+      ["Walking Lunges",       "3","12/leg", "5–7.5 kg each"],
+      ["Leg Extension",        "3","12–15",  "15–25 kg"],
+      ["Standing Calf Raises", "4","15",     "15–30 kg"]
+    ]},
+  { d: "Fri", day: "Friday",    focus: "Shoulders + Core",             emoji: "💪",
+    exercises: [
+      ["Seated Dumbbell Shoulder Press","3","10–12",   "5–7.5 kg each"],
+      ["Dumbbell Lateral Raises",       "4","12–15",   "2.5–5 kg each"],
+      ["Rear Delt Fly Machine",         "3","15",      "10–20 kg"],
+      ["Hanging Knee Raises",           "3","12–15",   "Bodyweight"],
+      ["Pallof Press",                  "3","12/side", "5–10 kg"]
+    ]},
+  { d: "Sat", day: "Saturday",  focus: "Posterior Chain (Hams + Glutes)", emoji: "⚡",
+    exercises: [
+      ["Romanian Deadlift",         "3","10–12",  "15–25 kg"],
+      ["Hamstring Curl",            "3","12–15",  "10–20 kg"],
+      ["Hip Thrust / Glute Bridge", "4","12",     "20–35 kg"],
+      ["Bulgarian Split Squat",     "3","10/leg", "5–7.5 kg each"],
+      ["Standing Calf Raises",      "3","15",     "15–30 kg"]
+    ]},
+  { d: "Sun", day: "Sunday",    focus: "Arms + Core",                  emoji: "💥",
+    exercises: [
+      ["EZ Bar Curl",    "3","12",        "7.5–15 kg"],
+      ["Rope Pushdown",  "3","12–15",     "10–20 kg"],
+      ["Hammer Curl",    "3","12",        "5–7.5 kg each"],
+      ["Cable Crunches", "3","15",        "10–15 kg"],
+      ["Side Planks",    "3","30–45 sec", "Bodyweight"]
+    ]}
+];
+
+// Week strip including rest day
+const WEEK = [
+  { d: "Mon", l: "Chest+Tri" }, { d: "Tue", l: "Back+Bi" },
+  { d: "Wed", l: "Rest", rest: true }, { d: "Thu", l: "Legs" },
+  { d: "Fri", l: "Shoulders" }, { d: "Sat", l: "Posterior" }, { d: "Sun", l: "Arms" }
+];
+const strip = document.getElementById('weekStrip');
+WEEK.forEach(w => {
+  const el = document.createElement('div');
+  el.className = 'pill' + (w.rest ? ' rest' : '');
+  el.innerHTML = `<span class="d">${w.d}</span>${w.l}`;
+  strip.appendChild(el);
+});
+
+const days = document.getElementById('days');
+
+// Evening routine
+const EVENING = [
+  ["Jumping Jacks","60 sec"],
+  ["Flutter Kicks","30 sec"],
+  ["Feet-Off Crunches","15 reps"],
+  ["Mountain Climbers","30 sec"],
+  ["Hollow Hold","30 sec"],
+  ["Leg Raises","15 reps"],
+  ["Alternate V-Ups","12 reps"],
+  ["Side Plank","30 sec/side"]
+];
+document.getElementById('evening').innerHTML = `
+  <div class="etop">
+    <span class="ttl">🌙 Evening Routine — Core Circuit</span>
+    <span class="meta">2–3 rounds · 15 s rest between exercises · 60 s between rounds</span>
+    <span class="when">Every day</span>
+  </div>
+  <div class="evening-grid">
+    ${EVENING.map(([nm,vl]) => `<div class="ex"><span class="nm">${nm}</span><span class="vl">${vl}</span></div>`).join('')}
+  </div>
+  <div class="cycle">
+    <span>🚴 <b>15 km cycling</b> after the circuit · steady pace · ~40–55 min</span>
+    <span class="big">~300–380 kcal</span>
+  </div>
+`;
+
+PLAN.forEach(d => {
+  const totalSets = d.exercises.reduce((s, e) => s + parseInt(e[1], 10), 0);
+  const rows = d.exercises.map(([ex, sets, reps, weight]) => {
+    const isBW = /bodyweight/i.test(weight);
+    return `
+      <tr class="${isBW ? 'bw' : ''}">
+        <td class="ex">${ex}</td>
+        <td class="center">${sets}</td>
+        <td class="center">${reps}</td>
+        <td class="weight">${weight}</td>
+      </tr>`;
+  }).join('');
+  const card = document.createElement('div');
+  card.className = 'day';
+  card.dataset.d = d.d;
+  card.innerHTML = `
+    <div class="head">
+      <span class="name">${d.day} ${d.emoji}</span>
+      <span class="focus">${d.focus}</span>
+      <span class="meta">${d.exercises.length} ex · ${totalSets} sets · ~30–40 min · 🔥 ~${DAILY_BURN[d.d]} kcal</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Exercise</th>
+          <th style="text-align:center;width:38px;">Sets</th>
+          <th style="text-align:center;width:60px;">Reps</th>
+          <th style="width:32%;">Suggested Starting Weight</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+  days.appendChild(card);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>✈️ Travel & Lifestyle Playbooks</title>
+<style>
+  :root {
+    --bg: #ecfeff;
+    --ink: #0c4a6e;
+    --muted: #64748b;
+    --card: #ffffff;
+    --sky: #0ea5e9;
+    --sun: #f59e0b;
+    --leaf: #10b981;
+    --coral: #f43f5e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, #bae6fd 0, transparent 28%),
+      radial-gradient(circle at 88% 18%, #fed7aa 0, transparent 30%),
+      radial-gradient(circle at 50% 95%, #d1fae5 0, transparent 32%),
+      var(--bg);
+    color: #0c1321;
+    min-height: 100vh;
+    padding: 24px 12px 60px;
+  }
+  header.hero { text-align: center; max-width: 1200px; margin: 0 auto 20px; }
+  .badge {
+    display: inline-flex; gap: 8px; align-items: center;
+    background: #fff; border: 2px dashed var(--sky);
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; color: var(--sky);
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+  }
+  h1 { font-size: clamp(28px, 4.4vw, 46px); margin: 12px 0 6px; letter-spacing: -0.02em; }
+  h1 .plane { display: inline-block; animation: fly 4s infinite ease-in-out; }
+  @keyframes fly { 0%,100%{transform:translateX(0)} 50%{transform:translateX(10px) translateY(-4px)} }
+  header.hero p { color: var(--muted); margin: 4px 0 14px; font-size: 15px; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+  .btn {
+    background: #fff; border: 2px solid #0c1321; color: #0c1321;
+    padding: 9px 16px; border-radius: 999px; font-weight: 700;
+    cursor: pointer; font-size: 14px; text-decoration: none;
+    box-shadow: 3px 3px 0 #0c1321;
+    display: inline-flex; gap: 6px; align-items: center;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #0c1321; }
+  .btn.primary { background: var(--sky); color: #fff; }
+  .btn.active { background: #0c1321; color: #fff; }
+
+  main { max-width: 1200px; margin: 0 auto; }
+
+  .tabs {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 18px;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .section {
+    background: var(--card);
+    border: 2.5px solid #0c1321;
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 #0c1321;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .section h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .section .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+
+  /* Packing checklist */
+  .pack-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;
+  }
+  .pack-cat {
+    background: #f0f9ff; border: 2px solid var(--sky);
+    border-radius: 14px; padding: 14px 16px;
+  }
+  .pack-cat h3 {
+    margin: 0 0 8px; font-size: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .pack-cat h3 .count {
+    background: var(--sky); color: #fff; padding: 2px 8px;
+    border-radius: 999px; font-size: 11px; font-weight: 800;
+  }
+  .pack-list { list-style: none; margin: 0; padding: 0; }
+  .pack-list li {
+    padding: 6px 0; border-bottom: 1px dashed #cbd5e1;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none; font-size: 14px;
+  }
+  .pack-list li:last-child { border-bottom: none; }
+  .pack-list input[type=checkbox] {
+    width: 16px; height: 16px; accent-color: var(--sky); flex-shrink: 0;
+  }
+  .pack-list li.checked span { text-decoration: line-through; color: var(--muted); }
+
+  .trip-type-selector {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .trip-btn {
+    background: #fff; border: 2px solid var(--sky); color: var(--sky);
+    padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 13px;
+    cursor: pointer;
+  }
+  .trip-btn.active { background: var(--sky); color: #fff; }
+
+  /* Restaurant playbook */
+  .cuisine-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;
+  }
+  .cuisine {
+    background: #fffbeb; border: 2px solid var(--sun);
+    border-radius: 14px; padding: 14px 16px;
+  }
+  .cuisine h3 { margin: 0 0 6px; font-size: 15px; color: #92400e; }
+  .cuisine .ok, .cuisine .avoid { font-size: 13px; margin-top: 6px; line-height: 1.5; }
+  .cuisine .lbl { font-weight: 800; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; display: block; margin-top: 8px; }
+  .cuisine .ok .lbl { color: var(--leaf); }
+  .cuisine .avoid .lbl { color: var(--coral); }
+
+  /* Places */
+  .place-tabs {
+    display: flex; gap: 8px; margin-bottom: 12px;
+  }
+  .place-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;
+  }
+  .india-grid, .continent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .continent-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .slot {
+    background: #fff; border: 2px solid #0c1321;
+    border-radius: 10px; padding: 8px 10px; font-size: 12px;
+    min-height: 60px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .slot.done { background: #dcfce7; border-color: #166534; }
+  .slot .name { font-weight: 800; font-size: 12px; display: flex; justify-content: space-between; gap: 4px; }
+  .slot .type { font-size: 9px; font-weight: 700; color: var(--muted); padding: 1px 6px; border: 1px solid var(--muted); border-radius: 999px; text-transform: uppercase; letter-spacing: .06em; }
+  .slot.done .type { color: #166534; border-color: #166534; }
+  .slot .book { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 2px; }
+  .slot.done .book { color: #166534; font-style: normal; font-weight: 700; }
+  .cbar {
+    height: 10px; background: #e0f2fe; border: 1.5px solid #0c1321;
+    border-radius: 999px; overflow: hidden; margin: 8px 0 12px;
+  }
+  .cbar .fill { height: 100%; background: linear-gradient(90deg, var(--sky), var(--leaf)); transition: width .4s ease; }
+  .place {
+    background: #fff; border: 2px solid #0c1321;
+    border-radius: 14px; overflow: hidden;
+    transition: transform .14s ease, box-shadow .14s ease;
+  }
+  .place:hover { transform: translate(-1px,-2px); box-shadow: 4px 5px 0 #0c1321; }
+  .place .head {
+    padding: 10px 14px; border-bottom: 2px dashed #e2e8f0;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 6px;
+  }
+  .place .head .n { font-weight: 800; font-size: 15px; }
+  .place .head .tag {
+    font-size: 10px; font-weight: 800; padding: 2px 8px;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: .08em;
+  }
+  .place .head .tag.been { background: #dcfce7; color: #166534; }
+  .place .head .tag.want { background: #fef3c7; color: #92400e; }
+  .place .body { padding: 10px 14px; font-size: 13px; color: #334155; }
+  .place .meta { display: flex; gap: 10px; margin-top: 6px; font-size: 11px; color: var(--muted); flex-wrap: wrap; }
+  .place .meta span { background: #f1f5f9; padding: 2px 8px; border-radius: 999px; }
+
+  /* Routines */
+  .routine-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;
+  }
+  .routine {
+    background: #f0fdf4; border: 2px solid var(--leaf);
+    border-radius: 14px; padding: 14px 16px;
+  }
+  .routine h3 { margin: 0 0 8px; font-size: 15px; color: #065f46; }
+  .routine ol { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.tbl th {
+    text-align: left; font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 8px 6px; border-bottom: 2px solid #0c1321;
+  }
+  table.tbl td { padding: 10px 6px; border-bottom: 1px dashed #e2e8f0; vertical-align: top; }
+  table.tbl tr:last-child td { border-bottom: none; }
+
+  /* Upcoming trips */
+  .trip-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;
+  }
+  .trip-card {
+    background: #fff;
+    border: 2.5px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 5px 5px 0 var(--sky);
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--ink);
+    display: block;
+    transition: transform .14s ease, box-shadow .14s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .trip-card:hover { transform: translate(-2px,-3px); box-shadow: 7px 8px 0 var(--sky); }
+  .trip-card .badge-row {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .trip-card .countdown {
+    background: var(--coral); color: #fff;
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 800; letter-spacing: .04em;
+  }
+  .trip-card .when-tag {
+    background: #f0f9ff; color: var(--sky); border: 1.5px solid var(--sky);
+    padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 800;
+  }
+  .trip-card h3 { margin: 6px 0 4px; font-size: 18px; letter-spacing: -.01em; }
+  .trip-card .route { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .trip-card .meta {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    font-size: 11px; color: #475569; font-weight: 700;
+    border-top: 1px dashed #cbd5e1; padding-top: 8px;
+  }
+  .trip-card .meta span { background: #f1f5f9; padding: 3px 9px; border-radius: 999px; }
+  .trip-card .open {
+    margin-top: 10px; font-size: 12px; font-weight: 800; color: var(--sky);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .trip-card .open::after { content: "→"; transition: transform .15s ease; display: inline-block; }
+  .trip-card:hover .open::after { transform: translateX(5px); }
+  .trip-card.placeholder {
+    background: #fafafa; border-style: dashed; box-shadow: none; color: var(--muted);
+  }
+  .trip-card.placeholder:hover { transform: none; box-shadow: none; }
+
+  footer.note { text-align: center; color: var(--muted); margin-top: 30px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">✈️ Travel & Lifestyle</span>
+  <h1>Playbooks <span class="plane">🛫</span></h1>
+  <p>Packing, dining out, places lived/loved — ready-to-use templates.</p>
+</header>
+
+<div class="controls">
+  <a class="btn primary" href="index.html">🏠 Life OS Home</a>
+  <a class="btn" href="meal-plan.html">🍽️ Meal Plan</a>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="btn active" data-tab="upcoming">🏔️ Upcoming Trips</button>
+  <button class="btn" data-tab="pack">🎒 Packing</button>
+  <button class="btn" data-tab="eat">🍽️ Eating Out</button>
+  <button class="btn" data-tab="places">🗺️ Places</button>
+  <button class="btn" data-tab="routines">🌿 Travel Routines</button>
+  <button class="btn" data-tab="kit">🛠️ Everyday Kit</button>
+</div>
+
+<main>
+
+  <!-- UPCOMING TRIPS -->
+  <div class="tab-content active" id="tab-upcoming">
+    <section class="section">
+      <h2>🏔️ Upcoming Trips</h2>
+      <div class="sub">Plans on the calendar. Click a card to open the full trip page.</div>
+      <div class="trip-grid" id="tripGrid"></div>
+    </section>
+  </div>
+
+  <!-- PACKING -->
+  <div class="tab-content" id="tab-pack">
+    <section class="section">
+      <h2>🎒 Packing Checklist</h2>
+      <div class="sub">Pick trip type — checklist regenerates. Tick items as you pack.</div>
+      <div class="trip-type-selector" id="tripTypes"></div>
+      <div class="pack-grid" id="packGrid"></div>
+      <div style="margin-top:14px; text-align:center;">
+        <button class="btn" id="resetPack">🔄 Reset Checks</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- EATING OUT -->
+  <div class="tab-content" id="tab-eat">
+    <section class="section">
+      <h2>🍽️ What to Eat Out</h2>
+      <div class="sub">Dining-out rules by cuisine. Stay on plan without being boring.</div>
+      <div class="cuisine-grid" id="cuisineGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2>🚦 Universal Rules</h2>
+      <div class="sub">My defaults, whatever the cuisine.</div>
+      <ul style="font-size:14px; line-height:1.8; padding-left:20px;">
+        <li><b>Order protein first.</b> Build the plate around it.</li>
+        <li><b>Always ask for sauces on the side.</b> Saves 300+ kcal per meal.</li>
+        <li><b>One starch, not three.</b> Rice OR bread OR fries — pick one.</li>
+        <li><b>Water with meals.</b> No sugary drinks, no fruit juices.</li>
+        <li><b>No dessert by default.</b> If the dessert is exceptional, share one.</li>
+        <li><b>Walk 10 min after.</b> Post-meal walk = better glucose response.</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- PLACES -->
+  <div class="tab-content" id="tab-places">
+    <section class="section">
+      <h2>🇮🇳 India Challenge — 28 States + 8 UTs</h2>
+      <div class="sub">Stay 2–3 nights in each · target: <b>complete by 2030</b> · document key memories/learnings.</div>
+      <div class="cbar"><div class="fill" id="indiaBar" style="width:0%"></div></div>
+      <div class="india-grid" id="indiaGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2>🌍 7 Continents Challenge</h2>
+      <div class="sub">One signature experience each · target: <b>complete by 2035</b>.</div>
+      <div class="cbar"><div class="fill" id="continentBar" style="width:0%"></div></div>
+      <div class="continent-grid" id="continentGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2>🗺️ Other Places (Free-form)</h2>
+      <div class="sub">Non-India, non-challenge locations. Where I've been and where I'm going.</div>
+      <div class="place-tabs" id="placeTabs">
+        <button class="trip-btn active" data-place="been">✓ Been</button>
+        <button class="trip-btn" data-place="want">☆ Want to Go</button>
+      </div>
+      <div class="place-grid" id="placeGrid"></div>
+    </section>
+  </div>
+
+  <!-- ROUTINES -->
+  <div class="tab-content" id="tab-routines">
+    <section class="section">
+      <h2>🌿 Travel Routines</h2>
+      <div class="sub">Protocols to keep body + mind + work on track.</div>
+      <div class="routine-grid" id="routineGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2>📋 Pre-Trip Checklist</h2>
+      <div class="sub">Logistics to tick off before every trip.</div>
+      <ul style="font-size:14px; line-height:1.9; padding-left:20px;">
+        <li>Check passport validity (≥ 6 months).</li>
+        <li>Confirm visa & entry requirements.</li>
+        <li>Notify bank of travel dates.</li>
+        <li>Download offline maps + Google Translate language pack.</li>
+        <li>Screenshot hotel address + booking confirmation.</li>
+        <li>Set auto-pay for any bills due during trip.</li>
+        <li>Share itinerary with next-of-kin.</li>
+        <li>Load travel insurance policy on phone.</li>
+        <li>Check weather for entire trip duration.</li>
+        <li>Set out-of-office email and calendar block.</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- EDC / EVERYDAY KIT -->
+  <div class="tab-content" id="tab-kit">
+    <section class="section">
+      <h2>🛠️ Everyday Carry (EDC)</h2>
+      <div class="sub">What's in my pockets / daily bag.</div>
+      <table class="tbl">
+        <thead><tr><th>Item</th><th>Model / Brand</th><th>Replace When</th></tr></thead>
+        <tbody id="edc"></tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>🏋️ Travel Workout Kit</h2>
+      <div class="sub">Staying consistent when the gym isn't around.</div>
+      <ul style="font-size:14px; line-height:1.8; padding-left:20px;">
+        <li>Resistance bands (3 tensions)</li>
+        <li>Jump rope</li>
+        <li>Lacrosse ball (muscle release)</li>
+        <li>Bodyweight routine from <a href="workout-plan.html">workout plan</a>'s evening circuit works anywhere</li>
+      </ul>
+    </section>
+  </div>
+
+</main>
+
+<footer class="note">Update after every trip. Delete what doesn't work. Add what does.</footer>
+
+<script>
+// ============ DATA ============
+
+const UPCOMING_TRIPS = [
+  {
+    name: "Shimla → Spiti → Manali",
+    route: "Kinnaur · Spiti Valley · Lahaul",
+    start: "2026-06-06",
+    end:   "2026-06-12",
+    days: 7,
+    region: "Himachal Pradesh",
+    highlights: "Chitkul · Tabo · Kaza · Chandratal",
+    href: "trip-spiti-jun26.html"
+  }
+];
+
+const TRIP_TYPES = ["Weekend", "Business", "Beach", "Cold-weather", "Long-haul international"];
+
+const BASE_PACK = {
+  "🧳 Docs & Money": [
+    "Passport + photocopy",
+    "Visa printout",
+    "Driver's license",
+    "Credit cards (2) + ATM card",
+    "Travel insurance policy",
+    "Cash (local + USD backup)",
+    "Boarding passes / tickets"
+  ],
+  "📱 Tech": [
+    "Phone + charger",
+    "Power bank",
+    "Universal adapter",
+    "Laptop + charger",
+    "Earphones / Airpods",
+    "Kindle"
+  ],
+  "👕 Clothes (base)": [
+    "Underwear × 7",
+    "Socks × 7",
+    "T-shirts × 5",
+    "Trousers × 2",
+    "Sleepwear",
+    "Light jacket"
+  ],
+  "🧴 Toiletries": [
+    "Toothbrush + paste",
+    "Deodorant",
+    "Sunscreen",
+    "Shampoo + conditioner (travel size)",
+    "Razor",
+    "Nail clipper",
+    "Lip balm"
+  ],
+  "💊 Health": [
+    "Regular medications",
+    "Supplements (morning + night pack)",
+    "Basic first-aid (bandages, antiseptic)",
+    "Pain reliever (ibuprofen / paracetamol)",
+    "Anti-diarrheal",
+    "Motion sickness pills",
+    "Hand sanitizer"
+  ]
+};
+
+const PACK_ADDONS = {
+  "Weekend": {},
+  "Business": {
+    "💼 Business": ["Suit / blazer", "Dress shirts × 3", "Dress shoes", "Laptop sleeve", "Notebook + pens", "Business cards"]
+  },
+  "Beach": {
+    "🏖️ Beach": ["Swimwear × 2", "Beach towel", "Flip flops", "Rash guard", "Reef-safe sunscreen", "Waterproof phone pouch", "Snorkel mask"]
+  },
+  "Cold-weather": {
+    "❄️ Cold": ["Thermal base layers", "Heavy jacket / down", "Wool socks × 3", "Gloves", "Beanie", "Scarf", "Boots (insulated)", "Hand warmers"]
+  },
+  "Long-haul international": {
+    "🌏 Long-haul": ["Compression socks", "Eye mask + ear plugs", "Neck pillow", "Entertainment downloads", "Empty water bottle (fill after security)", "Snacks", "Extra layer (planes are cold)"]
+  }
+};
+
+const CUISINES = [
+  {
+    name: "🇮🇳 Indian",
+    ok: "Tandoori (not butter) chicken/paneer, dal, sabzi, raita, tandoori roti (limit), kachumber, soups.",
+    avoid: "Butter chicken, biryani (white rice-heavy), naan, puris, samosas, sugary chai, mithai."
+  },
+  {
+    name: "🍕 Italian",
+    ok: "Grilled fish/chicken, minestrone, caprese, arrabiata with extra veg, thin-crust margherita (share).",
+    avoid: "Cream/carbonara sauces, garlic bread, lasagna, tiramisu, full pizza solo."
+  },
+  {
+    name: "🥢 Chinese / Asian",
+    ok: "Stir-fry tofu/chicken with veg, soups (hot & sour, miso), steamed dumplings (1 portion), edamame.",
+    avoid: "Fried rice, sweet & sour sauce, crispy anything, kung pao-bowls with heavy sauce."
+  },
+  {
+    name: "🥪 American / Bar",
+    ok: "Grilled chicken salad, burger (no bun + side salad), steak + veg, wings (grilled, not fried).",
+    avoid: "Fries, nachos, loaded burgers, milkshakes, dessert cocktails."
+  },
+  {
+    name: "🌯 Mexican",
+    ok: "Fajitas, tacos al pastor (corn tortilla, 2-3), grilled fish, ceviche, guac (not unlimited chips).",
+    avoid: "Nachos, burritos (calorie bombs), chimichangas, sweet margaritas."
+  },
+  {
+    name: "🍣 Japanese",
+    ok: "Sashimi, nigiri (limit 8), miso, edamame, seaweed salad, grilled yakitori.",
+    avoid: "Tempura, mayo rolls, teriyaki with sugar glaze, katsu."
+  },
+  {
+    name: "🥙 Mediterranean / Lebanese",
+    ok: "Grilled meats, hummus (small), tabbouleh, fattoush, Greek salad, tzatziki, kebabs.",
+    avoid: "Pita overload, fried falafel (have 1-2), baklava, cheesy dishes."
+  },
+  {
+    name: "🥗 Breakfast / Brunch",
+    ok: "Omelet (3 eggs, veg), Greek yogurt + berries, smashed avo on sourdough (1 slice), black coffee.",
+    avoid: "Pancakes, waffles with syrup, bacon-heavy plates, hash browns, sugary lattes."
+  }
+];
+
+const PLACES_BEEN = [
+  // { name, country, year, vibe, note }
+  { name: "—", country: "—", year: "—", vibe: "—", note: "Add places you've been." }
+];
+
+const PLACES_WANT = [
+  // { name, country, why, season }
+  { name: "Kyoto",      country: "Japan",      why: "Temples, cherry blossoms, slow mornings", season: "Mar–Apr" },
+  { name: "Patagonia",  country: "Argentina/Chile", why: "Hiking, raw wilderness", season: "Nov–Mar" },
+  { name: "Reykjavik",  country: "Iceland",    why: "Northern lights, geothermal baths", season: "Oct–Mar" },
+  { name: "Ladakh",     country: "India",      why: "High-altitude silence",    season: "Jun–Sep" },
+  { name: "Lisbon",     country: "Portugal",   why: "Walkable, food, pace",     season: "Apr–Jun" }
+];
+
+// India Challenge — 28 states + 8 UTs. Set visited:true + year/note to mark done.
+const INDIA_PLACES = [
+  { region: "Andhra Pradesh",              type: "State", visited: false },
+  { region: "Arunachal Pradesh",           type: "State", visited: false },
+  { region: "Assam",                       type: "State", visited: false },
+  { region: "Bihar",                       type: "State", visited: false },
+  { region: "Chhattisgarh",                type: "State", visited: false },
+  { region: "Goa",                         type: "State", visited: false },
+  { region: "Gujarat",                     type: "State", visited: false },
+  { region: "Haryana",                     type: "State", visited: false },
+  { region: "Himachal Pradesh",            type: "State", visited: false },
+  { region: "Jharkhand",                   type: "State", visited: false },
+  { region: "Karnataka",                   type: "State", visited: false },
+  { region: "Kerala",                      type: "State", visited: false },
+  { region: "Madhya Pradesh",              type: "State", visited: false },
+  { region: "Maharashtra",                 type: "State", visited: false },
+  { region: "Manipur",                     type: "State", visited: false },
+  { region: "Meghalaya",                   type: "State", visited: false },
+  { region: "Mizoram",                     type: "State", visited: false },
+  { region: "Nagaland",                    type: "State", visited: false },
+  { region: "Odisha",                      type: "State", visited: false },
+  { region: "Punjab",                      type: "State", visited: false },
+  { region: "Rajasthan",                   type: "State", visited: false },
+  { region: "Sikkim",                      type: "State", visited: false },
+  { region: "Tamil Nadu",                  type: "State", visited: false },
+  { region: "Telangana",                   type: "State", visited: false, note: "Home — Hyderabad" },
+  { region: "Tripura",                     type: "State", visited: false },
+  { region: "Uttar Pradesh",               type: "State", visited: false },
+  { region: "Uttarakhand",                 type: "State", visited: false },
+  { region: "West Bengal",                 type: "State", visited: false },
+  { region: "Andaman & Nicobar Islands",   type: "UT",    visited: false },
+  { region: "Chandigarh",                  type: "UT",    visited: false },
+  { region: "Dadra & N.H. and Daman & Diu",type: "UT",    visited: false },
+  { region: "Delhi",                       type: "UT",    visited: false },
+  { region: "Jammu & Kashmir",             type: "UT",    visited: false },
+  { region: "Ladakh",                      type: "UT",    visited: false },
+  { region: "Lakshadweep",                 type: "UT",    visited: false },
+  { region: "Puducherry",                  type: "UT",    visited: false }
+];
+
+// 7 Continents — signature experience each by 2035
+const CONTINENTS = [
+  { name: "Asia",           signature: "Base continent — India + neighbors",             visited: false },
+  { name: "Europe",         signature: "Road trip across multiple countries",             visited: false },
+  { name: "North America",  signature: "—",                                              visited: false },
+  { name: "South America",  signature: "Hike in Patagonia",                               visited: false },
+  { name: "Africa",         signature: "Safari (Serengeti / Masai Mara / Kruger)",        visited: false },
+  { name: "Australia / Oceania", signature: "Dive the Great Barrier Reef",                visited: false },
+  { name: "Antarctica",     signature: "Antarctic expedition cruise",                     visited: false }
+];
+
+const ROUTINES = [
+  {
+    title: "🌅 Travel Morning",
+    steps: [
+      "Hydrate — 500 ml on waking",
+      "10 min bodyweight mobility",
+      "Sunlight within 30 min of waking",
+      "Caffeine only AFTER sunlight",
+      "Most important task before breakfast"
+    ]
+  },
+  {
+    title: "✈️ On the Plane",
+    steps: [
+      "Walk 5 min every 2 hours",
+      "Compression socks on before boarding",
+      "No alcohol (terrible for sleep + jet lag)",
+      "Eat on destination time, not origin",
+      "Hydrate — 250 ml/hour"
+    ]
+  },
+  {
+    title: "🌙 Jet Lag Protocol",
+    steps: [
+      "Set watch to destination on boarding",
+      "Sunlight within 1 hour of local wake-up",
+      "No caffeine after 2 PM local",
+      "Melatonin (0.3–0.5 mg) 30 min before local bedtime for 3 nights",
+      "Force self to stay up until 9 PM local on arrival day"
+    ]
+  },
+  {
+    title: "🏋️ Hotel Workout",
+    steps: [
+      "5 min warm-up: jumping jacks, high knees, arm circles",
+      "3 rounds: 10 push-ups · 15 squats · 10 rows (band) · 30s plank",
+      "Finisher: 100 jump-rope skips × 3",
+      "Cooldown: 5 min stretch",
+      "Done in 25 min, no excuses"
+    ]
+  }
+];
+
+const EDC = [
+  // [item, model, replace when]
+  ["Wallet",       "—", "When frayed"],
+  ["Keys",         "With fob + whistle", "N/A"],
+  ["Phone",        "—", "Every 3 years"],
+  ["Earphones",    "—", "When battery dies"],
+  ["Water bottle", "700 ml stainless",   "Never (lifetime buy)"],
+  ["Notebook",     "Pocket-size dotted", "When filled"],
+  ["Pen",          "—", "When empty"],
+  ["Hand sanitizer", "30 ml",           "When empty"]
+];
+
+// ============ RENDER ============
+
+// Upcoming trips
+function fmtDate(iso) {
+  const d = new Date(iso + "T00:00:00");
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d.getDate()} ${months[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`;
+}
+function daysUntil(iso) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(iso + "T00:00:00");
+  return Math.round((target - today) / 86400000);
+}
+function renderTrips() {
+  const grid = document.getElementById('tripGrid');
+  if (!UPCOMING_TRIPS.length) {
+    grid.innerHTML = `<div class="trip-card placeholder"><h3>No upcoming trips</h3><div class="route">Add one to <code>UPCOMING_TRIPS</code> in source.</div></div>`;
+    return;
+  }
+  grid.innerHTML = UPCOMING_TRIPS.map(t => {
+    const d = daysUntil(t.start);
+    const cd = d > 0 ? `${d} days to go` : d === 0 ? "Today!" : `Started ${-d}d ago`;
+    return `
+      <a class="trip-card" href="${t.href}">
+        <div class="badge-row">
+          <span class="countdown">${cd}</span>
+          <span class="when-tag">${fmtDate(t.start)} → ${fmtDate(t.end)}</span>
+        </div>
+        <h3>${t.name}</h3>
+        <div class="route">${t.route}</div>
+        <div class="meta">
+          <span>📅 ${t.days} days</span>
+          <span>📍 ${t.region}</span>
+          <span>✨ ${t.highlights}</span>
+        </div>
+        <div class="open">Open trip page</div>
+      </a>`;
+  }).join('');
+}
+renderTrips();
+
+// Tabs
+document.querySelectorAll('#tabs .btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#tabs .btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Packing
+const tripTypesEl = document.getElementById('tripTypes');
+tripTypesEl.innerHTML = TRIP_TYPES.map((t, i) =>
+  `<button class="trip-btn ${i === 0 ? 'active' : ''}" data-trip="${t}">${t}</button>`
+).join('');
+
+function renderPack(tripType) {
+  const categories = { ...BASE_PACK, ...(PACK_ADDONS[tripType] || {}) };
+  document.getElementById('packGrid').innerHTML = Object.entries(categories).map(([cat, items]) => `
+    <div class="pack-cat">
+      <h3>${cat} <span class="count">${items.length}</span></h3>
+      <ul class="pack-list">
+        ${items.map(item => `
+          <li onclick="this.classList.toggle('checked'); this.querySelector('input').checked = this.classList.contains('checked');">
+            <input type="checkbox"><span>${item}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>`).join('');
+}
+renderPack("Weekend");
+
+tripTypesEl.addEventListener('click', e => {
+  if (!e.target.matches('.trip-btn')) return;
+  tripTypesEl.querySelectorAll('.trip-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderPack(e.target.dataset.trip);
+});
+
+document.getElementById('resetPack').addEventListener('click', () => {
+  document.querySelectorAll('.pack-list li').forEach(li => {
+    li.classList.remove('checked');
+    li.querySelector('input').checked = false;
+  });
+});
+
+// Cuisines
+document.getElementById('cuisineGrid').innerHTML = CUISINES.map(c => `
+  <div class="cuisine">
+    <h3>${c.name}</h3>
+    <div class="ok"><span class="lbl">✓ Go for</span>${c.ok}</div>
+    <div class="avoid"><span class="lbl">✗ Skip</span>${c.avoid}</div>
+  </div>`).join('');
+
+// Places
+function renderPlaces(mode) {
+  const data = mode === 'been' ? PLACES_BEEN : PLACES_WANT;
+  const tag = mode === 'been' ? 'been' : 'want';
+  const tagTxt = mode === 'been' ? '✓ BEEN' : '☆ WANT';
+  document.getElementById('placeGrid').innerHTML = data.map(p => `
+    <div class="place">
+      <div class="head">
+        <div class="n">${p.name}</div>
+        <span class="tag ${tag}">${tagTxt}</span>
+      </div>
+      <div class="body">
+        <div><b>${p.country}</b>${p.year ? ' · ' + p.year : ''}</div>
+        <div style="margin-top:4px;">${p.vibe || p.why || ''}</div>
+        ${p.note ? `<div style="margin-top:4px; font-style:italic;">${p.note}</div>` : ''}
+        <div class="meta">
+          ${p.season ? `<span>🗓 ${p.season}</span>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+renderPlaces('been');
+
+document.getElementById('placeTabs').addEventListener('click', e => {
+  if (!e.target.matches('.trip-btn')) return;
+  document.querySelectorAll('#placeTabs .trip-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderPlaces(e.target.dataset.place);
+});
+
+// India Challenge
+function renderIndia() {
+  const total = INDIA_PLACES.length;
+  const done = INDIA_PLACES.filter(p => p.visited).length;
+  const pct = (done / total * 100);
+  document.getElementById('indiaBar').style.width = pct + '%';
+  document.querySelector('#tab-places .section:first-child .sub').innerHTML =
+    `Stay 2–3 nights in each · target: <b>complete by 2030</b> · <b>${done} / ${total}</b> visited.`;
+  document.getElementById('indiaGrid').innerHTML = INDIA_PLACES.map(p => `
+    <div class="slot ${p.visited ? 'done' : ''}">
+      <div class="name">${p.region} <span class="type">${p.type}</span></div>
+      <div class="book">${p.visited ? (p.year || '') + ' — ' + (p.note || 'visited') : (p.note || '— to visit —')}</div>
+    </div>`).join('');
+}
+
+// Continents Challenge
+function renderContinents() {
+  const total = CONTINENTS.length;
+  const done = CONTINENTS.filter(c => c.visited).length;
+  const pct = (done / total * 100);
+  document.getElementById('continentBar').style.width = pct + '%';
+  document.querySelectorAll('#tab-places .section')[1].querySelector('.sub').innerHTML =
+    `One signature experience each · target: <b>complete by 2035</b> · <b>${done} / ${total}</b> visited.`;
+  document.getElementById('continentGrid').innerHTML = CONTINENTS.map(c => `
+    <div class="slot ${c.visited ? 'done' : ''}">
+      <div class="name">${c.name}</div>
+      <div class="book">${c.visited ? (c.year || '') + ' — ' + (c.signature || 'visited') : (c.signature || '— plan experience —')}</div>
+    </div>`).join('');
+}
+
+renderIndia();
+renderContinents();
+
+// Routines
+document.getElementById('routineGrid').innerHTML = ROUTINES.map(r => `
+  <div class="routine">
+    <h3>${r.title}</h3>
+    <ol>${r.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+  </div>`).join('');
+
+// EDC
+document.getElementById('edc').innerHTML = EDC.map(r =>
+  `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`
+).join('');
+</script>
+</body>
+</html>

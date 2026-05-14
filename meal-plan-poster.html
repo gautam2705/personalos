@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Weekly Meal Plan — Printable Poster</title>
+<style>
+  @page { size: A4 portrait; margin: 8mm; }
+  :root {
+    --sun:#ff6b6b; --mon:#4ecdc4; --tue:#f6b93b; --wed:#a78bfa;
+    --thu:#60a5fa; --fri:#f472b6; --sat:#84cc16;
+    --ink:#1f2330; --muted:#586074; --line:#1f2330;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    color: var(--ink);
+    background: #fff8f1;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet {
+    width: 210mm; min-height: 297mm; margin: 0 auto;
+    padding: 8mm 8mm 6mm; background: #fff8f1; position: relative;
+  }
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 3px solid var(--ink); padding-bottom: 6px; margin-bottom: 8px;
+  }
+  .header h1 {
+    margin: 0; font-size: 24pt; letter-spacing: -.02em;
+  }
+  .header .sub {
+    font-size: 9pt; color: var(--muted); text-align: right; line-height: 1.35;
+  }
+  .header .sub b { color: var(--ink); }
+
+  .legend {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 5px; margin: 6px 0 8px;
+    font-size: 8pt;
+  }
+  .legend .item {
+    background: #fff; border: 1.5px solid var(--ink); border-radius: 8px;
+    padding: 5px 7px; display: flex; gap: 6px; align-items: center;
+  }
+  .legend .ico {
+    width: 18px; height: 18px; border-radius: 5px; background: #fff7ed;
+    border: 1.5px solid #fdba74; display: grid; place-items: center; font-size: 10pt; flex-shrink: 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+  }
+  .day {
+    border: 2px solid var(--ink); border-radius: 10px; background: #fff;
+    padding: 5px 7px 6px; position: relative; overflow: hidden;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .day::before {
+    content: ""; position: absolute; top: 0; left: 0; height: 100%; width: 5px;
+  }
+  .day[data-d="Sun"]::before { background: var(--sun); }
+  .day[data-d="Mon"]::before { background: var(--mon); }
+  .day[data-d="Tue"]::before { background: var(--tue); }
+  .day[data-d="Wed"]::before { background: var(--wed); }
+  .day[data-d="Thu"]::before { background: var(--thu); }
+  .day[data-d="Fri"]::before { background: var(--fri); }
+  .day[data-d="Sat"]::before { background: var(--sat); }
+
+  .day .head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-left: 7px;
+  }
+  .day .head .name { font-weight: 800; font-size: 11pt; }
+  .day .head .total {
+    background: var(--ink); color: #ffe66d; font-weight: 800;
+    border-radius: 999px; padding: 1px 7px; font-size: 7pt; letter-spacing: .04em;
+  }
+  .meal {
+    margin: 3px 0 0 7px; padding: 3px 0 0;
+    border-top: 1.2px dashed #e5e7eb;
+  }
+  .meal:first-of-type { border-top: none; padding-top: 1px; }
+  .meal .label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    font-weight: 700;
+  }
+  .meal .protein {
+    background: #fff7ed; border: 1.2px solid #fdba74; color: #9a3412;
+    padding: 0px 5px; border-radius: 999px; font-size: 6.5pt; font-weight: 800;
+    letter-spacing: .04em;
+  }
+  .meal .title { font-weight: 700; font-size: 8.5pt; margin-top: 1px; line-height: 1.22; }
+  .meal ul {
+    list-style: none; margin: 2px 0 0; padding: 0;
+    font-size: 7.2pt; line-height: 1.28;
+  }
+  .meal ul li {
+    display: flex; justify-content: space-between; gap: 6px;
+    padding: 0;
+  }
+  .meal ul li .ing { color: #1f2330; }
+  .meal ul li .qty {
+    color: #334155; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600;
+  }
+
+  .footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 6px; padding-top: 5px; border-top: 2px solid var(--ink);
+    font-size: 8pt; color: var(--muted);
+  }
+  .footer b { color: var(--ink); }
+
+  .ritual {
+    background: #fff; border: 2px solid var(--ink); border-radius: 10px;
+    padding: 5px 9px; margin-bottom: 5px;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center;
+  }
+  .ritual .icon { font-size: 14pt; }
+  .ritual .text { font-size: 8pt; line-height: 1.32; }
+  .ritual .text b { color: var(--ink); }
+  .ritual .pp {
+    background: var(--ink); color: #ffe66d; font-weight: 800;
+    border-radius: 999px; padding: 2px 8px; font-size: 7pt; white-space: nowrap;
+  }
+
+  .hyd {
+    background: linear-gradient(135deg, #ecfeff, #f0f9ff);
+    border: 2px solid var(--ink); border-radius: 10px;
+    padding: 5px 9px; margin-bottom: 6px;
+  }
+  .hyd .htop {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8.5pt; font-weight: 800; margin-bottom: 3px;
+  }
+  .hyd .htop .total { background: #0e7490; color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 7.5pt; }
+  .hyd-list {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px 10px;
+    font-size: 7pt; line-height: 1.3;
+  }
+  .hyd-list span b { color: #0e7490; }
+
+  .day-macros {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px;
+    margin-top: 4px; padding-top: 4px; border-top: 1.2px dashed #e5e7eb;
+    margin-left: 7px;
+  }
+  .day-macros .m {
+    background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px;
+    padding: 2px 1px; text-align: center; font-size: 6.5pt; font-weight: 700; color: #92400e;
+  }
+  .day-macros .m .v { display: block; font-size: 8pt; color: #1f2330; }
+  .day-macros .m.burn { background: #ecfdf5; border-color: #34d399; color: #065f46; }
+  .day-macros .m.deficit { background: #fef2f2; border-color: #f87171; color: #991b1b; }
+
+  @media print {
+    body { background: #fff; }
+    .sheet { background: #fff; padding: 0; }
+    .no-print { display: none !important; }
+  }
+  .toolbar {
+    position: fixed; top: 14px; right: 14px; z-index: 99;
+    display: flex; gap: 8px;
+  }
+  .toolbar button {
+    background: #1f2330; color: #fff; border: 0; border-radius: 999px;
+    padding: 8px 14px; font-weight: 700; cursor: pointer; font-size: 13px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button onclick="window.print()">🖨️ Print poster</button>
+</div>
+
+<div class="sheet">
+  <div class="header">
+    <div>
+      <h1>🍽️ My Weekly Meal Plan</h1>
+      <div style="font-size:9pt;color:var(--muted);margin-top:2px;">4 meals/day • dry weights for grains/dals • 1 boiled egg white at every dinner 🥚</div>
+      <div style="font-size:8.5pt;color:var(--ink);margin-top:3px;font-weight:700;">☕ 7 AM &nbsp;·&nbsp; 🥗 11 AM &nbsp;·&nbsp; 🫐 3 PM &nbsp;·&nbsp; 🍲 6 PM</div>
+    </div>
+    <div class="sub">
+      <b>Paneer (low-fat):</b> 50 g = 14 g protein<br>
+      <b>Egg white:</b> 1 = ~3.6 g protein<br>
+      <b>Buttermilk:</b> 200 ml • <b>Curd/Raita:</b> 100 g • <b>Soup:</b> 250 ml
+    </div>
+  </div>
+
+  <div class="ritual">
+    <div class="icon">☕</div>
+    <div class="text"><b>Every day · 7 AM ritual:</b> Black coffee (1 cup, 200 ml) + 3 walnuts + 8 almonds + 8 pistachios + 4 cashews</div>
+    <div class="pp">~6.7 g protein</div>
+  </div>
+
+  <div class="hyd">
+    <div class="htop">
+      <span>💧 Daily hydration & supplements</span>
+      <span class="total">Total: 2960 ml · 2.96 L</span>
+    </div>
+    <div class="hyd-list" id="hyd-list"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="footer">
+    <span>💧 <b>2960 ml water/day</b> · weekly avg: <b>~1545 kcal in</b> · <b>~2640 kcal burn</b> · <b>~−1095 kcal deficit</b></span>
+    <span><b>Stick to dry weights</b> · salt to taste · hydrate well</span>
+  </div>
+</div>
+
+<script>
+const HYDRATION = [
+  { time: "6 AM",       what: "2 garlic cloves",   water: 300 },
+  { time: "8 AM",       what: "1 tbsp flax seeds", water: 600 },
+  { time: "10 AM",      what: "ACV (with mother)", water: 300 },
+  { time: "12 PM",      what: "Plain water",       water: 250 },
+  { time: "1 PM",       what: "Plain water",       water: 250 },
+  { time: "3 PM",       what: "1 tbsp chia seeds", water: 180 },
+  { time: "Pre-dinner", what: "Psyllium husk",     water: 600 },
+  { time: "8 PM",       what: "Plain water",       water: 300 },
+  { time: "10 PM",      what: "Hibiscus tea",      water: 180 }
+];
+
+const DAILY_NUTRITION = {
+  Sun: { kcal: 1510, carbs: 204, fat: 44, protein: 87,  burn: 2420 },
+  Mon: { kcal: 1515, carbs: 197, fat: 46, protein: 92,  burn: 2700 },
+  Tue: { kcal: 1580, carbs: 196, fat: 53, protein: 97,  burn: 2780 },
+  Wed: { kcal: 1580, carbs: 191, fat: 50, protein: 107, burn: 2420 },
+  Thu: { kcal: 1545, carbs: 204, fat: 49, protein: 87,  burn: 2700 },
+  Fri: { kcal: 1610, carbs: 218, fat: 49, protein: 91,  burn: 2750 },
+  Sat: { kcal: 1495, carbs: 177, fat: 54, protein: 90,  burn: 2700 }
+};
+
+const MORNING = {
+  title: "Black Coffee + Mixed Nuts",
+  items: [
+    ["Black coffee (no sugar/milk)","1 cup (200 ml)",0.3],
+    ["Walnuts","3",2.4],
+    ["Almonds","8",2.1],
+    ["Pistachios","8",1.1],
+    ["Cashews","4",1.1]
+  ]
+};
+
+const BERRIES_ITEMS = [
+  ["Whey isolate (protein powder)","30 g",25.0],
+  ["A2 cow milk","250 ml",8.3],
+  ["Blueberries","30 g",0.2],
+  ["Mulberries","30 g",0.4],
+  ["Strawberries","30 g",0.2],
+  ["Anaar (pomegranate) seeds","40 g",0.7]
+];
+
+const FRUITS = {
+  Sun: { primary: ["Apple","1 (~180 g)",0.5],     extra: ["Kiwi","1 (~75 g)",0.9] },
+  Mon: { primary: ["Apple","1 (~180 g)",0.5],     extra: ["Watermelon","200 g",1.2] },
+  Tue: { primary: ["Apple","1 (~180 g)",0.5],     extra: ["Grapes","250 g",1.5] },
+  Wed: { primary: ["Apple","1 (~180 g)",0.5],     extra: ["Pineapple","100 g",0.5] },
+  Thu: { primary: ["Guava","1 (~165 g)",4.3],     extra: ["Mango","100 g",0.8] },
+  Fri: { primary: ["Guava","1 (~165 g)",4.3],     extra: ["Muskmelon","200 g",1.7] },
+  Sat: { primary: ["Pear","1 (~180 g)",0.7],      extra: ["Papaya","150 g",0.7] }
+};
+
+const PLAN = [
+  { d: "Sun", day: "Sunday", emoji: "🥣",
+    lunch: { title: "Chole + Red Rice + Kachumber",
+      items: [["Chole (chickpeas, dry)","50 g",9.5],["Red rice (dry)","50 g",3.5],["Kachumber salad","150 g",2.0]]},
+    dinner:{ title: "Dal + Sautéed Veggies + Paneer",
+      items: [["Dal (toor/moong, dry)","40 g",9.0],["Mixed veg (mushroom, bell pepper, zucchini, broccoli, cauliflower, carrot, onion, peas)","200 g",4.0],["Low-fat paneer","30 g",8.4],["Boiled egg white","1",3.6]]}},
+  { d: "Mon", day: "Monday", emoji: "🌿",
+    lunch: { title: "Methi Paneer + Jowar Roti + Buttermilk",
+      items: [["Methi (fenugreek leaves)","100 g",1.0],["Low-fat paneer","50 g",14.0],["Jowar roti (dry flour, 2)","60 g",6.0],["Cabbage-carrot-beetroot salad","150 g",2.0],["Buttermilk","200 ml",2.0]]},
+    dinner:{ title: "Mixed Veg Dal + Cabbage-Beans Poriyal",
+      items: [["Mixed veg dal (dry)","40 g",9.0],["Lauki/carrot/tomato/onion in dal","150 g",3.0],["Cabbage & beans poriyal","150 g",3.0],["Boiled egg white","1",3.6]]}},
+  { d: "Tue", day: "Tuesday", emoji: "🌾",
+    lunch: { title: "Millet Bowl + Paneer + Roasted Veg",
+      items: [["Foxtail/little millet (dry)","50 g",6.0],["Low-fat paneer","50 g",14.0],["Roasted veg (zucchini, bell pepper, carrot, onion)","200 g",4.0],["Mint-curd dressing","50 g",1.5],["Sautéed mushrooms","50 g",1.5]]},
+    dinner:{ title: "Tomato Garlic Soup + Bhindi + Paneer Side",
+      items: [["Tomato garlic soup","250 ml",3.0],["Bhindi (okra) sabzi","150 g",2.5],["Low-fat paneer side","50 g",14.0],["Boiled egg white","1",3.6]]}},
+  { d: "Wed", day: "Wednesday", emoji: "🥬",
+    lunch: { title: "Palak-Peas-Corn Quinoa Bowl + Paneer Chipotle",
+      items: [["Quinoa (dry)","50 g",7.0],["Palak (spinach)","100 g",3.0],["Green peas","50 g",2.5],["Sweet corn","30 g",1.0],["Bell pepper + low-fat paneer","50 g paneer",14.0],["Buttermilk","200 ml",2.0]]},
+    dinner:{ title: "Dal + Sautéed Veggies + Paneer",
+      items: [["Dal (toor/moong, dry)","40 g",9.0],["Mixed veg (mushroom, bell pepper, zucchini, broccoli, cauliflower, carrot, onion)","200 g",4.0],["Low-fat paneer","50 g",14.0],["Boiled egg white","1",3.6]]}},
+  { d: "Thu", day: "Thursday", emoji: "🥒",
+    lunch: { title: "Lauki Chana Dal + Bajra Roti + Salad",
+      items: [["Chana dal (dry)","50 g",11.0],["Lauki (bottle gourd)","100 g",0.6],["Bajra roti (dry flour, 2)","60 g",6.6],["Shredded salad (cabbage, carrot, beetroot)","150 g",2.0]]},
+    dinner:{ title: "Moong Soup + Karela Sabzi + Cucumber Mint + Raita",
+      items: [["Moong soup (moong dal, dry)","30 g",7.0],["Karela onion sabzi","150 g",2.0],["Cucumber mint salad","100 g",1.0],["Mixed veg curd raita","100 g",3.0],["Boiled egg white","1",3.6]]}},
+  { d: "Fri", day: "Friday", emoji: "🌱",
+    lunch: { title: "Palak + Mushroom Pepper Stir Fry + Jowar Roti + Buttermilk",
+      items: [["Palak (spinach)","150 g",4.5],["Mushrooms","100 g",3.0],["Bell pepper","50 g",0.5],["Jowar roti (dry flour, 2)","60 g",6.0],["Salad (cucumber, onion, tomato, sesame)","150 g",2.0],["Buttermilk","200 ml",2.0]]},
+    dinner:{ title: "Moong Dal + Mixed Veg + Small Quinoa",
+      items: [["Moong dal (dry)","40 g",9.6],["Mixed vegetables","200 g",4.0],["Quinoa (dry, small)","30 g",4.2],["Boiled egg white","1",3.6]]}},
+  { d: "Sat", day: "Saturday", emoji: "🥣",
+    lunch: { title: "Steel Cut Oats Khichdi + Mushroom + Raita",
+      items: [["Steel cut oats (dry)","50 g",6.5],["Moong dal in khichdi (dry)","20 g",4.8],["Khichdi vegetables","100 g",2.0],["Mushroom sauté","50 g",1.5],["Mixed veg raita","100 g",3.0]]},
+    dinner:{ title: "Clear Veg Soup + Paneer Tikka Veg + Sprouts Chaat",
+      items: [["Clear vegetable soup","250 ml",2.0],["Low-fat paneer (tikka-style)","50 g",14.0],["Sautéed vegetables","100 g",2.0],["Sprouts chaat","50 g",3.5],["Boiled egg white","1",3.6]]}}
+];
+
+function sum(items){ return items.reduce((s,it)=>s+(it[2]||0),0); }
+function listHTML(items){
+  return items.map(([n,q])=>`<li><span class="ing">${n}</span><span class="qty">${q}</span></li>`).join('');
+}
+
+const grid = document.getElementById('grid');
+const mp = sum(MORNING.items);
+
+// Render hydration list
+document.getElementById('hyd-list').innerHTML = HYDRATION.map(h =>
+  `<span><b>${h.time}:</b> ${h.what} <b>+ ${h.water} ml</b></span>`
+).join('');
+
+PLAN.forEach(d => {
+  const f = FRUITS[d.d];
+  const snackItems = [...BERRIES_ITEMS, f.primary, f.extra];
+  const lp = sum(d.lunch.items);
+  const sp = sum(snackItems);
+  const dp = sum(d.dinner.items);
+  const tot = mp + lp + sp + dp;
+  const N = DAILY_NUTRITION[d.d];
+  const card = document.createElement('div');
+  card.className = 'day';
+  card.dataset.d = d.d;
+  card.innerHTML = `
+    <div class="head">
+      <div class="name">${d.day} ${d.emoji}</div>
+      <div class="total">${N.kcal} kcal · ${N.protein} g P</div>
+    </div>
+    <div class="meal">
+      <div class="label"><span>🥗 Lunch · 11 AM</span><span class="protein">${lp.toFixed(1)} g</span></div>
+      <div class="title">${d.lunch.title}</div>
+      <ul>${listHTML(d.lunch.items)}</ul>
+    </div>
+    <div class="meal">
+      <div class="label"><span>🫐 Snack · 3 PM</span><span class="protein">${sp.toFixed(1)} g</span></div>
+      <div class="title">Whey Shake + 130 g Mixed Berries + ${f.primary[0]} + ${f.extra[0]}</div>
+      <ul>${listHTML(snackItems)}</ul>
+    </div>
+    <div class="meal">
+      <div class="label"><span>🍲 Dinner · 6 PM</span><span class="protein">${dp.toFixed(1)} g</span></div>
+      <div class="title">${d.dinner.title}</div>
+      <ul>${listHTML(d.dinner.items)}</ul>
+    </div>
+    <div class="day-macros">
+      <div class="m">🔥 In<span class="v">${N.kcal}</span></div>
+      <div class="m">🍞 C<span class="v">${N.carbs} g</span></div>
+      <div class="m">🥑 F<span class="v">${N.fat} g</span></div>
+      <div class="m">🥩 P<span class="v">${N.protein} g</span></div>
+      <div class="m burn">💪 Burn<span class="v">~${N.burn}</span></div>
+      <div class="m deficit">📉 Def<span class="v">−${N.burn - N.kcal}</span></div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
